@@ -483,7 +483,7 @@ function ProjectCard({ title, desc, tags, icon, color, image, href }: any) {
     };
 
     return (
-        <Link href={href}>
+        <Link href={href} scroll={false}>
             <motion.div
                 whileHover={{ y: -8 }}
                 className="group rounded-[2.5rem] bg-white border border-indigo-100/50 shadow-sm hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-500 relative overflow-hidden flex flex-col h-full cursor-pointer"
