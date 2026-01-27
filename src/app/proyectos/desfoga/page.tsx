@@ -12,7 +12,7 @@ export default function DesfogaDetail() {
             {/* Nav Back */}
             <nav className="fixed top-0 w-full z-50 py-4 border-b border-white/5 bg-slate-950/50 backdrop-blur-xl">
                 <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
-                    <Link href="/" className="flex items-center gap-2 text-cyan-500/80 hover:text-cyan-400 transition-colors font-bold">
+                    <Link href="/#desfoga" className="flex items-center gap-2 text-cyan-500/80 hover:text-cyan-400 transition-colors font-bold">
                         <ArrowLeft size={20} /> Volver al Inicio
                     </Link>
                     <img src="/logo-atsit.png" alt="AT-SIT" className="h-10 w-auto brightness-200" />

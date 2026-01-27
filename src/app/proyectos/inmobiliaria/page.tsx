@@ -12,7 +12,7 @@ export default function InmobiliariaDetail() {
             {/* Nav Back */}
             <nav className="fixed top-0 w-full z-50 glass py-4">
                 <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
-                    <Link href="/" className="flex items-center gap-2 text-indigo-400 hover:text-indigo-600 transition-colors font-bold">
+                    <Link href="/#inmobiliaria" className="flex items-center gap-2 text-indigo-400 hover:text-indigo-600 transition-colors font-bold">
                         <ArrowLeft size={20} /> Volver al Inicio
                     </Link>
                     <img src="/logo-atsit.png" alt="AT-SIT" className="h-10 w-auto" />

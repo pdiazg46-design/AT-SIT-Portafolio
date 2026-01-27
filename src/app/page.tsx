@@ -195,6 +195,7 @@ export default function Home() {
 
                         <div className="grid lg:grid-cols-3 gap-8">
                             <ProjectCard
+                                id="inmobiliaria"
                                 title="Gestión Inmobiliaria Pro"
                                 desc="Control total de activos con geolocalización avanzada y administración legal automatizada."
                                 tags={["Next.js", "Prisma", "Leaflet"]}
@@ -204,6 +205,7 @@ export default function Home() {
                                 href="/proyectos/inmobiliaria"
                             />
                             <ProjectCard
+                                id="tangente"
                                 title="Tangente Finance Pro"
                                 desc="Dashboard financiero de alta precisión para el sector construcción y finanzas corporativas."
                                 tags={["React", "Drizzle", "Fintech"]}
@@ -213,6 +215,7 @@ export default function Home() {
                                 href="/proyectos/tangente"
                             />
                             <ProjectCard
+                                id="desfoga"
                                 title="Desfoga Studio"
                                 desc="Ecosistema de IA que predice tendencias cinematográficas mediante análisis de datos masivos."
                                 tags={["Gen AI", "Python", "Cloud"]}
@@ -475,7 +478,7 @@ export default function Home() {
     );
 }
 
-function ProjectCard({ title, desc, tags, icon, color, image, href }: any) {
+function ProjectCard({ title, desc, tags, icon, color, image, href, id }: any) {
     const colors: any = {
         indigo: "text-indigo-600 bg-indigo-50 border-indigo-100 group-hover:bg-indigo-600 group-hover:text-white",
         purple: "text-violet-600 bg-violet-50 border-violet-100 group-hover:bg-violet-600 group-hover:text-white",
@@ -483,8 +486,9 @@ function ProjectCard({ title, desc, tags, icon, color, image, href }: any) {
     };
 
     return (
-        <Link href={href} scroll={false}>
+        <Link href={href}>
             <motion.div
+                id={id}
                 whileHover={{ y: -8 }}
                 className="group rounded-[2.5rem] bg-white border border-indigo-100/50 shadow-sm hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-500 relative overflow-hidden flex flex-col h-full cursor-pointer"
             >
