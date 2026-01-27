@@ -1,0 +1,69 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ffffff;
+  --foreground: #020617;
+  --accent: #4f46e5;
+  --accent-secondary: #06b6d4;
+  --surface: #f8fafc;
+  --indigo-soft: #eef2ff;
+  --violet-soft: #f5f3ff;
+  --cyan-soft: #ecfeff;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  overflow-x: hidden;
+}
+
+.mesh-gradient {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  background-color: var(--background);
+  background-image:
+    radial-gradient(at 0% 0%, hsla(220, 100%, 95%, 1) 0, transparent 50%),
+    radial-gradient(at 50% 0%, hsla(260, 100%, 98%, 1) 0, transparent 50%),
+    radial-gradient(at 100% 0%, hsla(190, 100%, 95%, 1) 0, transparent 50%),
+    radial-gradient(at 0% 100%, hsla(220, 100%, 98%, 1) 0, transparent 50%);
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.04);
+}
+
+.glass-dark {
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
