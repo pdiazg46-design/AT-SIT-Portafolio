@@ -137,27 +137,7 @@ export default function Home() {
                                 Empoderamos a pequeños y medianos empresarios con herramientas digitales robustas e inteligencia artificial. Convertimos procesos manuales lentos en ecosistemas automatizados de alto rendimiento.
                             </motion.p>
 
-                            {/* Excel to Reality Banner */}
-                            <motion.div
-                                initial={{ opacity: 0, x: -20 }}
-                                whileInView={{ opacity: 1, x: 0 }}
-                                className="bg-white/50 backdrop-blur-md border border-indigo-100/50 p-6 rounded-[2rem] flex items-center gap-6 mb-12 max-w-xl group relative overflow-hidden shadow-xl shadow-indigo-500/5"
-                            >
-                                <div className="absolute inset-0 bg-gradient-to-r from-indigo-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                                <div className="w-16 h-16 rounded-2xl bg-indigo-600 shadow-lg shadow-indigo-600/20 flex items-center justify-center shrink-0 relative z-10 transition-transform group-hover:scale-105">
-                                    <FileSpreadsheet className="text-white" size={32} />
-                                </div>
-                                <div className="relative z-10">
-                                    <div className="flex items-center gap-2 mb-1">
-                                        <div className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
-                                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-500/60">Evolución Estratégica</p>
-                                    </div>
-                                    <p className="text-lg font-black text-slate-900 leading-tight tracking-tight">
-                                        Desde un <span className="text-indigo-600">Excel</span> pasamos a un <br />
-                                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-cyan-500">Ecosistema Digital.</span>
-                                    </p>
-                                </div>
-                            </motion.div>
+
 
                             <motion.div
                                 initial={{ opacity: 0, y: 20 }}
@@ -256,9 +236,9 @@ export default function Home() {
                             >
                                 <div className="relative rounded-[3rem] overflow-hidden border border-white/10 shadow-2xl h-full min-h-[400px]">
                                     <img
-                                        src="/chaos-excel.png"
+                                        src="/messy-excel.png"
                                         alt="Caos de Excel"
-                                        className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-60 transition-opacity duration-700"
+                                        className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity duration-700"
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/60 to-transparent" />
                                     <div className="absolute bottom-0 left-0 right-0 p-10">
