@@ -105,52 +105,77 @@ export default function Home() {
             <main>
                 {/* Hero Section */}
                 <section className="relative pt-48 pb-32 overflow-hidden">
-                    <div className="max-w-7xl mx-auto px-6 relative z-10 text-center md:text-left">
-                        <div className="max-w-4xl">
+                    <div className="max-w-7xl mx-auto px-6 relative z-10">
+                        <div className="grid lg:grid-cols-2 gap-12 items-center">
+                            <div className="text-center lg:text-left">
+                                <motion.div
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-600 text-[10px] font-bold uppercase tracking-[0.2em] mb-8"
+                                >
+                                    <Zap size={14} className="fill-indigo-600" />
+                                    Transformación Digital & IA para Pymes
+                                </motion.div>
+
+                                <motion.h1
+                                    initial={{ opacity: 0, y: 30 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.1 }}
+                                    className="text-6xl md:text-8xl font-black tracking-tighter mb-8 leading-[0.85] text-slate-900"
+                                >
+                                    Del Caos de Excel al <br />
+                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-violet-600 to-cyan-500">
+                                        Ecosistema Digital
+                                    </span>
+                                </motion.h1>
+
+                                <motion.p
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.2 }}
+                                    className="text-xl text-slate-500 mb-12 leading-relaxed max-w-2xl font-medium"
+                                >
+                                    Empoderamos a pequeños y medianos empresarios con herramientas digitales robustas e inteligencia artificial. Convertimos procesos manuales lentos en ecosistemas automatizados de alto rendimiento.
+                                </motion.p>
+
+                                <motion.div
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.3 }}
+                                    className="flex flex-col sm:flex-row gap-5 justify-center lg:justify-start"
+                                >
+                                    <a href="#proyectos" className="bg-slate-900 hover:bg-slate-800 text-white px-10 py-5 rounded-2xl font-black text-center transition-all shadow-2xl shadow-slate-900/10 flex items-center justify-center gap-2 group">
+                                        Ver Proyectos <ArrowRight className="group-hover:translate-x-1 transition-transform" />
+                                    </a>
+                                    <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="bg-white border-2 border-slate-100 hover:border-indigo-100 hover:bg-slate-50 px-10 py-5 rounded-2xl font-black text-center transition-all flex items-center justify-center gap-2 text-slate-700">
+                                        WhatsApp Directo
+                                    </a>
+                                </motion.div>
+                            </div>
+
+                            {/* Hero Visual: The Chaos */}
                             <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-600 text-[10px] font-bold uppercase tracking-[0.2em] mb-8"
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ delay: 0.4 }}
+                                className="relative group lg:mt-0 mt-12"
                             >
-                                <Zap size={14} className="fill-indigo-600" />
-                                Transformación Digital & IA para Pymes
-                            </motion.div>
-
-                            <motion.h1
-                                initial={{ opacity: 0, y: 30 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.1 }}
-                                className="text-6xl md:text-8xl font-black tracking-tighter mb-8 leading-[0.85] text-slate-900"
-                            >
-                                Del Caos de Excel al <br />
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-violet-600 to-cyan-500">
-                                    Ecosistema Digital
-                                </span>
-                            </motion.h1>
-
-                            <motion.p
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.2 }}
-                                className="text-xl text-slate-500 mb-12 leading-relaxed max-w-2xl font-medium"
-                            >
-                                Empoderamos a pequeños y medianos empresarios con herramientas digitales robustas e inteligencia artificial. Convertimos procesos manuales lentos en ecosistemas automatizados de alto rendimiento.
-                            </motion.p>
-
-
-
-                            <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.3 }}
-                                className="flex flex-col sm:flex-row gap-5"
-                            >
-                                <a href="#proyectos" className="bg-slate-900 hover:bg-slate-800 text-white px-10 py-5 rounded-2xl font-black text-center transition-all shadow-2xl shadow-slate-900/10 flex items-center justify-center gap-2 group">
-                                    Ver Proyectos <ArrowRight className="group-hover:translate-x-1 transition-transform" />
-                                </a>
-                                <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="bg-white border-2 border-slate-100 hover:border-indigo-100 hover:bg-slate-50 px-10 py-5 rounded-2xl font-black text-center transition-all flex items-center justify-center gap-2 text-slate-700">
-                                    WhatsApp Directo
-                                </a>
+                                <div className="absolute -inset-4 bg-gradient-to-r from-indigo-500/20 to-cyan-500/20 rounded-[3rem] blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                                <div className="relative rounded-[3rem] overflow-hidden border border-slate-200 shadow-2xl bg-white p-2">
+                                    <img
+                                        src="/hero-chaos.png"
+                                        alt="Caos de Gestión Centralizada"
+                                        className="rounded-[2.5rem] w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105"
+                                    />
+                                    {/* Tooltip Overlay (Static for visual impact) */}
+                                    <div className="absolute top-10 right-10 bg-white/90 backdrop-blur-md p-4 rounded-2xl shadow-xl border border-white/20 transform rotate-3 animate-bounce-slow">
+                                        <div className="flex items-center gap-2 mb-1">
+                                            <div className="w-2 h-2 rounded-full bg-red-500" />
+                                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-900">Error Crítico</span>
+                                        </div>
+                                        <p className="text-[10px] font-bold text-slate-500 uppercase">Datos Desactualizados en Excel</p>
+                                    </div>
+                                </div>
                             </motion.div>
                         </div>
                     </div>
