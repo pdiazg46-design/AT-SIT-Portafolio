@@ -252,18 +252,28 @@ export default function Home() {
                             {/* Stage 1: Past */}
                             <motion.div
                                 whileInView={{ opacity: [0, 1], x: [-30, 0] }}
-                                className="relative z-10 bg-white/5 border border-white/10 p-10 rounded-[3rem] backdrop-blur-xl group hover:border-white/20 transition-all"
+                                className="relative z-10 group transition-all"
                             >
-                                <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center mb-8 group-hover:bg-slate-800 transition-colors">
-                                    <FileSpreadsheet className="text-slate-500 group-hover:text-slate-400" size={32} />
+                                <div className="relative rounded-[3rem] overflow-hidden border border-white/10 shadow-2xl h-full min-h-[400px]">
+                                    <img
+                                        src="/chaos-excel.png"
+                                        alt="Caos de Excel"
+                                        className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-60 transition-opacity duration-700"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/60 to-transparent" />
+                                    <div className="absolute bottom-0 left-0 right-0 p-10">
+                                        <div className="flex items-center gap-3 mb-4">
+                                            <div className="p-2 rounded-lg bg-red-500/10 border border-red-500/20">
+                                                <FileSpreadsheet className="text-red-500" size={20} />
+                                            </div>
+                                            <span className="text-red-500 text-[10px] font-black uppercase tracking-[0.2em]">El Pasado</span>
+                                        </div>
+                                        <h3 className="text-2xl font-black text-white tracking-tight mb-2">Caos de Excel Manual</h3>
+                                        <p className="text-slate-400 text-sm font-medium leading-relaxed">
+                                            Procesos lentos, errores humanos y datos fragmentados que frenan tu crecimiento.
+                                        </p>
+                                    </div>
                                 </div>
-                                <h3 className="text-2xl font-black mb-4 tracking-tight">El Pasado: Excel Manual</h3>
-                                <ul className="space-y-3 text-slate-400 font-medium">
-                                    <li className="flex gap-2">✕ Carga de trabajo manual y lenta.</li>
-                                    <li className="flex gap-2">✕ Alto riesgo de errores humanos.</li>
-                                    <li className="flex gap-2">✕ Datos estáticos y aislados.</li>
-                                    <li className="flex gap-2">✕ Sin visión en tiempo real.</li>
-                                </ul>
                             </motion.div>
 
                             {/* Stage 2: Transition */}
