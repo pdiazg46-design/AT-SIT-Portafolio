@@ -113,18 +113,18 @@ export default function Home() {
                                 className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-600 text-[10px] font-bold uppercase tracking-[0.2em] mb-8"
                             >
                                 <Zap size={14} className="fill-indigo-600" />
-                                Software Engineering & AI Agents
+                                Transformación Digital & IA para Pymes
                             </motion.div>
 
                             <motion.h1
                                 initial={{ opacity: 0, y: 30 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.1 }}
-                                className="text-6xl md:text-9xl font-black tracking-tighter mb-8 leading-[0.85] text-slate-900"
+                                className="text-6xl md:text-8xl font-black tracking-tighter mb-8 leading-[0.85] text-slate-900"
                             >
-                                Ciencia <br />
+                                Del Caos de Excel al <br />
                                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-violet-600 to-cyan-500">
-                                    Aplicada
+                                    Ecosistema Digital
                                 </span>
                             </motion.h1>
 
@@ -134,7 +134,7 @@ export default function Home() {
                                 transition={{ delay: 0.2 }}
                                 className="text-xl text-slate-500 mb-12 leading-relaxed max-w-2xl font-medium"
                             >
-                                Ingeniería de software de alta fidelidad. Construimos herramientas robustas impulsadas por agentes autónomos y análisis de datos de precisión.
+                                Empoderamos a pequeños y medianos empresarios con herramientas digitales robustas e inteligencia artificial. Convertimos procesos manuales lentos en ecosistemas automatizados de alto rendimiento.
                             </motion.p>
 
                             {/* Excel to Reality Banner */}
@@ -276,7 +276,7 @@ export default function Home() {
                                 </div>
                                 <h3 className="text-2xl font-black mb-4 tracking-tight">Evolución AT-SIT</h3>
                                 <p className="text-white/80 font-bold leading-relaxed">
-                                    Integramos, normalizamos y migramos tus procesos hacia una arquitectura científica.
+                                    Integramos, normalizamos y migramos tus procesos hacia una arquitectura empresarial robusta.
                                 </p>
                             </motion.div>
 
@@ -310,7 +310,7 @@ export default function Home() {
                                     <span className="text-indigo-600">Agentes Autónomos</span>
                                 </h2>
                                 <p className="text-slate-600 text-lg mb-12 leading-relaxed font-medium">
-                                    Nuestros agentes de IA no solo generan código; resuelven problemas complejos con rigor científico y precisión absoluta.
+                                    Nuestros agentes de IA no solo generan código; resuelven problemas complejos con precisión estratégica y resultados medibles.
                                 </p>
 
                                 <div className="space-y-8">
@@ -346,7 +346,7 @@ export default function Home() {
                                 ¿Elevamos tu <br /> estandar tecnológico?
                             </h2>
                             <p className="text-xl text-slate-400 mb-12 font-medium">
-                                Transforma tu visión en una herramienta científica de alto impacto.
+                                Transforma tu visión en una herramienta digital de alto impacto.
                             </p>
 
                             <div className="grid md:grid-cols-2 gap-12 items-start text-left">
@@ -374,7 +374,7 @@ export default function Home() {
                                     </div>
                                     <div className="p-8">
                                         <p className="text-slate-400 font-medium">
-                                            "La ciencia no es solo conocimiento, es la aplicación de ese conocimiento para resolver lo imposible."
+                                            "La tecnología no es solo código, es la clave para liberar el potencial de tu negocio."
                                         </p>
                                     </div>
                                 </div>
@@ -464,7 +464,7 @@ export default function Home() {
                         <p className="text-slate-400 text-[10px] font-black tracking-[0.4em] uppercase opacity-70">Software Engineering Studio</p>
                     </div>
                     <div className="text-slate-400 text-[10px] font-bold text-center max-w-sm leading-relaxed uppercase tracking-wider">
-                        © {year} AT-SIT INTEGRACIÓN TECNOLÓGICA. CIENCIA APLICADA AL DESARROLLO DE SOFTWARE PROFESIONAL.
+                        © {year} AT-SIT INTEGRACIÓN TECNOLÓGICA. TRANSFORMACIÓN DIGITAL PARA EL CRECIMIENTO EMPRESARIAL.
                     </div>
                     <div className="flex items-center gap-6">
                         <Github size={20} className="text-slate-400 hover:text-indigo-600 cursor-pointer transition-colors" />
