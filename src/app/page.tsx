@@ -73,7 +73,7 @@ export default function Home() {
                         animate={{ opacity: 1, x: 0 }}
                         className="flex items-center"
                     >
-                        <div className="group relative">
+                        <Link href="/" className="group relative block">
                             {/* Opción 1: Cápsula Premium (Por defecto ahora para máxima elegancia) */}
                             <div className="bg-slate-950 px-8 py-4 rounded-full border border-white/10 shadow-2xl transition-all duration-700 hover:border-indigo-500/50 group-hover:scale-[1.02] flex items-center justify-center">
                                 <img
@@ -82,7 +82,7 @@ export default function Home() {
                                     className="h-10 md:h-12 w-auto transition-transform duration-700"
                                 />
                             </div>
-                        </div>
+                        </Link>
                     </motion.div>
 
                     <div className="hidden md:flex items-center gap-10">
