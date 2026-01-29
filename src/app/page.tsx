@@ -123,9 +123,9 @@ export default function Home() {
                                     transition={{ delay: 0.1 }}
                                     className="text-6xl md:text-8xl font-black tracking-tighter mb-8 leading-[0.85] text-slate-900"
                                 >
-                                    Del Caos de Excel al <br />
+                                    30 Años de Operaciones <br />
                                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-violet-600 to-cyan-500">
-                                        Ecosistema Digital
+                                        Cristalizados en Código
                                     </span>
                                 </motion.h1>
 
@@ -135,7 +135,7 @@ export default function Home() {
                                     transition={{ delay: 0.2 }}
                                     className="text-xl text-slate-500 mb-12 leading-relaxed max-w-2xl font-medium"
                                 >
-                                    Empoderamos a pequeños y medianos empresarios con herramientas digitales robustas e inteligencia artificial. Convertimos procesos manuales lentos en ecosistemas automatizados de alto rendimiento.
+                                    No soy solo un desarrollador. Soy un Arquitecto de Modernización que comprende el lenguaje de tu negocio —finanzas, logística y procesos críticos— antes de escribir la primera línea de código. Transformo décadas de conocimiento en el terreno en ecosistemas digitales de alto impacto.
                                 </motion.p>
 
                                 <motion.div
@@ -281,11 +281,11 @@ export default function Home() {
                                             <div className="p-2 rounded-lg bg-red-500/10 border border-red-500/20">
                                                 <FileSpreadsheet className="text-red-500" size={20} />
                                             </div>
-                                            <span className="text-red-500 text-[10px] font-black uppercase tracking-[0.2em]">El Pasado</span>
+                                            <span className="text-red-500 text-[10px] font-black uppercase tracking-[0.2em]">Donde Empecé</span>
                                         </div>
-                                        <h3 className="text-2xl font-black text-white tracking-tight mb-2">Caos de Excel Manual</h3>
+                                        <h3 className="text-2xl font-black text-white tracking-tight mb-2">Dominio del Caos Local</h3>
                                         <p className="text-slate-400 text-sm font-medium leading-relaxed">
-                                            Procesos lentos, errores humanos y datos fragmentados que frenan tu crecimiento.
+                                            Viví décadas gestionando procesos críticos en Excel y Access. Entiendo el dolor de las fórmulas rotas y la rigidez de las bases de datos locales.
                                         </p>
                                     </div>
                                 </div>
@@ -299,9 +299,9 @@ export default function Home() {
                                 <div className="w-20 h-20 rounded-full bg-white/20 flex items-center justify-center mb-6 animate-pulse">
                                     <Zap className="text-white" size={40} />
                                 </div>
-                                <h3 className="text-2xl font-black mb-4 tracking-tight">Evolución AT-SIT</h3>
+                                <h3 className="text-2xl font-black mb-4 tracking-tight">Arqueología de Datos</h3>
                                 <p className="text-white/80 font-bold leading-relaxed">
-                                    Integramos, normalizamos y migramos tus procesos hacia una arquitectura empresarial robusta.
+                                    Aplico ingeniería inversa a tus hojas de cálculo. Normalizo, limpio y extraigo la lógica de negocio implícita para llevarla a un nivel superior.
                                 </p>
                             </motion.div>
 
@@ -313,12 +313,12 @@ export default function Home() {
                                 <div className="w-16 h-16 rounded-2xl bg-indigo-500/20 flex items-center justify-center mb-8 shadow-inner shadow-indigo-500/40">
                                     <Cloud className="text-indigo-400" size={32} />
                                 </div>
-                                <h3 className="text-2xl font-black mb-4 tracking-tight">El Futuro: Ecosistema Cloud</h3>
+                                <h3 className="text-2xl font-black mb-4 tracking-tight">Tu Ecosistema SSOT</h3>
                                 <ul className="space-y-3 text-indigo-100 font-medium">
-                                    <li className="flex gap-2 text-indigo-400">✓ Automatización total de procesos.</li>
-                                    <li className="flex gap-2 text-indigo-400">✓ 100% integridad de datos.</li>
-                                    <li className="flex gap-2 text-indigo-400">✓ Dashboards en tiempo real.</li>
-                                    <li className="flex gap-2 text-indigo-400">✓ Base para Agentes Autónomos.</li>
+                                    <li className="flex gap-2 text-indigo-400">✓ Una Única Fuente de Verdad.</li>
+                                    <li className="flex gap-2 text-indigo-400">✓ Trazabilidad total mediante GitHub.</li>
+                                    <li className="flex gap-2 text-indigo-400">✓ Integridad absoluta de datos.</li>
+                                    <li className="flex gap-2 text-indigo-400">✓ Agilidad Cloud en Vercel.</li>
                                 </ul>
                             </motion.div>
                         </div>
@@ -332,16 +332,16 @@ export default function Home() {
                             <div>
                                 <h2 className="text-5xl font-black mb-10 leading-[1.1] text-slate-900 tracking-tight">
                                     Escuadrón de <br />
-                                    <span className="text-indigo-600">Agentes Autónomos</span>
+                                    <span className="text-indigo-600">Resolución Estratégica</span>
                                 </h2>
                                 <p className="text-slate-600 text-lg mb-12 leading-relaxed font-medium">
-                                    Nuestros agentes de IA no solo generan código; resuelven problemas complejos con precisión estratégica y resultados medibles.
+                                    Mis agentes de IA no solo generan código; son una extensión de 30 años de estrategia operativa diseñados para resolver problemas complejos con precisión quirúrgica.
                                 </p>
 
                                 <div className="space-y-8">
-                                    <SkillRow icon={<ShieldCheck className="text-indigo-600" />} title="Simplificador Técnico" desc="Abstracción total de complejidad y automatización de flujos de trabajo críticos." />
-                                    <SkillRow icon={<Zap className="text-violet-600" />} title="Detective Debugging" desc="Análisis de causa raíz mediante método científico para errores persistentes." />
-                                    <SkillRow icon={<Map className="text-cyan-600" />} title="Especialista en Mapas" desc="Implementación de cartografía híbrida de alta precisión con calibración inteligente." />
+                                    <SkillRow icon={<ShieldCheck className="text-indigo-600" />} title="Arquitecto de Procesos" desc="Abstracción total de la complejidad operativa y automatización de flujos de trabajo críticos basados en lógica real." />
+                                    <SkillRow icon={<Zap className="text-violet-600" />} title="Detective de Datos" desc="Análisis de causa raíz mediante método científico para desentrañar lógicas de negocio ocultas en sistemas legados." />
+                                    <SkillRow icon={<Map className="text-cyan-600" />} title="Especialista en Integridad" desc="Implementación de sistemas SSOT con trazabilidad total, garantizando que cada dato cuente una única historia verídica." />
                                 </div>
                             </div>
 
@@ -399,7 +399,7 @@ export default function Home() {
                                     </div>
                                     <div className="p-8">
                                         <p className="text-slate-400 font-medium">
-                                            "La tecnología no es solo código, es la clave para liberar el potencial de tu negocio."
+                                            "Mi compromiso no es entregarte una aplicación, es entregarte una solución operativa de alto nivel que habla tu mismo idioma."
                                         </p>
                                     </div>
                                 </div>
