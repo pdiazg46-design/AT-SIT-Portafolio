@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ExternalLink, Layers, Map, ShieldCheck, Zap, ArrowRight, Github, Mail, MessageCircle, FileSpreadsheet, Loader2, CheckCircle2, Cloud } from "lucide-react";
+import { ExternalLink, Layers, Map, ShieldCheck, Zap, ArrowRight, Github, Mail, MessageCircle, FileSpreadsheet, Loader2, CheckCircle2, Cloud, Link2, TrendingUp, Gem, SearchCode, Globe, ShieldAlert, Wrench, BarChart3, Users2, Award } from "lucide-react";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
@@ -326,34 +326,71 @@ export default function Home() {
                 </section>
 
                 {/* Skills Section */}
-                <section id="habilidades" className="py-32 border-y border-indigo-100">
+                <section id="habilidades" className="py-32 border-y border-indigo-100 bg-white">
                     <div className="max-w-7xl mx-auto px-6">
-                        <div className="grid lg:grid-cols-2 gap-24 items-center">
-                            <div>
-                                <h2 className="text-5xl font-black mb-10 leading-[1.1] text-slate-900 tracking-tight">
-                                    Escuadrón de <br />
-                                    <span className="text-indigo-600">Resolución Estratégica</span>
-                                </h2>
-                                <p className="text-slate-600 text-lg mb-12 leading-relaxed font-medium">
-                                    Mis agentes de IA no solo generan código; son una extensión de 30 años de estrategia operativa diseñados para resolver problemas complejos con precisión quirúrgica.
-                                </p>
+                        <div className="text-center mb-24">
+                            <h2 className="text-5xl md:text-7xl font-black mb-10 leading-[1.1] text-slate-900 tracking-tight">
+                                Resolución <br />
+                                <span className="text-indigo-600">Estratégica Senior</span>
+                            </h2>
+                            <p className="text-slate-600 text-xl max-w-3xl mx-auto font-medium leading-relaxed">
+                                Mis agentes de IA no solo generan código; son una extensión de 30 años de estrategia operativa diseñados para resolver problemas complejos con precisión quirúrgica.
+                            </p>
+                        </div>
 
-                                <div className="space-y-8">
-                                    <SkillRow icon={<ShieldCheck className="text-indigo-600" />} title="Arquitecto de Procesos" desc="Abstracción total de la complejidad operativa y automatización de flujos de trabajo críticos basados en lógica real." />
-                                    <SkillRow icon={<Zap className="text-violet-600" />} title="Detective de Datos" desc="Análisis de causa raíz mediante método científico para desentrañar lógicas de negocio ocultas en sistemas legados." />
-                                    <SkillRow icon={<Map className="text-cyan-600" />} title="Especialista en Integridad" desc="Implementación de sistemas SSOT con trazabilidad total, garantizando que cada dato cuente una única historia verídica." />
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-6 relative">
-                                <div className="absolute inset-0 bg-indigo-50/50 blur-[120px] -z-10" />
-                                <div className="space-y-6">
-                                    <StatCard value="99.9%" label="Disponibilidad" />
-                                    <StatCard value="Auto" label="Escalado" />
-                                </div>
-                                <div className="space-y-6 mt-12">
-                                    <StatCard value="AI" label="Native" />
-                                    <StatCard value="100%" label="Precisión" />
+                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-16">
+                            <SkillRow
+                                icon={<Link2 className="text-indigo-600" />}
+                                title="El Puente Estratégico"
+                                desc="Soy el eslabón perdido entre la gerencia y el desarrollo: entiendo la rentabilidad y los KPIs del negocio antes de escribir la primera línea de código."
+                            />
+                            <SkillRow
+                                icon={<TrendingUp className="text-violet-600" />}
+                                title="Evolución Profesional"
+                                desc="Arquitecto de modernización que ha pasado de construir la infraestructura física de las telecomunicaciones a diseñar los ecosistemas digitales que las gestionan."
+                            />
+                            <SkillRow
+                                icon={<Gem className="text-cyan-600" />}
+                                title="Valor Único"
+                                desc="Más que un desarrollador de software, soy un experto en operaciones con la capacidad técnica para cristalizar 30 años de experiencia logística y financiera en algoritmos eficientes."
+                            />
+                            <SkillRow
+                                icon={<SearchCode className="text-blue-600" />}
+                                title="Enfoque de Solución"
+                                desc="Diagnóstico quirúrgico de procesos: mi trayectoria en terreno me permite detectar ineficiencias invisibles para un programador tradicional y solucionarlas con tecnología precisa."
+                            />
+                            <SkillRow
+                                icon={<Globe className="text-indigo-600" />}
+                                title="Transformación Digital"
+                                desc="Transformo el caos administrativo y la dependencia de hojas de cálculo en plataformas de gestión robustas, escalables y potenciadas por Inteligencia Artificial."
+                            />
+                            <SkillRow
+                                icon={<ShieldAlert className="text-red-600" />}
+                                title="Madurez y Riesgo"
+                                desc="Seniority aplicada a la innovación: ofrezco la madurez de un gerente de operaciones y la agilidad de un desarrollador, minimizando riesgos y asegurando el retorno de inversión."
+                            />
+                            <SkillRow
+                                icon={<Wrench className="text-slate-600" />}
+                                title="Versatilidad Industrial"
+                                desc="Fluidez multisectorial única: domino el lenguaje técnico de la energía solar, las telecomunicaciones y la construcción, garantizando herramientas que se adaptan a la realidad del 'barro' y la oficina."
+                            />
+                            <SkillRow
+                                icon={<BarChart3 className="text-green-600" />}
+                                title="Pragmatismo Tecnológico"
+                                desc="No vendo código, vendo control y visibilidad. Creo herramientas de gestión vivas que permiten a los dueños de negocios tomar decisiones basadas en datos reales, no en intuiciones."
+                            />
+                            <SkillRow
+                                icon={<Users2 className="text-indigo-600" />}
+                                title="Liderazgo Técnico"
+                                desc="Capacidad probada para liderar la transición tecnológica de una empresa, desde la gestión de cuadrillas en terreno hasta la implementación de automatización en la nube."
+                            />
+                            <div className="md:col-span-2 lg:col-span-3 flex justify-center mt-8">
+                                <div className="max-w-2xl">
+                                    <SkillRow
+                                        icon={<Award className="text-amber-500" />}
+                                        title="La Promesa de Marca"
+                                        desc="30 años de operaciones cristalizados en código: convierto décadas de resolución de problemas complejos en software simple, intuitivo y poderoso."
+                                    />
                                 </div>
                             </div>
                         </div>
