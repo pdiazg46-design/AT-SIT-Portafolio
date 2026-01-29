@@ -123,7 +123,7 @@ export default function Home() {
                                     transition={{ delay: 0.1 }}
                                     className="text-6xl md:text-8xl font-black tracking-tighter mb-8 leading-[0.85] text-slate-900"
                                 >
-                                    30 Años de Operaciones <br />
+                                    31 Años de Liderazgo <br />
                                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-violet-600 to-cyan-500">
                                         Cristalizados en Código
                                     </span>
@@ -133,9 +133,9 @@ export default function Home() {
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: 0.2 }}
-                                    className="text-xl text-slate-500 mb-12 leading-relaxed max-w-2xl font-medium"
+                                    className="text-xl text-slate-500 mb-12 leading-relaxed max-w-2xl font-medium text-justify"
                                 >
-                                    No soy solo un desarrollador. Soy un Arquitecto de Modernización que comprende el lenguaje de tu negocio —finanzas, logística y procesos críticos— antes de escribir la primera línea de código. Transformo décadas de conocimiento en el terreno en ecosistemas digitales de alto impacto.
+                                    No soy solo un desarrollador. Soy un Arquitecto de Modernización que combina 15 años en Operaciones y 16 años en Ventas de Proyectos. Entiendo el ROI y la lógica de negocio —finanzas, logística y estrategia comercial— antes de escribir la primera línea de código.
                                 </motion.p>
 
                                 <motion.div
@@ -334,7 +334,7 @@ export default function Home() {
                                 <span className="text-indigo-600">Estratégica Senior</span>
                             </h2>
                             <p className="text-slate-600 text-xl max-w-3xl mx-auto font-medium leading-relaxed">
-                                Mis agentes de IA no solo generan código; son una extensión de 30 años de estrategia operativa diseñados para resolver problemas complejos con precisión quirúrgica.
+                                Mis agentes de IA no solo generan código; son una extensión de 31 años de liderazgo estratégico (15 en operaciones, 16 en ventas de proyectos) para resolver problemas complejos.
                             </p>
                         </div>
 
@@ -352,7 +352,7 @@ export default function Home() {
                             <SkillRow
                                 icon={<Gem className="text-cyan-600" />}
                                 title="Valor Único"
-                                desc="Más que un desarrollador de software, soy un experto en operaciones con la capacidad técnica para cristalizar 30 años de experiencia logística y financiera en algoritmos eficientes."
+                                desc="Más que un desarrollador de software, soy un experto en operaciones con la capacidad técnica para cristalizar 31 años de experiencia logística, comercial y financiera en algoritmos eficientes."
                             />
                             <SkillRow
                                 icon={<SearchCode className="text-blue-600" />}
@@ -389,7 +389,7 @@ export default function Home() {
                                     <SkillRow
                                         icon={<Award className="text-amber-500" />}
                                         title="La Promesa de Marca"
-                                        desc="30 años de operaciones cristalizados en código: convierto décadas de resolución de problemas complejos en software simple, intuitivo y poderoso."
+                                        desc="31 años de liderazgo cristalizados en código: convierto décadas de resolución de problemas operativos y comerciales complejos en software simple y poderoso."
                                     />
                                 </div>
                             </div>
@@ -591,7 +591,7 @@ function SkillRow({ icon, title, desc }: any) {
             </div>
             <div>
                 <h4 className="font-black text-xl mb-1 text-slate-900 tracking-tight">{title}</h4>
-                <p className="text-slate-600 text-sm font-medium leading-relaxed">{desc}</p>
+                <p className="text-slate-600 text-sm font-medium leading-relaxed text-justify hyphens-auto">{desc}</p>
             </div>
         </div>
     );
