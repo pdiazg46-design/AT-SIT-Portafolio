@@ -229,6 +229,16 @@ export default function Home() {
                                 image="/projects/desfoga.png"
                                 href="/proyectos/desfoga"
                             />
+                            <ProjectCard
+                                id="estacionamientos"
+                                title="Smart Parking Pro"
+                                desc="Ecosistema integral para la automatización de estacionamientos con reconocimiento de patentes (ANPR) y gestión multi-acceso en tiempo real."
+                                tags={["ANPR", "IoT", "Real-time"]}
+                                icon={<Zap size={24} />}
+                                color="indigo"
+                                image="/projects/estacionamientos.png"
+                                href="/proyectos/estacionamientos"
+                            />
                         </div>
                     </div>
                 </section>
