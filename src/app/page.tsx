@@ -250,13 +250,13 @@ export default function Home() {
                     <div className="max-w-7xl mx-auto px-6 relative z-10">
                         <div className="text-center mb-24">
                             <h2 className="text-4xl md:text-6xl font-black mb-6 tracking-tighter">
-                                Del Caos de Excel a la <br />
+                                Mi Trayectoria Evolutiva: <br />
                                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">
-                                    Inteligencia en la Nube
+                                    Excel → Access → Web/AI
                                 </span>
                             </h2>
                             <p className="text-slate-400 text-xl max-w-2xl mx-auto font-medium">
-                                No importa la realidad de tu negocio actual. Construimos el puente hacia un ecosistema digital robusto y escalable.
+                                He recorrido cada etapa de la gestión de datos. Mi experiencia me permite rescatar lógicas de negocio atrapadas en herramientas locales y llevarlas a ecosistemas globales de alto rendimiento.
                             </p>
                         </div>
 
