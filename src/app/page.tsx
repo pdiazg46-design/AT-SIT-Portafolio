@@ -239,6 +239,16 @@ export default function Home() {
                                 image="/projects/estacionamientos.png"
                                 href="/proyectos/estacionamientos"
                             />
+                            <ProjectCard
+                                id="finanza-facil"
+                                title="Finanza Fácil & Libertad"
+                                desc="Plataforma de gestión financiera personal potenciada por voz, diseñada para eliminar la fricción y maximizar la libertad financiera."
+                                tags={["Voice NLP", "Fintech", "Cloud"]}
+                                icon={<TrendingUp size={24} />}
+                                color="purple"
+                                image="/projects/finanza-facil.png"
+                                href="/proyectos/finanza-facil"
+                            />
                         </div>
                     </div>
                 </section>
