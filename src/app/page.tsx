@@ -114,7 +114,7 @@ export default function Home() {
                                     className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-600 text-[10px] font-bold uppercase tracking-[0.2em] mb-8"
                                 >
                                     <Zap size={14} className="fill-indigo-600" />
-                                    Transformación Digital & IA para Pymes
+                                    Ecosistemas Inteligentes & Optimización de Procesos Empresariales
                                 </motion.div>
 
                                 <motion.h1
@@ -123,9 +123,9 @@ export default function Home() {
                                     transition={{ delay: 0.1 }}
                                     className="text-6xl md:text-8xl font-black tracking-tighter mb-8 leading-[0.85] text-slate-900"
                                 >
-                                    31 Años de Liderazgo <br />
+                                    La Inteligencia Artificial <br />
                                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-violet-600 to-cyan-500">
-                                        Cristalizados en Código
+                                        Cambió Todo
                                     </span>
                                 </motion.h1>
 
@@ -135,7 +135,7 @@ export default function Home() {
                                     transition={{ delay: 0.2 }}
                                     className="text-xl text-slate-500 mb-12 leading-relaxed max-w-2xl font-medium text-justify"
                                 >
-                                    No soy solo un desarrollador. Soy un Arquitecto de Modernización que combina 15 años en Operaciones y 16 años en Ventas de Proyectos. Entiendo el ROI y la lógica de negocio —finanzas, logística y estrategia comercial— antes de escribir la primera línea de código.
+                                    Diseñamos sistemas a la medida que automatizan tus procesos más críticos, integran IA en tu flujo de trabajo operativo y blindan tu empresa para el futuro. Analizamos tu rentabilidad y logística antes de escribir una sola línea de código.
                                 </motion.p>
 
                                 <motion.div
@@ -144,11 +144,11 @@ export default function Home() {
                                     transition={{ delay: 0.3 }}
                                     className="flex flex-col sm:flex-row gap-5 justify-center lg:justify-start"
                                 >
-                                    <a href="#proyectos" className="bg-slate-900 hover:bg-slate-800 text-white px-10 py-5 rounded-2xl font-black text-center transition-all shadow-2xl shadow-slate-900/10 flex items-center justify-center gap-2 group">
-                                        Ver Proyectos <ArrowRight className="group-hover:translate-x-1 transition-transform" />
+                                    <a href="#contacto" className="bg-slate-900 hover:bg-slate-800 text-white px-10 py-5 rounded-2xl font-black text-center transition-all shadow-2xl shadow-slate-900/10 flex items-center justify-center gap-2 group">
+                                        Auditoría Sin Costo <ArrowRight className="group-hover:translate-x-1 transition-transform" />
                                     </a>
-                                    <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="bg-white border-2 border-slate-100 hover:border-indigo-100 hover:bg-slate-50 px-10 py-5 rounded-2xl font-black text-center transition-all flex items-center justify-center gap-2 text-slate-700">
-                                        WhatsApp Directo
+                                    <a href="#proyectos" className="bg-white border-2 border-slate-100 hover:border-indigo-100 hover:bg-slate-50 px-10 py-5 rounded-2xl font-black text-center transition-all flex items-center justify-center gap-2 text-slate-700">
+                                        Ver Casos de Éxito
                                     </a>
                                 </motion.div>
                             </div>
@@ -163,17 +163,17 @@ export default function Home() {
                                 <div className="absolute -inset-4 bg-gradient-to-r from-indigo-500/20 to-cyan-500/20 rounded-[3rem] blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                                 <div className="relative rounded-[3rem] overflow-hidden border border-slate-200 shadow-2xl bg-white p-2">
                                     <img
-                                        src="/hero-chaos.png"
-                                        alt="Caos de Gestión Centralizada"
+                                        src="/hero-ai.png"
+                                        alt="Inteligencia Artificial Empresarial"
                                         className="rounded-[2.5rem] w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105"
                                     />
-                                    {/* Tooltip Overlay (Static for visual impact) */}
+                                    {/* Tooltip Overlay (STATIC BUT NEW) */}
                                     <div className="absolute top-10 right-10 bg-white/90 backdrop-blur-md p-4 rounded-2xl shadow-xl border border-white/20 transform rotate-3 animate-bounce-slow">
                                         <div className="flex items-center gap-2 mb-1">
-                                            <div className="w-2 h-2 rounded-full bg-red-500" />
-                                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-900">Error Crítico</span>
+                                            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-900">IA Activa</span>
                                         </div>
-                                        <p className="text-[10px] font-bold text-slate-500 uppercase">Datos Desactualizados en Excel</p>
+                                        <p className="text-[10px] font-bold text-slate-500 uppercase">Procesos Optimizados</p>
                                     </div>
                                 </div>
                             </motion.div>
