@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ExternalLink, Layers, Map, ShieldCheck, Zap, ArrowRight, Github, Mail, MessageCircle, FileSpreadsheet, Loader2, CheckCircle2, Cloud, Link2, TrendingUp, Gem, SearchCode, Globe, ShieldAlert, Wrench, BarChart3, Users2, Award } from "lucide-react";
+import { ExternalLink, Layers, Map, ShieldCheck, Zap, ArrowRight, Github, Mail, MessageCircle, FileSpreadsheet, Loader2, CheckCircle2, Cloud, Link2, TrendingUp, Gem, SearchCode, Globe, ShieldAlert, Wrench, BarChart3, Users2, Award, Smartphone } from "lucide-react";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
@@ -248,6 +248,16 @@ export default function Home() {
                                 color="purple"
                                 image="/projects/finanza-facil.png"
                                 href="/proyectos/finanza-facil"
+                            />
+                            <ProjectCard
+                                id="emprende"
+                                title="Emprende SaaS & POS"
+                                desc="Plataforma omnicanal de Punto de Venta e inventario con actualizaciones optimistas y procesamiento de voz integrado."
+                                tags={["Next.js", "PWA", "Mercado Pago"]}
+                                icon={<Smartphone size={24} />}
+                                color="cyan"
+                                image="/projects/emprende.png"
+                                href="/proyectos/emprende"
                             />
                         </div>
                     </div>
