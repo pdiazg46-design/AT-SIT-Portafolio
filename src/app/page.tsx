@@ -309,6 +309,16 @@ export default function Home() {
                                 image="/projects/portafolio.png"
                                 href="/proyectos/portafolio"
                             />
+                            <ProjectCard
+                                id="ecommerce"
+                                title="E-Commerce Emprende"
+                                desc="Escaparate digital B2C de alto rendimiento con catálogo oscuro elegante, carrito optimizado y Zustand State Management."
+                                tags={["Next.js", "Supabase", "Zustand"]}
+                                icon={<Globe size={24} />}
+                                color="cyan"
+                                image="/projects/e-commerce.png"
+                                href="/proyectos/e-commerce"
+                            />
                         </div>
                     </div>
                 </section>
