@@ -259,6 +259,56 @@ export default function Home() {
                                 image="/projects/emprende.png"
                                 href="/proyectos/emprende"
                             />
+                            <ProjectCard
+                                id="easy-management"
+                                title="Easy Management CRM"
+                                desc="CRM dinámico con pipeline de ventas, métricas KPI en tiempo real y motor RAG adaptativo vía carga CSV/Excel."
+                                tags={["React", "Vite", "Gen AI"]}
+                                icon={<BarChart3 size={24} />}
+                                color="indigo"
+                                image="/projects/easy-management.png"
+                                href="/proyectos/easy-management"
+                            />
+                            <ProjectCard
+                                id="miperai"
+                                title="MiperAI: Matriz de Riesgo"
+                                desc="SaaS B2B corporativo de prevención de riesgos. Motor cuantitativo (PxS), reportes generados con IA y documentación offline."
+                                tags={["Next.js", "Prisma", "Cloud"]}
+                                icon={<ShieldAlert size={24} />}
+                                color="purple"
+                                image="/projects/miperai.png"
+                                href="/proyectos/miperai"
+                            />
+                            <ProjectCard
+                                id="gpsit"
+                                title="GPSIT Accesible"
+                                desc="Sistema de navegación nativo (Android Auto) enfocado en facilidad de uso, contraste alto y TTS en modo coloquial chilenizado."
+                                tags={["Kotlin", "Android Auto", "TTS"]}
+                                icon={<Map size={24} />}
+                                color="cyan"
+                                image="/projects/gpsit.png"
+                                href="/proyectos/gpsit"
+                            />
+                            <ProjectCard
+                                id="funeraria"
+                                title="Gestión Funeraria"
+                                desc="Plataforma de control y trazabilidad documental. Interfaz administrativa integral y base de datos relacional."
+                                tags={["Next.js", "Prisma", "Tailwind"]}
+                                icon={<Layers size={24} />}
+                                color="indigo"
+                                image="/projects/funeraria.png"
+                                href="/proyectos/funeraria"
+                            />
+                            <ProjectCard
+                                id="portafolio"
+                                title="AT-SIT Portafolio"
+                                desc="Ecosistema corporativo de demostración tecnológica optimizado para alto rendimiento y captura de leads."
+                                tags={["Next.js", "Framer Motion", "Vercel"]}
+                                icon={<Gem size={24} />}
+                                color="purple"
+                                image="/projects/portafolio.png"
+                                href="/proyectos/portafolio"
+                            />
                         </div>
                     </div>
                 </section>
