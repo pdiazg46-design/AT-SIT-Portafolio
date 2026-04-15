@@ -78,6 +78,21 @@ export default function MiperAIDetail() {
                             desc="Inyección silenciosa de Multi-tenants para controlar organizaciones complejas."
                         />
                     </div>
+
+                    {/* Tech & Capabilities */}
+                    <div className="bg-gradient-to-br from-slate-900 to-slate-950 rounded-[3rem] p-12 md:p-20 border border-white/5 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 p-10 opacity-5">
+                            <ShieldAlert size={250} />
+                        </div>
+                        <div className="max-w-2xl relative z-10">
+                            <h2 className="text-4xl font-black mb-10 tracking-tight">Operatividad en Terreno B2B</h2>
+                            <div className="space-y-6">
+                                <CapabilityRow title="Motor Cuantitativo (PxS)" desc="Evaluación paramétrica de Probabilidad vs Severidad para priorización inquebrantable de riesgos críticos en el DOM." />
+                                <CapabilityRow title="Speech-to-Text (STT) Forense" desc="Dictado nativo Web Speech API en dispositivos móviles Android para levantamiento de hallazgos con latencia cero en faena." />
+                                <CapabilityRow title="Bifurcación Estructural" desc="Ecosistema dual: Modo Administrador PC (Wizard Gen-AI) vs Entorno Restringido Móvil (Visor Single-Screen sin fatiga visual)." />
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </main>
         </div>
@@ -92,6 +107,20 @@ function ModuleCard({ icon, title, desc }: any) {
             </div>
             <h3 className="text-2xl font-black mb-4 tracking-tight text-white">{title}</h3>
             <p className="text-slate-300 font-medium leading-relaxed">{desc}</p>
+        </div>
+    );
+}
+
+function CapabilityRow({ title, desc }: any) {
+    return (
+        <div className="flex gap-6 items-start">
+            <div className="shrink-0 mt-1">
+                <ShieldAlert className="text-indigo-400" size={24} />
+            </div>
+            <div>
+                <h4 className="font-bold text-xl mb-1 text-white">{title}</h4>
+                <p className="text-slate-300 font-medium">{desc}</p>
+            </div>
         </div>
     );
 }

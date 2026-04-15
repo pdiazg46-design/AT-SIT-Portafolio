@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ExternalLink, Layers, Map, ShieldCheck, Zap, ArrowRight, Github, Mail, MessageCircle, FileSpreadsheet, Loader2, CheckCircle2, Cloud, Link2, TrendingUp, Gem, SearchCode, Globe, ShieldAlert, Wrench, BarChart3, Users2, Award, Smartphone } from "lucide-react";
+import { ExternalLink, Layers, Map, ShieldCheck, Zap, ArrowRight, Github, Mail, MessageCircle, FileSpreadsheet, Loader2, CheckCircle2, Cloud, Link2, TrendingUp, Gem, SearchCode, Globe, ShieldAlert, Wrench, BarChart3, Users2, Award, Smartphone, Lock, DownloadCloud } from "lucide-react";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
@@ -248,6 +248,8 @@ export default function Home() {
                                 color="purple"
                                 image="/projects/finanza-facil.png"
                                 href="/proyectos/finanza-facil"
+                                downloadLink="#"
+                                downloadText="App Web"
                             />
                             <ProjectCard
                                 id="emprende"
@@ -258,6 +260,8 @@ export default function Home() {
                                 color="cyan"
                                 image="/projects/emprende.png"
                                 href="/proyectos/emprende"
+                                downloadLink="#"
+                                downloadText="App Web"
                             />
                             <ProjectCard
                                 id="easy-management"
@@ -620,7 +624,7 @@ export default function Home() {
     );
 }
 
-function ProjectCard({ title, desc, tags, icon, color, image, href, id }: any) {
+function ProjectCard({ title, desc, tags, icon, color, image, href, id, downloadLink = "#", downloadText = "Dossier" }: any) {
     const colors: any = {
         indigo: "text-indigo-600 bg-indigo-50 border-indigo-100 group-hover:bg-indigo-600 group-hover:text-white",
         purple: "text-violet-600 bg-violet-50 border-violet-100 group-hover:bg-violet-600 group-hover:text-white",
@@ -628,38 +632,54 @@ function ProjectCard({ title, desc, tags, icon, color, image, href, id }: any) {
     };
 
     return (
-        <Link href={href}>
-            <motion.div
-                id={id}
-                whileHover={{ y: -8 }}
-                className="group rounded-[2.5rem] bg-white border border-indigo-100/50 shadow-sm hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-500 relative overflow-hidden flex flex-col h-full cursor-pointer"
-            >
-                <div className="h-64 overflow-hidden relative">
-                    <img src={image} alt={title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-white via-white/10 to-transparent opacity-60" />
+        <motion.div
+            id={id}
+            whileHover={{ y: -8 }}
+            className="group rounded-[2.5rem] bg-white border border-indigo-100/50 shadow-sm hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-500 relative overflow-hidden flex flex-col h-full"
+        >
+            <Link href={href} className="absolute inset-0 z-0" aria-label={`Ver detalles de ${title}`} />
+            
+            <div className="h-64 overflow-hidden relative pointer-events-none">
+                <img src={image} alt={title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                <div className="absolute inset-0 bg-gradient-to-t from-white via-white/10 to-transparent opacity-60" />
+            </div>
+
+            <div className="p-10 pt-6 flex flex-col flex-grow relative pointer-events-none">
+                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 transition-all duration-500 ${colors[color]}`}>
+                    {icon}
+                </div>
+                <h3 className="text-3xl font-black mb-4 tracking-tight text-slate-900">{title}</h3>
+                <p className="text-slate-600 font-medium leading-relaxed mb-6 flex-grow">
+                    {desc}
+                </p>
+                
+                <div className="mb-6 inline-flex w-fit items-center gap-2 bg-slate-900/5 border border-slate-900/10 px-3 py-2 rounded-xl group-hover:bg-slate-900 group-hover:border-slate-900 transition-all duration-300">
+                    <Lock size={14} className="text-slate-500 group-hover:text-indigo-400 transition-colors" />
+                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-700 group-hover:text-white transition-colors mt-[1px]">
+                        Aplicación Privada <span className="text-slate-300 group-hover:text-white/30 mx-1.5">|</span> <span className="text-indigo-600 group-hover:text-indigo-300">Contacta para personalizar</span>
+                    </span>
                 </div>
 
-                <div className="p-10 pt-6 flex flex-col flex-grow">
-                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 transition-all duration-500 ${colors[color]}`}>
-                        {icon}
-                    </div>
-                    <h3 className="text-3xl font-black mb-4 tracking-tight text-slate-900">{title}</h3>
-                    <p className="text-slate-600 font-medium leading-relaxed mb-6 flex-grow">
-                        {desc}
-                    </p>
-                    <div className="flex flex-wrap gap-2 mb-8">
-                        {tags.map((tag: any) => (
-                            <span key={tag} className="text-[10px] font-black uppercase tracking-widest text-indigo-600/60 bg-indigo-50 px-4 py-1.5 rounded-full border border-indigo-100/50">
-                                {tag}
-                            </span>
-                        ))}
-                    </div>
+                <div className="flex flex-wrap gap-2 mb-8">
+                    {tags.map((tag: any) => (
+                        <span key={tag} className="text-[10px] font-black uppercase tracking-widest text-indigo-600/60 bg-indigo-50 px-4 py-1.5 rounded-full border border-indigo-100/50">
+                            {tag}
+                        </span>
+                    ))}
+                </div>
+                
+                <div className="flex items-center justify-between w-full pointer-events-auto relative z-10 mt-auto pt-2">
                     <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-indigo-600 opacity-100 transform translate-x-0 transition-all group-hover:translate-x-2">
                         Ver Detalles <ArrowRight size={16} />
                     </div>
+                    {downloadLink && (
+                        <a href={downloadLink} download target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="flex items-center gap-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-100 text-slate-500 hover:text-indigo-600 px-3 py-1.5 rounded-lg transition-colors text-[10px] font-black uppercase tracking-widest shadow-sm">
+                            {downloadText.includes("Web") ? <ExternalLink size={14} /> : <DownloadCloud size={14} />} {downloadText}
+                        </a>
+                    )}
                 </div>
-            </motion.div>
-        </Link>
+            </div>
+        </motion.div>
     );
 }
 
