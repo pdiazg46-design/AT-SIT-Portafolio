@@ -259,7 +259,7 @@ export default function Home() {
                                 color="cyan"
                                 image="/projects/emprende.png"
                                 href="/proyectos/emprende"
-                                downloadLink="https://emprende.vercel.app/"
+                                downloadLink="https://emprende-atsit.vercel.app/"
                             />
                             <ProjectCard
                                 id="easy-management"
@@ -270,6 +270,7 @@ export default function Home() {
                                 color="indigo"
                                 image="/projects/easy-management.png"
                                 href="/proyectos/easy-management"
+                                downloadLink="https://easymanagement-ai.vercel.app/"
                             />
                             <ProjectCard
                                 id="miperai"
@@ -280,6 +281,7 @@ export default function Home() {
                                 color="purple"
                                 image="/projects/miperai.png"
                                 href="/proyectos/miperai"
+                                downloadLink="https://miper-ai.vercel.app/"
                             />
                             <ProjectCard
                                 id="gpsit"
@@ -675,8 +677,16 @@ function ProjectCard({ title, desc, tags, icon, color, image, href, id, download
                     </div>
                     {/* Botón solo si ES una App Web (downloadLink válido) */}
                     {(downloadLink && downloadLink !== "#") && (
-                        <a href={downloadLink} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="flex items-center gap-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-100 text-slate-500 hover:text-indigo-600 px-3 py-1.5 rounded-lg transition-colors text-[10px] font-black uppercase tracking-widest shadow-sm">
-                            <ExternalLink size={14} /> {downloadText}
+                        <a 
+                            href={downloadLink} 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            onClick={(e) => e.stopPropagation()} 
+                            className="relative overflow-hidden group/btn flex items-center gap-1.5 bg-gradient-to-r from-indigo-500 to-cyan-500 text-white px-4 py-2 rounded-xl transition-all duration-300 shadow-[0_0_15px_rgba(99,102,241,0.4)] hover:shadow-[0_0_25px_rgba(6,182,212,0.6)] hover:scale-105 text-[10px] font-black uppercase tracking-widest"
+                        >
+                            <div className="absolute inset-0 w-2/4 h-full bg-white/30 translate-x-[-150%] group-hover/btn:translate-x-[250%] transition-transform duration-700 ease-in-out skew-x-12" />
+                            <ExternalLink size={14} className="relative z-10" /> 
+                            <span className="relative z-10">{downloadText}</span>
                         </a>
                     )}
                 </div>
