@@ -75,7 +75,7 @@ export default function Home() {
                     >
                         <Link href="/" className="group relative block">
                             {/* Opción 1: Cápsula Premium (Por defecto ahora para máxima elegancia) */}
-                            <div className="bg-slate-950 px-8 py-4 rounded-full border border-white/10 shadow-2xl transition-all duration-700 hover:border-indigo-500/50 group-hover:scale-[1.02] flex items-center justify-center">
+                            <div className="px-6 py-2 transition-all duration-700 hover:scale-[1.02] flex items-center justify-center">
                                 <img
                                     src="/logo-atsit.png"
                                     alt="AT-SIT Logo"
@@ -697,7 +697,7 @@ export default function Home() {
             <footer className="py-20 border-t border-slate-100 bg-white">
                 <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-10">
                     <div className="flex flex-col items-center md:items-start gap-4">
-                        <div className="bg-slate-950 p-4 rounded-[1.25rem] border border-white/5 shadow-xl">
+                        <div className="p-2 flex items-center justify-center">
                             <img src="/logo-atsit.png" alt="AT-SIT" className="h-10 w-auto" />
                         </div>
                         <p className="text-slate-400 text-[10px] font-black tracking-[0.4em] uppercase opacity-70">Software Engineering Studio</p>
