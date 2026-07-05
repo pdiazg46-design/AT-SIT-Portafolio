@@ -17,7 +17,7 @@ export async function POST(req: Request) {
         // Envío real con Resend
         const { data, error } = await resend.emails.send({
             from: 'AT-SIT Portfolio <onboarding@resend.dev>',
-            to: 'atsittelecom@gmail.com',
+            to: 'pdiazg46@gmail.com',
             subject: `Nueva Solicitud: ${name}`,
             text: `Has recibido un nuevo mensaje desde tu portafolio:\n\nNombre: ${name}\nEmail: ${email}\nMensaje: ${message}`,
             replyTo: email,

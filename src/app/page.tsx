@@ -596,12 +596,6 @@ export default function Home() {
                                             <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl" />
                                             <h3 className="text-2xl font-black mb-6 text-white tracking-tight">Canales <span className="text-indigo-400">Directos</span></h3>
                                             <div className="space-y-5">
-                                                <a href="mailto:atsittelecom@gmail.com" className="flex items-center gap-4 text-slate-300 hover:text-indigo-400 transition-all group/item">
-                                                    <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center group-hover/item:border-indigo-500/50 group-hover/item:bg-indigo-500/10 transition-all">
-                                                        <Mail size={20} className="text-indigo-400" />
-                                                    </div>
-                                                    <span className="font-medium">atsittelecom@gmail.com</span>
-                                                </a>
                                                 <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 text-slate-300 hover:text-green-400 transition-all group/item">
                                                     <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center group-hover/item:border-green-500/50 group-hover/item:bg-green-500/10 transition-all">
                                                         <MessageCircle size={20} className="text-[#25D366]" />
@@ -707,8 +701,8 @@ export default function Home() {
                     </div>
                     <div className="flex items-center gap-6">
                         <Github size={20} className="text-slate-400 hover:text-indigo-600 cursor-pointer transition-colors" />
-                        <a href="mailto:atsittelecom@gmail.com">
-                            <Mail size={20} className="text-slate-400 hover:text-indigo-600 cursor-pointer transition-colors" />
+                        <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
+                            <MessageCircle size={20} className="text-slate-400 hover:text-indigo-600 cursor-pointer transition-colors" />
                         </a>
                     </div>
                 </div>
