@@ -79,7 +79,7 @@ export default function Home() {
                                 <img
                                     src="/logo-atsit.png"
                                     alt="AT-SIT Logo"
-                                    className="h-10 md:h-12 w-auto transition-transform duration-700"
+                                    className="h-16 md:h-20 w-auto transition-transform duration-700"
                                 />
                             </div>
                         </Link>
@@ -698,7 +698,7 @@ export default function Home() {
                 <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-10">
                     <div className="flex flex-col items-center md:items-start gap-4">
                         <div className="p-2 flex items-center justify-center">
-                            <img src="/logo-atsit.png" alt="AT-SIT" className="h-10 w-auto" />
+                            <img src="/logo-atsit.png" alt="AT-SIT" className="h-16 w-auto" />
                         </div>
                         <p className="text-slate-400 text-[10px] font-black tracking-[0.4em] uppercase opacity-70">Software Engineering Studio</p>
                     </div>
