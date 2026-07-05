@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ExternalLink, Layers, Map, ShieldCheck, Zap, ArrowRight, Github, Mail, MessageCircle, FileSpreadsheet, Loader2, CheckCircle2, Cloud, Link2, TrendingUp, Gem, SearchCode, Globe, ShieldAlert, Wrench, BarChart3, Users2, Award, Smartphone, Lock, DownloadCloud } from "lucide-react";
+import { ExternalLink, Layers, Map, ShieldCheck, Zap, ArrowRight, Github, Mail, MessageCircle, FileSpreadsheet, Loader2, CheckCircle2, Cloud, Link2, TrendingUp, Gem, SearchCode, Globe, ShieldAlert, Wrench, BarChart3, Users2, Award, Smartphone, Lock, DownloadCloud, Sun, Network, Car } from "lucide-react";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
@@ -86,7 +86,7 @@ export default function Home() {
                     </motion.div>
 
                     <div className="hidden md:flex items-center gap-10">
-                        {["Proyectos", "Habilidades", "Contacto"].map((item) => (
+                        {["Proyectos", "Servicios", "Habilidades", "Contacto"].map((item) => (
                             <a
                                 key={item}
                                 href={`#${item.toLowerCase()}`}
@@ -232,8 +232,8 @@ export default function Home() {
                             <ProjectCard
                                 id="estacionamientos"
                                 title="Smart Parking Pro"
-                                desc="Ecosistema integral para la automatización de estacionamientos con reconocimiento de patentes (ANPR) y gestión multi-acceso en tiempo real."
-                                tags={["ANPR", "IoT", "Real-time"]}
+                                desc="Ecosistema integral para la automatización de estacionamientos con reconocimiento de patentes (Lectura automática) y gestión de accesos en tiempo real."
+                                tags={["Lectura Patentes", "IoT", "Real-time"]}
                                 icon={<Zap size={24} />}
                                 color="indigo"
                                 image="/projects/estacionamientos.png"
@@ -322,6 +322,86 @@ export default function Home() {
                                 color="cyan"
                                 image="/projects/e-commerce.png"
                                 href="/proyectos/e-commerce"
+                            />
+                            <ProjectCard
+                                id="moviles-diaz"
+                                title="Móviles Díaz"
+                                desc="Plataforma de gestión de flota y transporte de pasajeros. Control de viajes, cálculo automático de comisiones de choferes, facturación e informes offline-first."
+                                tags={["React", "Vite", "Offline Sync", "Azure"]}
+                                icon={<Car size={24} />}
+                                color="indigo"
+                                image="/projects/moviles-diaz.png"
+                                href="/proyectos/moviles-diaz"
+                                downloadLink="https://movilesdiaz.atsit.cl"
+                            />
+                        </div>
+                    </div>
+                </section>
+
+                {/* Services Section */}
+                <section id="servicios" className="py-32 relative bg-white overflow-hidden">
+                    {/* Background glows */}
+                    <div className="absolute top-1/3 left-0 w-96 h-96 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none" />
+                    <div className="absolute bottom-1/3 right-0 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none" />
+
+                    <div className="max-w-7xl mx-auto px-6 relative z-10">
+                        <div className="max-w-3xl mb-20">
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.5 }}
+                                className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-600 text-[10px] font-bold uppercase tracking-[0.2em] mb-6"
+                            >
+                                <Zap size={14} className="fill-indigo-600" />
+                                Ingeniería & Conectividad de Alta Disponibilidad
+                            </motion.div>
+                            <h2 className="text-5xl md:text-6xl font-black mb-6 tracking-tight text-slate-900">
+                                Servicios de Telecomunicaciones e Infraestructura
+                            </h2>
+                            <p className="text-slate-600 text-lg font-medium">
+                                Soluciones tecnológicas integrales y redes de alta velocidad para sectores industriales, plantas de energía y entidades públicas o privadas.
+                            </p>
+                        </div>
+
+                        <div className="grid lg:grid-cols-3 gap-8">
+                            <ServiceCard
+                                title="Seguridad Electrónica e Integración"
+                                subtitle="Para Empresas Públicas y Privadas"
+                                desc="Diseño e implementación de sistemas críticos de protección, control e instrumentación digital de seguridad."
+                                icon={<ShieldCheck size={24} />}
+                                color="indigo"
+                                items={[
+                                    "CCTV Avanzado (Cámaras Inteligentes con Reconocimiento de Patentes)",
+                                    "Detección y Alarma de Incendio (Sistemas certificados)",
+                                    "Control de Acceso (Biométrico, vehicular y peatonales)",
+                                    "Corrientes débiles, automatización e intrusión"
+                                ]}
+                            />
+                            <ServiceCard
+                                title="Redes y Enlaces de Fibra Óptica"
+                                subtitle="Despliegue y Conectividad Metropolitana"
+                                desc="Diseño, tendido y fusión de redes ópticas para garantizar la máxima velocidad y estabilidad de datos."
+                                icon={<Network size={24} />}
+                                color="purple"
+                                items={[
+                                    "Enlaces de Fibra Óptica Punto a Punto (P2P)",
+                                    "Construcción y despliegue de Redes FTTH (GPON)",
+                                    "Certificación de enlaces con OTDR y fusión por núcleo",
+                                    "Canalización, cableado estructurado e infraestructura de red"
+                                ]}
+                            />
+                            <ServiceCard
+                                title="Plantas Solares y Parques de Energía"
+                                subtitle="Monitoreo e Instrumentación Solar"
+                                desc="Soluciones especializadas de telecomunicaciones y ciberseguridad industrial para la operación de energías renovables."
+                                icon={<Sun size={24} />}
+                                color="cyan"
+                                items={[
+                                    "Conectividad de datos e integración de sistemas SCADA",
+                                    "CCTV térmico e intrusión perimetral para parques solares",
+                                    "Redes de monitoreo ambiental y meteorológico de plantas",
+                                    "Instalación de fibra y redes ópticas en trincheras y trackers"
+                                ]}
                             />
                         </div>
                     </div>
@@ -715,5 +795,43 @@ function StatCard({ value, label }: any) {
             <div className="text-5xl font-black text-indigo-600 mb-2 tracking-tighter">{value}</div>
             <div className="text-[10px] uppercase font-bold tracking-[0.3em] text-indigo-400">{label}</div>
         </div>
+    );
+}
+
+function ServiceCard({ title, subtitle, desc, items, icon, color }: any) {
+    const colors: any = {
+        indigo: "text-indigo-600 bg-indigo-50 border-indigo-100 group-hover:bg-indigo-600 group-hover:text-white",
+        purple: "text-violet-600 bg-violet-50 border-violet-100 group-hover:bg-violet-600 group-hover:text-white",
+        cyan: "text-cyan-600 bg-cyan-50 border-cyan-100 group-hover:bg-cyan-600 group-hover:text-white"
+    };
+    
+    const borderColors: any = {
+        indigo: "hover:border-indigo-500/30 hover:shadow-indigo-500/5",
+        purple: "hover:border-violet-500/30 hover:shadow-violet-500/5",
+        cyan: "hover:border-cyan-500/30 hover:shadow-cyan-500/5"
+    };
+
+    return (
+        <motion.div
+            whileHover={{ y: -8 }}
+            className={`group rounded-[2.5rem] bg-white border border-indigo-100/50 p-10 shadow-sm hover:shadow-2xl transition-all duration-500 flex flex-col h-full ${borderColors[color]}`}
+        >
+            <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-8 transition-all duration-500 ${colors[color]}`}>
+                {icon}
+            </div>
+            
+            <span className="text-[10px] font-black uppercase tracking-widest text-indigo-600/60 mb-2 block">{subtitle}</span>
+            <h3 className="text-3xl font-black mb-4 tracking-tight text-slate-900 leading-tight">{title}</h3>
+            <p className="text-slate-600 font-medium leading-relaxed mb-8">{desc}</p>
+            
+            <ul className="space-y-3.5 mt-auto border-t border-slate-100 pt-8">
+                {items.map((item: string, idx: number) => (
+                    <li key={idx} className="flex items-start gap-3 text-slate-600 font-semibold text-sm">
+                        <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2 shrink-0" />
+                        <span>{item}</span>
+                    </li>
+                ))}
+            </ul>
+        </motion.div>
     );
 }
