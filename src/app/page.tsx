@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ExternalLink, Layers, Map, ShieldCheck, Zap, ArrowRight, Github, Mail, MessageCircle, FileSpreadsheet, Loader2, CheckCircle2, Cloud, Link2, TrendingUp, Gem, SearchCode, Globe, ShieldAlert, Wrench, BarChart3, Users2, Award, Smartphone, Lock, DownloadCloud, Sun, Network, Car } from "lucide-react";
+import { ExternalLink, Layers, Map, ShieldCheck, Zap, ArrowRight, Github, Mail, MessageCircle, FileSpreadsheet, Loader2, CheckCircle2, Cloud, Link2, TrendingUp, Gem, SearchCode, Globe, ShieldAlert, Wrench, BarChart3, Users2, Award, Smartphone, Lock, DownloadCloud, Sun, Network, Car, Building } from "lucide-react";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
@@ -363,7 +363,7 @@ export default function Home() {
                             </p>
                         </div>
 
-                        <div className="grid lg:grid-cols-3 gap-8">
+                        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
                             <ServiceCard
                                 title="Seguridad Electrónica e Integración"
                                 subtitle="Para Empresas Públicas y Privadas"
@@ -401,6 +401,19 @@ export default function Home() {
                                     "CCTV térmico e intrusión perimetral para parques solares",
                                     "Redes de monitoreo ambiental y meteorológico de plantas",
                                     "Instalación de fibra y redes ópticas en trincheras y trackers"
+                                ]}
+                            />
+                            <ServiceCard
+                                title="Hoteles, Clínicas y Campamentos"
+                                subtitle="Hospitalidad & Recintos Alta Densidad"
+                                desc="Infraestructura tecnológica avanzada orientada al confort, entretenimiento y control de flujos en recintos de salud y habitacionales."
+                                icon={<Building size={24} />}
+                                color="indigo"
+                                items={[
+                                    "Infraestructura de telecomunicaciones integrada (CCTV, acceso e incendio)",
+                                    "Sistemas de Televisión y distribución de señal (IPTV / CATV)",
+                                    "Sistemas de control y gestión de pasajeros, huéspedes o pacientes",
+                                    "Pantallas interactivas y cartelería digital multimedia (Digital Signage)"
                                 ]}
                             />
                         </div>
