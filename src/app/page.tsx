@@ -242,16 +242,17 @@ export default function Home() {
                             <ProjectCard
                                 id="atsit-finanzas"
                                 title="ATSIT Finanzas"
-                                desc="Nuestra primera app descargable para Windows. Sistema integral para la gestión financiera de obras y proyectos, control de presupuestos, seguimiento de tareas, desglose de Neto + IVA (19%) e informes en PDF y Excel."
-                                tags={["Gestión de Obras", "Control de IVA", "Windows App"]}
+                                desc="Nuestra primera app descargable para Windows y macOS. Sistema integral para la gestión financiera de obras y proyectos, control de presupuestos, seguimiento de tareas, desglose de Neto + IVA (19%) e informes en PDF y Excel."
+                                tags={["Gestión de Obras", "Control de IVA", "Windows & Mac"]}
                                 icon={<TrendingUp size={24} />}
                                 color="purple"
                                 image="/projects/finanza-facil.png"
                                 href="/proyectos/atsit-finanzas"
-                                downloadLink="https://drive.google.com/file/d/1P0wetvbgd6z0lozTPXyqPto28rZ9yEqB/view?usp=sharing"
-                                downloadText="Descargar ATSIT Finanzas"
+                                downloadLink="https://github.com/pdiazg46-design/ATSIT-Finanzas/releases/latest/download/ATSIT.Finanzas.Setup.1.0.0.exe"
+                                downloadMacLink="https://github.com/pdiazg46-design/ATSIT-Finanzas/releases/latest/download/ATSIT.Finanzas-1.0.0.dmg"
+                                downloadText="Descargar Windows (.exe)"
                                 trialBadge="15 Días de Prueba"
-                                osBadge="Solo Windows"
+                                osBadge="Windows & macOS"
                                 isFeaturedDownload={true}
                             />
                             <ProjectCard
@@ -401,7 +402,7 @@ export default function Home() {
                                                 <Clock size={12} /> Prueba Gratis 15 Días
                                             </span>
                                             <span className="bg-cyan-400 text-slate-950 font-black text-[10px] uppercase tracking-widest px-3.5 py-1.5 rounded-full shadow-xl flex items-center gap-1.5">
-                                                <Monitor size={12} /> Exclusivo Windows
+                                                <Monitor size={12} /> Windows & macOS
                                             </span>
                                         </div>
                                     </div>
@@ -409,7 +410,7 @@ export default function Home() {
                                     {/* Tech Quick Badges */}
                                     <div className="mt-6 flex flex-wrap justify-center gap-2">
                                         <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 bg-white/5 border border-white/10 px-3 py-1 rounded-xl">
-                                            Electron Nativo
+                                            Electron Multi-Platform
                                         </span>
                                         <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 bg-white/5 border border-white/10 px-3 py-1 rounded-xl">
                                             SQLite Offline
@@ -425,7 +426,7 @@ export default function Home() {
                                     <div>
                                         <div className="inline-flex items-center gap-2 text-purple-400 text-xs font-black uppercase tracking-widest mb-4">
                                             <Sparkles size={16} className="text-purple-400 animate-pulse" />
-                                            🚀 Primera Aplicación Descargable para Windows
+                                            🚀 Aplicación Oficial de Escritorio
                                         </div>
 
                                         <h3 className="text-4xl md:text-6xl font-black mb-6 tracking-tight text-white leading-none">
@@ -433,7 +434,7 @@ export default function Home() {
                                         </h3>
 
                                         <p className="text-slate-300 text-base md:text-lg font-medium leading-relaxed mb-8">
-                                            Nuestra solución insignia de escritorio para el control integral de obras, presupuestos y finanzas. Diseñada para trabajar 100% offline o sincronizada, ofreciendo una experiencia fluida sin fricciones administrativas.
+                                            Nuestra solución insignia de escritorio para el control integral de obras, presupuestos y finanzas. Disponible para Windows y macOS, diseñada para trabajar 100% offline o sincronizada.
                                         </p>
 
                                         {/* 4 Feature Cards Grid */}
@@ -481,25 +482,34 @@ export default function Home() {
                                     </div>
 
                                     {/* Action Buttons Bar */}
-                                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-6 border-t border-white/10">
+                                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-6 border-t border-white/10">
                                         <a
-                                            href="https://drive.google.com/file/d/1P0wetvbgd6z0lozTPXyqPto28rZ9yEqB/view?usp=sharing"
+                                            href="https://github.com/pdiazg46-design/ATSIT-Finanzas/releases/latest/download/ATSIT.Finanzas.Setup.1.0.0.exe"
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="bg-gradient-to-r from-purple-500 via-indigo-600 to-cyan-500 hover:from-purple-600 hover:to-cyan-600 text-white font-black px-9 py-5 rounded-2xl shadow-2xl shadow-purple-500/30 transition-all transform hover:scale-[1.03] active:scale-95 flex items-center justify-center gap-3 text-base text-center group/btn"
+                                            className="bg-gradient-to-r from-purple-500 via-indigo-600 to-blue-600 hover:from-purple-600 hover:to-blue-700 text-white font-black px-6 py-4 rounded-2xl shadow-xl shadow-purple-500/20 transition-all transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 text-sm text-center group/btn"
                                         >
-                                            <DownloadCloud size={24} className="group-hover/btn:translate-y-0.5 transition-transform" />
-                                            <span>Descargar ATSIT Finanzas para Windows (.exe)</span>
+                                            <DownloadCloud size={20} className="group-hover/btn:translate-y-0.5 transition-transform" />
+                                            <span>Descargar Windows (.exe)</span>
+                                        </a>
+                                        <a
+                                            href="https://github.com/pdiazg46-design/ATSIT-Finanzas/releases/latest/download/ATSIT.Finanzas-1.0.0.dmg"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="bg-gradient-to-r from-slate-700 via-slate-800 to-slate-900 hover:from-slate-800 hover:to-slate-950 text-white border border-white/20 font-black px-6 py-4 rounded-2xl shadow-xl transition-all transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 text-sm text-center group/btn"
+                                        >
+                                            <DownloadCloud size={20} className="group-hover/btn:translate-y-0.5 transition-transform" />
+                                            <span>Descargar Mac (.dmg)</span>
                                         </a>
                                         <Link
                                             href="/proyectos/atsit-finanzas"
-                                            className="bg-white/10 hover:bg-white/20 text-white font-bold px-7 py-5 rounded-2xl text-center transition-all text-sm flex items-center justify-center gap-2 border border-white/10"
+                                            className="bg-white/10 hover:bg-white/20 text-white font-bold px-5 py-4 rounded-2xl text-center transition-all text-sm flex items-center justify-center gap-2 border border-white/10"
                                         >
-                                            Ver Ficha Técnica <ArrowRight size={16} />
+                                            Ficha Técnica <ArrowRight size={16} />
                                         </Link>
                                     </div>
                                     <p className="text-[11px] text-slate-400 mt-4 text-center sm:text-left font-medium">
-                                        * Instalador oficial verificado (.exe). 15 días de prueba gratuita con todas las funciones habilitadas.
+                                        * Instaladores oficiales verificados desde GitHub Releases (.exe / .dmg). 15 días de prueba gratuita.
                                     </p>
                                 </div>
                             </div>

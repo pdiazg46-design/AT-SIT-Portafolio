@@ -40,7 +40,7 @@ export default function AtsitFinanzasDetail() {
                                 Sistema de escritorio nativo para el control integral de obras, seguimiento de tareas, gestión de presupuestos, desglose de Neto + IVA (19%) y generación de informes ejecutivos en PDF y Excel.
                             </p>
                             <div className="flex flex-wrap gap-3 mb-10">
-                                {["Windows App (.exe)", "Electron Nativo", "Drizzle ORM", "SQLite Offline", "PDF & Excel"].map(tag => (
+                                {["Windows (.exe)", "macOS (.dmg)", "Electron Nativo", "SQLite Offline", "PDF & Excel"].map(tag => (
                                     <span key={tag} className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-slate-300 text-xs font-bold uppercase tracking-widest">
                                         {tag}
                                     </span>
@@ -55,22 +55,33 @@ export default function AtsitFinanzasDetail() {
                                         <Clock size={12} /> Prueba Gratis 15 Días
                                     </span>
                                     <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 text-[10px] font-black uppercase tracking-wider">
-                                        <Monitor size={12} /> Exclusivo Windows
+                                        <Monitor size={12} /> Windows & macOS
                                     </span>
                                 </div>
-                                <h3 className="text-2xl font-black text-white mb-2">Descargar ATSIT Finanzas para PC</h3>
+                                <h3 className="text-2xl font-black text-white mb-2">Descargar ATSIT Finanzas</h3>
                                 <p className="text-slate-300 text-sm font-medium mb-6 leading-relaxed">
-                                    Obtén el ejecutable directo (.exe) para Windows 10/11. Incluye 15 días de prueba sin restricciones de funciones.
+                                    Elige la versión adecuada para tu sistema operativo. Incluye 15 días de prueba completa sin restricciones.
                                 </p>
-                                <a
-                                    href="https://drive.google.com/file/d/1P0wetvbgd6z0lozTPXyqPto28rZ9yEqB/view?usp=sharing"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="w-full sm:w-auto inline-flex items-center justify-center gap-3 bg-gradient-to-r from-purple-500 via-indigo-600 to-cyan-500 hover:from-purple-600 hover:to-cyan-600 text-white font-black px-8 py-4.5 rounded-2xl shadow-xl shadow-purple-500/25 transition-all transform hover:scale-[1.02] active:scale-95 text-base"
-                                >
-                                    <DownloadCloud size={22} />
-                                    Descargar Instalador Windows (Google Drive)
-                                </a>
+                                <div className="flex flex-col sm:flex-row gap-4">
+                                    <a
+                                        href="https://github.com/pdiazg46-design/ATSIT-Finanzas/releases/latest/download/ATSIT.Finanzas.Setup.1.0.0.exe"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="w-full sm:w-auto inline-flex items-center justify-center gap-3 bg-gradient-to-r from-purple-500 via-indigo-600 to-blue-600 hover:from-purple-600 hover:to-blue-700 text-white font-black px-7 py-4 rounded-2xl shadow-xl shadow-purple-500/25 transition-all transform hover:scale-[1.02] active:scale-95 text-sm"
+                                    >
+                                        <Zap size={18} className="fill-white" />
+                                        Descargar Windows (.exe)
+                                    </a>
+                                    <a
+                                        href="https://github.com/pdiazg46-design/ATSIT-Finanzas/releases/latest/download/ATSIT.Finanzas-1.0.0.dmg"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="w-full sm:w-auto inline-flex items-center justify-center gap-3 bg-gradient-to-r from-slate-700 to-slate-900 hover:from-slate-800 hover:to-slate-950 text-white border border-white/20 font-black px-7 py-4 rounded-2xl shadow-xl transition-all transform hover:scale-[1.02] active:scale-95 text-sm"
+                                    >
+                                        <DownloadCloud size={18} />
+                                        Descargar Mac (.dmg)
+                                    </a>
+                                </div>
                             </div>
                         </motion.div>
 
