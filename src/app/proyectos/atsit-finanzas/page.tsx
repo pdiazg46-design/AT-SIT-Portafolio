@@ -93,7 +93,7 @@ export default function AtsitFinanzasDetail() {
                             <div className="absolute inset-0 bg-purple-500/20 blur-[120px] -z-10" />
                             <div className="rounded-[2.5rem] p-3 bg-white/5 border border-white/10 shadow-2xl">
                                 <img
-                                    src="/projects/finanza-facil.png"
+                                    src="/projects/atsit-finanzas-desktop.jpg"
                                     alt="ATSIT Finanzas Software"
                                     className="rounded-[2rem] shadow-2xl border border-white/5 w-full object-cover"
                                 />

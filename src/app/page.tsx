@@ -246,7 +246,7 @@ export default function Home() {
                                 tags={["Gestión de Obras", "Control de IVA", "Windows & Mac"]}
                                 icon={<TrendingUp size={24} />}
                                 color="purple"
-                                image="/projects/finanza-facil.png"
+                                image="/projects/atsit-finanzas-desktop.jpg"
                                 href="/proyectos/atsit-finanzas"
                                 downloadLink="https://github.com/pdiazg46-design/ATSIT-Finanzas/releases/latest/download/ATSIT.Finanzas.Setup.1.0.0.exe"
                                 downloadMacLink="https://github.com/pdiazg46-design/ATSIT-Finanzas/releases/latest/download/ATSIT.Finanzas-1.0.0.dmg"
@@ -394,7 +394,7 @@ export default function Home() {
                                 {/* Visual Image Side */}
                                 <div className="lg:col-span-5 relative">
                                     <div className="relative rounded-[2.5rem] overflow-hidden border border-white/15 shadow-2xl group-hover:scale-[1.02] transition-transform duration-700">
-                                        <img src="/projects/finanza-facil.png" alt="ATSIT Finanzas App Desktop" className="w-full h-auto object-cover" />
+                                        <img src="/projects/atsit-finanzas-desktop.jpg" alt="ATSIT Finanzas App Desktop" className="w-full h-auto object-cover" />
                                         <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent opacity-60" />
                                         
                                         <div className="absolute top-4 left-4 flex flex-wrap gap-2">
