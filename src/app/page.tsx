@@ -240,19 +240,30 @@ export default function Home() {
                                 href="/proyectos/estacionamientos"
                             />
                             <ProjectCard
-                                id="finanza-facil"
+                                id="atsit-finanzas"
                                 title="ATSIT Finanzas"
-                                desc="Nuestra primera app descargable para Windows. Sistema integral para la gestión financiera de obras y proyectos, control de presupuestos, seguimiento de tareas, cálculo automático de Neto + IVA (19%) y reportes en PDF y Excel."
+                                desc="Nuestra primera app descargable para Windows. Sistema integral para la gestión financiera de obras y proyectos, control de presupuestos, seguimiento de tareas, desglose de Neto + IVA (19%) e informes en PDF y Excel."
                                 tags={["Gestión de Obras", "Control de IVA", "Windows App"]}
                                 icon={<TrendingUp size={24} />}
                                 color="purple"
                                 image="/projects/finanza-facil.png"
-                                href="/proyectos/finanza-facil"
+                                href="/proyectos/atsit-finanzas"
                                 downloadLink="https://drive.google.com/file/d/1P0wetvbgd6z0lozTPXyqPto28rZ9yEqB/view?usp=sharing"
                                 downloadText="Descargar ATSIT Finanzas"
                                 trialBadge="15 Días de Prueba"
                                 osBadge="Solo Windows"
                                 isFeaturedDownload={true}
+                            />
+                            <ProjectCard
+                                id="finanza-facil"
+                                title="Finanza Fácil & Libertad"
+                                desc="Plataforma de gestión financiera personal potenciada por voz, diseñada para eliminar la fricción y maximizar la libertad financiera."
+                                tags={["Voice NLP", "Fintech", "Cloud"]}
+                                icon={<TrendingUp size={24} />}
+                                color="purple"
+                                image="/projects/finanza-facil.png"
+                                href="/proyectos/finanza-facil"
+                                downloadLink="https://at-sit-final.vercel.app/"
                             />
                             <ProjectCard
                                 id="emprende"
@@ -481,7 +492,7 @@ export default function Home() {
                                             <span>Descargar ATSIT Finanzas para Windows (.exe)</span>
                                         </a>
                                         <Link
-                                            href="/proyectos/finanza-facil"
+                                            href="/proyectos/atsit-finanzas"
                                             className="bg-white/10 hover:bg-white/20 text-white font-bold px-7 py-5 rounded-2xl text-center transition-all text-sm flex items-center justify-center gap-2 border border-white/10"
                                         >
                                             Ver Ficha Técnica <ArrowRight size={16} />

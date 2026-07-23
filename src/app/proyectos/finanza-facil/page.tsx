@@ -15,7 +15,9 @@ export default function FinanzaFacilDetail() {
                     <Link href="/#finanza-facil" className="flex items-center gap-2 text-purple-400 hover:text-purple-300 transition-colors font-bold">
                         <ArrowLeft size={20} /> Volver al Inicio
                     </Link>
-                    <img src="/logo-atsit.png" alt="AT-SIT" className="h-10 w-auto brightness-200" />
+                    <div className="px-4 py-1.5 bg-white/90 backdrop-blur-md rounded-2xl flex items-center justify-center shadow-md">
+                        <img src="/logo-atsit.png" alt="AT-SIT" className="h-8 w-auto" />
+                    </div>
                 </div>
             </nav>
 
@@ -28,48 +30,30 @@ export default function FinanzaFacilDetail() {
                             animate={{ opacity: 1, x: 0 }}
                         >
                             <span className="inline-block px-4 py-1.5 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 text-[10px] font-bold uppercase tracking-widest mb-6">
-                                🚀 Primera App Descargable para Windows
+                                Fintech & Voice AI
                             </span>
                             <h1 className="text-6xl font-black tracking-tighter mb-8 leading-tight">
-                                ATSIT <br />
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-indigo-500">Finanzas</span>
+                                Finanza <br />
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-indigo-500">Fácil & Libertad</span>
                             </h1>
                             <p className="text-xl text-slate-300 font-medium leading-relaxed mb-8">
-                                Nuestra primera aplicación nativa de escritorio para Windows. Diseñada para la gestión financiera integral de obras y proyectos, control de presupuestos, desglose de Neto + IVA (19%), flujo de caja y exportación de informes en PDF y Excel.
+                                Una plataforma disruptiva que transforma la gestión financiera personal mediante comandos de voz y algoritmos de libertad financiera, eliminando la fricción del registro tradicional.
                             </p>
                             <div className="flex flex-wrap gap-3 mb-8">
-                                {["Windows App", "Electron", "Drizzle ORM", "SQLite Nativo", "PDF & Excel"].map(tag => (
+                                {["Next.js", "Prisma", "Voice NLP", "PostgreSQL", "Tailwind"].map(tag => (
                                     <span key={tag} className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-slate-300 text-xs font-bold uppercase tracking-widest">
                                         {tag}
                                     </span>
                                 ))}
                             </div>
-
-                            {/* Prominent Download Banner for Windows (15-Day Trial) */}
-                            <div className="p-6 md:p-8 rounded-3xl bg-gradient-to-br from-purple-900/60 via-indigo-900/60 to-slate-900 border border-purple-500/30 shadow-2xl backdrop-blur-xl relative overflow-hidden">
-                                <div className="absolute -top-12 -right-12 w-48 h-48 bg-purple-500/20 rounded-full blur-2xl pointer-events-none" />
-                                <div className="flex flex-wrap items-center gap-2 mb-4">
-                                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/20 border border-amber-400/40 text-amber-300 text-[10px] font-black uppercase tracking-wider">
-                                        <Clock size={12} /> Prueba Gratis 15 Días
-                                    </span>
-                                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 text-[10px] font-black uppercase tracking-wider">
-                                        <Smartphone size={12} className="rotate-90" /> Solo para Windows
-                                    </span>
-                                </div>
-                                <h3 className="text-2xl font-black text-white mb-2">Descargar ATSIT Finanzas (Desktop)</h3>
-                                <p className="text-slate-300 text-sm font-medium mb-6 leading-relaxed">
-                                    Obtén el ejecutable directo para Windows con 15 días de evaluación completa sin costo ni restricciones de funciones.
-                                </p>
-                                <a
-                                    href="https://drive.google.com/file/d/1P0wetvbgd6z0lozTPXyqPto28rZ9yEqB/view?usp=sharing"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="w-full sm:w-auto inline-flex items-center justify-center gap-3 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white font-black px-8 py-4 rounded-2xl shadow-xl shadow-purple-500/25 transition-all transform hover:scale-[1.02] active:scale-95 text-base"
-                                >
-                                    <Zap size={20} className="fill-white" />
-                                    Descargar ATSIT Finanzas para Windows
-                                </a>
-                            </div>
+                            <a
+                                href="https://at-sit-final.vercel.app/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-3 bg-purple-600 hover:bg-purple-700 text-white font-bold px-8 py-4 rounded-2xl shadow-xl shadow-purple-600/20 transition-all"
+                            >
+                                Acceder a la App Web <Zap size={18} />
+                            </a>
                         </motion.div>
                         <motion.div
                             initial={{ opacity: 0, scale: 0.9 }}
@@ -79,29 +63,29 @@ export default function FinanzaFacilDetail() {
                             <div className="absolute inset-0 bg-purple-500/20 blur-[120px] -z-10" />
                             <img
                                 src="/projects/finanza-facil.png"
-                                alt="ATSIT Finanzas Dashboard"
+                                alt="Finanza Fácil Dashboard"
                                 className="rounded-[2.5rem] shadow-2xl border border-white/5 w-full"
                             />
                         </motion.div>
                     </div>
 
                     {/* Módulos */}
-                    <h2 className="text-4xl font-black mb-16 tracking-tight text-center">Ingeniería Financiera & Control de Obras</h2>
+                    <h2 className="text-4xl font-black mb-16 tracking-tight text-center">Ingeniería Financiera</h2>
                     <div className="grid md:grid-cols-3 gap-8 mb-32">
                         <ModuleCard
-                            icon={<BarChart3 className="text-purple-400" />}
-                            title="Control de Obras & Tareas"
-                            desc="Gestión centralizada de proyectos, seguimiento de ítems con valores neto/total y balance de margen de ganancia en tiempo real."
+                            icon={<Mic className="text-purple-400" />}
+                            title="Comandos de Voz NLP"
+                            desc="Procesamiento de lenguaje natural para registrar ingresos y gastos instantáneamente sin formularios complejos."
                         />
                         <ModuleCard
-                            icon={<ShieldCheck className="text-indigo-400" />}
-                            title="Cálculo de IVA (19%)"
-                            desc="Cálculo automático de Débito y Crédito Fiscal sobre facturas y boletas para un control exacto en declaraciones mensuales."
+                            icon={<Clock className="text-indigo-400" />}
+                            title="Días de Libertad"
+                            desc="Cálculo dinámico que traduce el dinero en tiempo de vida, incentivando el ahorro y la inversión inteligente."
                         />
                         <ModuleCard
-                            icon={<Database className="text-cyan-400" />}
-                            title="Base de Datos SQLite Nativa"
-                            desc="Almacenamiento local ultrarrápido y seguro que te permite operar al 100% en terreno u obra sin depender de conexión a internet."
+                            icon={<ShieldCheck className="text-cyan-400" />}
+                            title="Seguridad & Privacidad"
+                            desc="Cifrado de alto nivel y modo incógnito global para proteger la información financiera más sensible."
                         />
                     </div>
 

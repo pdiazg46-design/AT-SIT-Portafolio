@@ -15,7 +15,9 @@ export default function DesfogaDetail() {
                     <Link href="/#desfoga" className="flex items-center gap-2 text-cyan-500/80 hover:text-cyan-400 transition-colors font-bold">
                         <ArrowLeft size={20} /> Volver al Inicio
                     </Link>
-                    <img src="/logo-atsit.png" alt="AT-SIT" className="h-10 w-auto brightness-200" />
+                    <div className="px-4 py-1.5 bg-white/90 backdrop-blur-md rounded-2xl flex items-center justify-center shadow-md">
+                        <img src="/logo-atsit.png" alt="AT-SIT" className="h-8 w-auto" />
+                    </div>
                 </div>
             </nav>
 

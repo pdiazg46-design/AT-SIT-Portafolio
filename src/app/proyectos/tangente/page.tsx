@@ -15,7 +15,9 @@ export default function TangenteDetail() {
                     <Link href="/#tangente" className="flex items-center gap-2 text-violet-400 hover:text-violet-600 transition-colors font-bold">
                         <ArrowLeft size={20} /> Volver al Inicio
                     </Link>
-                    <img src="/logo-atsit.png" alt="AT-SIT" className="h-10 w-auto" />
+                    <div className="px-4 py-1.5 bg-white/90 backdrop-blur-md rounded-2xl flex items-center justify-center shadow-md">
+                        <img src="/logo-atsit.png" alt="AT-SIT" className="h-8 w-auto" />
+                    </div>
                 </div>
             </nav>
 
