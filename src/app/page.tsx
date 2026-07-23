@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ExternalLink, Layers, Map, ShieldCheck, Zap, ArrowRight, Github, Mail, MessageCircle, FileSpreadsheet, Loader2, CheckCircle2, Cloud, Link2, TrendingUp, Gem, SearchCode, Globe, ShieldAlert, Wrench, BarChart3, Users2, Award, Smartphone, Lock, DownloadCloud, Sun, Network, Car, Building } from "lucide-react";
+import { ExternalLink, Layers, Map, ShieldCheck, Zap, ArrowRight, Github, Mail, MessageCircle, FileSpreadsheet, Loader2, CheckCircle2, Cloud, Link2, TrendingUp, Gem, SearchCode, Globe, ShieldAlert, Wrench, BarChart3, Users2, Award, Smartphone, Lock, DownloadCloud, Sun, Network, Car, Building, Monitor, Sparkles, Clock } from "lucide-react";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
@@ -86,7 +86,7 @@ export default function Home() {
                     </motion.div>
 
                     <div className="hidden md:flex items-center gap-10">
-                        {["Proyectos", "Servicios", "Habilidades", "Contacto"].map((item) => (
+                        {["Proyectos", "Descargas", "Servicios", "Habilidades", "Contacto"].map((item) => (
                             <a
                                 key={item}
                                 href={`#${item.toLowerCase()}`}
@@ -248,7 +248,11 @@ export default function Home() {
                                 color="purple"
                                 image="/projects/finanza-facil.png"
                                 href="/proyectos/finanza-facil"
-                                downloadLink="https://at-sit-final.vercel.app/"
+                                downloadLink="https://drive.google.com/file/d/1P0wetvbgd6z0lozTPXyqPto28rZ9yEqB/view?usp=sharing"
+                                downloadText="Descargar App Windows"
+                                trialBadge="15 Días de Prueba"
+                                osBadge="Solo Windows"
+                                isFeaturedDownload={true}
                             />
                             <ProjectCard
                                 id="emprende"
@@ -335,6 +339,105 @@ export default function Home() {
                                 downloadLink="https://movilesdiaz.atsit.cl"
                             />
                         </div>
+                    </div>
+                </section>
+
+                {/* Descargas Section */}
+                <section id="descargas" className="py-24 relative bg-slate-900 text-white overflow-hidden border-b border-white/5">
+                    <div className="absolute top-0 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
+                    <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
+
+                    <div className="max-w-7xl mx-auto px-6 relative z-10">
+                        <div className="text-center max-w-3xl mx-auto mb-16">
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-500/20 border border-purple-500/30 text-purple-300 text-[10px] font-bold uppercase tracking-[0.2em] mb-6"
+                            >
+                                <DownloadCloud size={14} className="text-purple-300 animate-pulse" />
+                                Software & Apps Ejecutables
+                            </motion.div>
+                            <h2 className="text-5xl md:text-6xl font-black mb-6 tracking-tight">
+                                Centro de <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-indigo-300 to-cyan-400">Descargas</span>
+                            </h2>
+                            <p className="text-slate-300 text-lg font-medium">
+                                Descarga nuestras aplicaciones de escritorio y versiones de evaluación directa.
+                            </p>
+                        </div>
+
+                        {/* Featured Windows App Card */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            className="bg-gradient-to-br from-purple-950/80 via-slate-900 to-slate-950 border border-purple-500/30 rounded-[3rem] p-8 md:p-14 backdrop-blur-xl relative overflow-hidden shadow-2xl hover:border-purple-500/50 transition-all group"
+                        >
+                            <div className="grid lg:grid-cols-12 gap-10 items-center">
+                                <div className="lg:col-span-5 relative">
+                                    <div className="relative rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
+                                        <img src="/projects/finanza-facil.png" alt="Finanza Fácil App Desktop" className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-700" />
+                                        <div className="absolute top-4 left-4 flex flex-wrap gap-2">
+                                            <span className="bg-amber-500 text-slate-950 font-black text-[10px] uppercase tracking-widest px-3 py-1 rounded-full shadow-lg flex items-center gap-1">
+                                                <Clock size={12} /> Prueba 15 Días
+                                            </span>
+                                            <span className="bg-cyan-400 text-slate-950 font-black text-[10px] uppercase tracking-widest px-3 py-1 rounded-full shadow-lg flex items-center gap-1">
+                                                <Monitor size={12} /> Solo Windows
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="lg:col-span-7 flex flex-col justify-between">
+                                    <div>
+                                        <div className="inline-flex items-center gap-2 text-purple-400 text-xs font-bold uppercase tracking-widest mb-3">
+                                            <Sparkles size={14} className="text-purple-400" /> App Destacada de Escritorio
+                                        </div>
+                                        <h3 className="text-3xl md:text-5xl font-black mb-4 tracking-tight text-white">
+                                            Finanza Fácil & Libertad
+                                        </h3>
+                                        <p className="text-slate-300 text-base md:text-lg font-medium leading-relaxed mb-6">
+                                            Aplicación de escritorio para la gestión financiera personal y empresarial. Incorpora comandos de voz NLP, sincronización de cuotas, indicadores de libertad financiera y reportes avanzados.
+                                        </p>
+
+                                        <div className="grid sm:grid-cols-2 gap-4 mb-8">
+                                            <div className="flex items-center gap-3 bg-white/5 border border-white/10 p-4 rounded-2xl">
+                                                <Clock className="text-amber-400 shrink-0" size={22} />
+                                                <div>
+                                                    <div className="text-xs font-black uppercase text-white">15 Días de Prueba</div>
+                                                    <div className="text-[11px] text-slate-400 font-medium">Evaluación gratuita sin restricciones</div>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center gap-3 bg-white/5 border border-white/10 p-4 rounded-2xl">
+                                                <Monitor className="text-cyan-400 shrink-0" size={22} />
+                                                <div>
+                                                    <div className="text-xs font-black uppercase text-white">Exclusivo para Windows</div>
+                                                    <div className="text-[11px] text-slate-400 font-medium">Compatible con Windows 10/11</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-4 border-t border-white/10">
+                                        <a
+                                            href="https://drive.google.com/file/d/1P0wetvbgd6z0lozTPXyqPto28rZ9yEqB/view?usp=sharing"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="bg-gradient-to-r from-purple-500 via-indigo-600 to-cyan-500 hover:from-purple-600 hover:to-cyan-600 text-white font-black px-8 py-4.5 rounded-2xl shadow-xl shadow-purple-500/25 transition-all transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-3 text-base text-center"
+                                        >
+                                            <DownloadCloud size={22} />
+                                            <span>Descargar App Windows (15 días gratis)</span>
+                                        </a>
+                                        <Link
+                                            href="/proyectos/finanza-facil"
+                                            className="bg-white/10 hover:bg-white/20 text-white font-bold px-6 py-4.5 rounded-2xl text-center transition-all text-sm flex items-center justify-center gap-2"
+                                        >
+                                            Ver Detalles <ArrowRight size={16} />
+                                        </Link>
+                                    </div>
+                                </div>
+                            </div>
+                        </motion.div>
                     </div>
                 </section>
 
@@ -711,7 +814,7 @@ export default function Home() {
     );
 }
 
-function ProjectCard({ title, desc, tags, icon, color, image, href, id, downloadLink, downloadText = "App Web" }: any) {
+function ProjectCard({ title, desc, tags, icon, color, image, href, id, downloadLink, downloadText = "App Web", trialBadge, osBadge, isFeaturedDownload }: any) {
     const colors: any = {
         indigo: "text-indigo-600 bg-indigo-50 border-indigo-100 group-hover:bg-indigo-600 group-hover:text-white",
         purple: "text-violet-600 bg-violet-50 border-violet-100 group-hover:bg-violet-600 group-hover:text-white",
@@ -722,13 +825,25 @@ function ProjectCard({ title, desc, tags, icon, color, image, href, id, download
         <motion.div
             id={id}
             whileHover={{ y: -8 }}
-            className="group rounded-[2.5rem] bg-white border border-indigo-100/50 shadow-sm hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-500 relative overflow-hidden flex flex-col h-full"
+            className={`group rounded-[2.5rem] bg-white border ${isFeaturedDownload ? 'border-purple-300 ring-2 ring-purple-500/20 shadow-xl shadow-purple-500/10' : 'border-indigo-100/50 shadow-sm'} hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-500 relative overflow-hidden flex flex-col h-full`}
         >
             <Link href={href} className="absolute inset-0 z-0" aria-label={`Ver detalles de ${title}`} />
             
             <div className="h-64 overflow-hidden relative pointer-events-none">
                 <img src={image} alt={title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                 <div className="absolute inset-0 bg-gradient-to-t from-white via-white/10 to-transparent opacity-60" />
+                {isFeaturedDownload && (
+                    <div className="absolute top-4 left-4 z-10 flex flex-wrap gap-1.5">
+                        <span className="bg-purple-600 text-white text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full shadow-lg flex items-center gap-1">
+                            <Sparkles size={12} /> App Desktop
+                        </span>
+                        {trialBadge && (
+                            <span className="bg-amber-500 text-slate-950 text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full shadow-lg flex items-center gap-1">
+                                <Clock size={12} /> {trialBadge}
+                            </span>
+                        )}
+                    </div>
+                )}
             </div>
 
             <div className="p-10 pt-6 flex flex-col flex-grow relative pointer-events-none">
@@ -740,8 +855,20 @@ function ProjectCard({ title, desc, tags, icon, color, image, href, id, download
                     {desc}
                 </p>
                 
-                {/* Etiqueta solo si NO es una App Web (downloadLink nulo) */}
-                {(!downloadLink || downloadLink === "#") && (
+                {downloadLink && downloadLink !== "#" ? (
+                    <div className="mb-6 flex flex-wrap items-center gap-2 pointer-events-auto">
+                        {osBadge && (
+                            <span className="inline-flex items-center gap-1 bg-cyan-50 border border-cyan-200 text-cyan-700 text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-lg">
+                                <Monitor size={12} /> {osBadge}
+                            </span>
+                        )}
+                        {trialBadge && (
+                            <span className="inline-flex items-center gap-1 bg-amber-50 border border-amber-200 text-amber-700 text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-lg">
+                                <Clock size={12} /> {trialBadge}
+                            </span>
+                        )}
+                    </div>
+                ) : (
                     <div className="mb-6 inline-flex w-fit items-center gap-2 bg-slate-900/5 border border-slate-900/10 px-3 py-2 rounded-xl group-hover:bg-slate-900 group-hover:border-slate-900 transition-all duration-300 pointer-events-auto shadow-sm">
                         <Lock size={14} className="text-slate-500 group-hover:text-indigo-400 transition-colors" />
                         <span className="text-[10px] font-black uppercase tracking-widest text-slate-700 group-hover:text-white transition-colors mt-[1px]">
@@ -758,10 +885,22 @@ function ProjectCard({ title, desc, tags, icon, color, image, href, id, download
                     ))}
                 </div>
                 
-                <div className="flex items-center justify-between w-full pointer-events-auto relative z-10 mt-auto pt-2">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 w-full pointer-events-auto relative z-10 mt-auto pt-2">
                     <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-indigo-600 opacity-100 transform translate-x-0 transition-all group-hover:translate-x-2">
                         Ver Detalles <ArrowRight size={16} />
                     </div>
+                    {downloadLink && downloadLink !== "#" && (
+                        <a
+                            href={downloadLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-md hover:shadow-lg transition-all active:scale-95 z-20"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <DownloadCloud size={14} />
+                            <span>{downloadText}</span>
+                        </a>
+                    )}
                 </div>
             </div>
         </motion.div>

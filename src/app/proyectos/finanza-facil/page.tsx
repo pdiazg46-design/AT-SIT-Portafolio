@@ -37,12 +37,38 @@ export default function FinanzaFacilDetail() {
                             <p className="text-xl text-slate-300 font-medium leading-relaxed mb-8">
                                 Una plataforma disruptiva que transforma la gestión financiera personal mediante comandos de voz y algoritmos de libertad financiera, eliminando la fricción del registro tradicional.
                             </p>
-                            <div className="flex flex-wrap gap-3">
+                            <div className="flex flex-wrap gap-3 mb-8">
                                 {["Next.js", "Prisma", "Voice NLP", "PostgreSQL", "Tailwind"].map(tag => (
                                     <span key={tag} className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-slate-300 text-xs font-bold uppercase tracking-widest">
                                         {tag}
                                     </span>
                                 ))}
+                            </div>
+
+                            {/* Prominent Download Banner for Windows (15-Day Trial) */}
+                            <div className="p-6 md:p-8 rounded-3xl bg-gradient-to-br from-purple-900/60 via-indigo-900/60 to-slate-900 border border-purple-500/30 shadow-2xl backdrop-blur-xl relative overflow-hidden">
+                                <div className="absolute -top-12 -right-12 w-48 h-48 bg-purple-500/20 rounded-full blur-2xl pointer-events-none" />
+                                <div className="flex flex-wrap items-center gap-2 mb-4">
+                                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/20 border border-amber-400/40 text-amber-300 text-[10px] font-black uppercase tracking-wider">
+                                        <Clock size={12} /> Prueba Gratis 15 Días
+                                    </span>
+                                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 text-[10px] font-black uppercase tracking-wider">
+                                        <Smartphone size={12} className="rotate-90" /> Exclusivo Windows
+                                    </span>
+                                </div>
+                                <h3 className="text-2xl font-black text-white mb-2">Descargar Aplicación de Escritorio</h3>
+                                <p className="text-slate-300 text-sm font-medium mb-6 leading-relaxed">
+                                    Obtén la versión ejecutable para PC con 15 días de prueba completa. Sin restricciones de funciones durante el periodo de evaluación.
+                                </p>
+                                <a
+                                    href="https://drive.google.com/file/d/1P0wetvbgd6z0lozTPXyqPto28rZ9yEqB/view?usp=sharing"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="w-full sm:w-auto inline-flex items-center justify-center gap-3 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white font-black px-8 py-4 rounded-2xl shadow-xl shadow-purple-500/25 transition-all transform hover:scale-[1.02] active:scale-95 text-base"
+                                >
+                                    <Zap size={20} className="fill-white" />
+                                    Descargar App para Windows (Google Drive)
+                                </a>
                             </div>
                         </motion.div>
                         <motion.div
