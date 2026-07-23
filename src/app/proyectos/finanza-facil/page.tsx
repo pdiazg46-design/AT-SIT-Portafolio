@@ -35,10 +35,10 @@ export default function FinanzaFacilDetail() {
                                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-indigo-500">Finanzas</span>
                             </h1>
                             <p className="text-xl text-slate-300 font-medium leading-relaxed mb-8">
-                                Nuestra primera aplicación de escritorio ejecutable para Windows. Transforma la gestión financiera personal y empresarial mediante comandos de voz y algoritmos de libertad financiera.
+                                Nuestra primera aplicación nativa de escritorio para Windows. Diseñada para la gestión financiera integral de obras y proyectos, control de presupuestos, desglose de Neto + IVA (19%), flujo de caja y exportación de informes en PDF y Excel.
                             </p>
                             <div className="flex flex-wrap gap-3 mb-8">
-                                {["Windows App", "Next.js", "Prisma", "Voice NLP", "PostgreSQL"].map(tag => (
+                                {["Windows App", "Electron", "Drizzle ORM", "SQLite Nativo", "PDF & Excel"].map(tag => (
                                     <span key={tag} className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-slate-300 text-xs font-bold uppercase tracking-widest">
                                         {tag}
                                     </span>
@@ -79,29 +79,29 @@ export default function FinanzaFacilDetail() {
                             <div className="absolute inset-0 bg-purple-500/20 blur-[120px] -z-10" />
                             <img
                                 src="/projects/finanza-facil.png"
-                                alt="Finanza Fácil Dashboard"
+                                alt="ATSIT Finanzas Dashboard"
                                 className="rounded-[2.5rem] shadow-2xl border border-white/5 w-full"
                             />
                         </motion.div>
                     </div>
 
                     {/* Módulos */}
-                    <h2 className="text-4xl font-black mb-16 tracking-tight text-center">Ingeniería Financiera</h2>
+                    <h2 className="text-4xl font-black mb-16 tracking-tight text-center">Ingeniería Financiera & Control de Obras</h2>
                     <div className="grid md:grid-cols-3 gap-8 mb-32">
                         <ModuleCard
-                            icon={<Mic className="text-purple-400" />}
-                            title="Comandos de Voz NLP"
-                            desc="Procesamiento de lenguaje natural para registrar ingresos y gastos instantáneamente sin formularios complejos."
+                            icon={<BarChart3 className="text-purple-400" />}
+                            title="Control de Obras & Tareas"
+                            desc="Gestión centralizada de proyectos, seguimiento de ítems con valores neto/total y balance de margen de ganancia en tiempo real."
                         />
                         <ModuleCard
-                            icon={<Clock className="text-indigo-400" />}
-                            title="Días de Libertad"
-                            desc="Cálculo dinámico que traduce el dinero en tiempo de vida, incentivando el ahorro y la inversión inteligente."
+                            icon={<ShieldCheck className="text-indigo-400" />}
+                            title="Cálculo de IVA (19%)"
+                            desc="Cálculo automático de Débito y Crédito Fiscal sobre facturas y boletas para un control exacto en declaraciones mensuales."
                         />
                         <ModuleCard
-                            icon={<ShieldCheck className="text-cyan-400" />}
-                            title="Seguridad & Privacidad"
-                            desc="Cifrado de alto nivel y modo incógnito global para proteger la información financiera más sensible."
+                            icon={<Database className="text-cyan-400" />}
+                            title="Base de Datos SQLite Nativa"
+                            desc="Almacenamiento local ultrarrápido y seguro que te permite operar al 100% en terreno u obra sin depender de conexión a internet."
                         />
                     </div>
 

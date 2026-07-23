@@ -242,8 +242,8 @@ export default function Home() {
                             <ProjectCard
                                 id="finanza-facil"
                                 title="ATSIT Finanzas"
-                                desc="Nuestra primera app descargable para Windows. Plataforma de gestión financiera personal potenciada por voz, diseñada para eliminar la fricción y maximizar la libertad financiera."
-                                tags={["Voice NLP", "Fintech", "Windows App"]}
+                                desc="Nuestra primera app descargable para Windows. Sistema integral para la gestión financiera de obras y proyectos, control de presupuestos, seguimiento de tareas, cálculo automático de Neto + IVA (19%) y reportes en PDF y Excel."
+                                tags={["Gestión de Obras", "Control de IVA", "Windows App"]}
                                 icon={<TrendingUp size={24} />}
                                 color="purple"
                                 image="/projects/finanza-facil.png"
@@ -343,98 +343,153 @@ export default function Home() {
                 </section>
 
                 {/* Descargas Section */}
-                <section id="descargas" className="py-24 relative bg-slate-900 text-white overflow-hidden border-b border-white/5">
-                    <div className="absolute top-0 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
-                    <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
+                <section id="descargas" className="py-32 relative bg-slate-950 text-white overflow-hidden border-b border-white/10">
+                    {/* Background glows */}
+                    <div className="absolute top-1/4 right-1/4 w-[500px] h-[500px] bg-purple-600/15 rounded-full blur-[120px] pointer-events-none" />
+                    <div className="absolute bottom-1/4 left-1/4 w-[500px] h-[500px] bg-cyan-500/15 rounded-full blur-[120px] pointer-events-none" />
 
                     <div className="max-w-7xl mx-auto px-6 relative z-10">
-                        <div className="text-center max-w-3xl mx-auto mb-16">
+                        <div className="text-center max-w-3xl mx-auto mb-20">
                             <motion.div
                                 initial={{ opacity: 0, y: 20 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
-                                className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-500/20 border border-purple-500/30 text-purple-300 text-[10px] font-bold uppercase tracking-[0.2em] mb-6"
+                                className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-300 text-xs font-bold uppercase tracking-[0.25em] mb-6 shadow-lg shadow-purple-500/10"
                             >
-                                <DownloadCloud size={14} className="text-purple-300 animate-pulse" />
-                                Software & Apps Ejecutables
+                                <DownloadCloud size={16} className="text-purple-400 animate-bounce-slow" />
+                                Centro Oficial de Software
                             </motion.div>
-                            <h2 className="text-5xl md:text-6xl font-black mb-6 tracking-tight">
-                                Centro de <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-indigo-300 to-cyan-400">Descargas</span>
+                            <h2 className="text-5xl md:text-7xl font-black mb-6 tracking-tighter">
+                                Aplicaciones de <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-indigo-300 to-cyan-400">Escritorio</span>
                             </h2>
-                            <p className="text-slate-300 text-lg font-medium">
-                                Descarga nuestras aplicaciones de escritorio y versiones de evaluación directa.
+                            <p className="text-slate-300 text-lg md:text-xl font-medium leading-relaxed">
+                                Software nativo de alto rendimiento listo para instalar en tus equipos corporativos.
                             </p>
                         </div>
 
-                        {/* Featured Windows App Card */}
+                        {/* Featured Windows App Premium Card */}
                         <motion.div
-                            initial={{ opacity: 0, y: 30 }}
+                            initial={{ opacity: 0, y: 40 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
-                            className="bg-gradient-to-br from-purple-950/80 via-slate-900 to-slate-950 border border-purple-500/30 rounded-[3rem] p-8 md:p-14 backdrop-blur-xl relative overflow-hidden shadow-2xl hover:border-purple-500/50 transition-all group"
+                            transition={{ duration: 0.6 }}
+                            className="bg-gradient-to-br from-slate-900/90 via-purple-950/40 to-slate-950 border border-purple-500/30 rounded-[3.5rem] p-8 md:p-16 backdrop-blur-2xl relative overflow-hidden shadow-2xl shadow-purple-950/50 hover:border-purple-500/60 transition-all duration-700 group"
                         >
-                            <div className="grid lg:grid-cols-12 gap-10 items-center">
+                            {/* Ambient Top Glow */}
+                            <div className="absolute top-0 right-0 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl pointer-events-none group-hover:bg-purple-500/20 transition-all duration-700" />
+
+                            <div className="grid lg:grid-cols-12 gap-12 items-center relative z-10">
+                                {/* Visual Image Side */}
                                 <div className="lg:col-span-5 relative">
-                                    <div className="relative rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
-                                        <img src="/projects/finanza-facil.png" alt="ATSIT Finanzas App Desktop" className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-700" />
+                                    <div className="relative rounded-[2.5rem] overflow-hidden border border-white/15 shadow-2xl group-hover:scale-[1.02] transition-transform duration-700">
+                                        <img src="/projects/finanza-facil.png" alt="ATSIT Finanzas App Desktop" className="w-full h-auto object-cover" />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent opacity-60" />
+                                        
                                         <div className="absolute top-4 left-4 flex flex-wrap gap-2">
-                                            <span className="bg-amber-500 text-slate-950 font-black text-[10px] uppercase tracking-widest px-3 py-1 rounded-full shadow-lg flex items-center gap-1">
-                                                <Clock size={12} /> Prueba 15 Días
+                                            <span className="bg-amber-400 text-slate-950 font-black text-[10px] uppercase tracking-widest px-3.5 py-1.5 rounded-full shadow-xl flex items-center gap-1.5">
+                                                <Clock size={12} /> Prueba Gratis 15 Días
                                             </span>
-                                            <span className="bg-cyan-400 text-slate-950 font-black text-[10px] uppercase tracking-widest px-3 py-1 rounded-full shadow-lg flex items-center gap-1">
-                                                <Monitor size={12} /> Solo Windows
+                                            <span className="bg-cyan-400 text-slate-950 font-black text-[10px] uppercase tracking-widest px-3.5 py-1.5 rounded-full shadow-xl flex items-center gap-1.5">
+                                                <Monitor size={12} /> Exclusivo Windows
                                             </span>
                                         </div>
+                                    </div>
+
+                                    {/* Tech Quick Badges */}
+                                    <div className="mt-6 flex flex-wrap justify-center gap-2">
+                                        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 bg-white/5 border border-white/10 px-3 py-1 rounded-xl">
+                                            Electron Nativo
+                                        </span>
+                                        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 bg-white/5 border border-white/10 px-3 py-1 rounded-xl">
+                                            SQLite Offline
+                                        </span>
+                                        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 bg-white/5 border border-white/10 px-3 py-1 rounded-xl">
+                                            PDF / Excel Reports
+                                        </span>
                                     </div>
                                 </div>
 
+                                {/* Content Side */}
                                 <div className="lg:col-span-7 flex flex-col justify-between">
                                     <div>
-                                        <div className="inline-flex items-center gap-2 text-purple-400 text-xs font-bold uppercase tracking-widest mb-3">
-                                            <Sparkles size={14} className="text-purple-400" /> 🚀 Primera App Descargable para Windows
+                                        <div className="inline-flex items-center gap-2 text-purple-400 text-xs font-black uppercase tracking-widest mb-4">
+                                            <Sparkles size={16} className="text-purple-400 animate-pulse" />
+                                            🚀 Primera Aplicación Descargable para Windows
                                         </div>
-                                        <h3 className="text-3xl md:text-5xl font-black mb-4 tracking-tight text-white">
-                                            ATSIT Finanzas
+
+                                        <h3 className="text-4xl md:text-6xl font-black mb-6 tracking-tight text-white leading-none">
+                                            ATSIT <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-indigo-300 to-cyan-400">Finanzas</span>
                                         </h3>
-                                        <p className="text-slate-300 text-base md:text-lg font-medium leading-relaxed mb-6">
-                                            Nuestra primera aplicación nativa de escritorio para Windows. Diseñada para la gestión financiera personal y empresarial, incorpora comandos de voz NLP, control de cuotas y métricas avanzadas de libertad financiera.
+
+                                        <p className="text-slate-300 text-base md:text-lg font-medium leading-relaxed mb-8">
+                                            Nuestra solución insignia de escritorio para el control integral de obras, presupuestos y finanzas. Diseñada para trabajar 100% offline o sincronizada, ofreciendo una experiencia fluida sin fricciones administrativas.
                                         </p>
 
-                                        <div className="grid sm:grid-cols-2 gap-4 mb-8">
-                                            <div className="flex items-center gap-3 bg-white/5 border border-white/10 p-4 rounded-2xl">
-                                                <Clock className="text-amber-400 shrink-0" size={22} />
+                                        {/* 4 Feature Cards Grid */}
+                                        <div className="grid sm:grid-cols-2 gap-4 mb-10">
+                                            <div className="flex items-start gap-3.5 bg-white/5 border border-white/10 p-4 rounded-2xl hover:bg-white/[0.08] transition-colors">
+                                                <div className="p-2.5 rounded-xl bg-purple-500/20 text-purple-300 shrink-0">
+                                                    <BarChart3 size={20} />
+                                                </div>
                                                 <div>
-                                                    <div className="text-xs font-black uppercase text-white">15 Días de Prueba</div>
-                                                    <div className="text-[11px] text-slate-400 font-medium">Evaluación gratuita sin restricciones</div>
+                                                    <div className="text-xs font-black uppercase text-white tracking-wider mb-0.5">Control de Obras</div>
+                                                    <div className="text-[11px] text-slate-400 font-medium">Margen de ganancia y balance de presupuesto en tiempo real.</div>
                                                 </div>
                                             </div>
-                                            <div className="flex items-center gap-3 bg-white/5 border border-white/10 p-4 rounded-2xl">
-                                                <Monitor className="text-cyan-400 shrink-0" size={22} />
+
+                                            <div className="flex items-start gap-3.5 bg-white/5 border border-white/10 p-4 rounded-2xl hover:bg-white/[0.08] transition-colors">
+                                                <div className="p-2.5 rounded-xl bg-cyan-500/20 text-cyan-300 shrink-0">
+                                                    <ShieldCheck size={20} />
+                                                </div>
                                                 <div>
-                                                    <div className="text-xs font-black uppercase text-white">Primera App para Windows</div>
-                                                    <div className="text-[11px] text-slate-400 font-medium">Compatible con Windows 10/11</div>
+                                                    <div className="text-xs font-black uppercase text-white tracking-wider mb-0.5">Gestión de IVA (19%)</div>
+                                                    <div className="text-[11px] text-slate-400 font-medium">Cálculo automático de Débito/Crédito Fiscal y facturas.</div>
+                                                </div>
+                                            </div>
+
+                                            <div className="flex items-start gap-3.5 bg-white/5 border border-white/10 p-4 rounded-2xl hover:bg-white/[0.08] transition-colors">
+                                                <div className="p-2.5 rounded-xl bg-amber-500/20 text-amber-300 shrink-0">
+                                                    <Clock size={20} />
+                                                </div>
+                                                <div>
+                                                    <div className="text-xs font-black uppercase text-white tracking-wider mb-0.5">Evaluación 15 Días</div>
+                                                    <div className="text-[11px] text-slate-400 font-medium">Prueba completa sin costo ni tarjeta de crédito.</div>
+                                                </div>
+                                            </div>
+
+                                            <div className="flex items-start gap-3.5 bg-white/5 border border-white/10 p-4 rounded-2xl hover:bg-white/[0.08] transition-colors">
+                                                <div className="p-2.5 rounded-xl bg-indigo-500/20 text-indigo-300 shrink-0">
+                                                    <Monitor size={20} />
+                                                </div>
+                                                <div>
+                                                    <div className="text-xs font-black uppercase text-white tracking-wider mb-0.5">Offline Nativo</div>
+                                                    <div className="text-[11px] text-slate-400 font-medium">Funciona autónomamente en terreno sin internet.</div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-4 border-t border-white/10">
+                                    {/* Action Buttons Bar */}
+                                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-6 border-t border-white/10">
                                         <a
                                             href="https://drive.google.com/file/d/1P0wetvbgd6z0lozTPXyqPto28rZ9yEqB/view?usp=sharing"
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="bg-gradient-to-r from-purple-500 via-indigo-600 to-cyan-500 hover:from-purple-600 hover:to-cyan-600 text-white font-black px-8 py-4.5 rounded-2xl shadow-xl shadow-purple-500/25 transition-all transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-3 text-base text-center"
+                                            className="bg-gradient-to-r from-purple-500 via-indigo-600 to-cyan-500 hover:from-purple-600 hover:to-cyan-600 text-white font-black px-9 py-5 rounded-2xl shadow-2xl shadow-purple-500/30 transition-all transform hover:scale-[1.03] active:scale-95 flex items-center justify-center gap-3 text-base text-center group/btn"
                                         >
-                                            <DownloadCloud size={22} />
-                                            <span>Descargar ATSIT Finanzas (Windows)</span>
+                                            <DownloadCloud size={24} className="group-hover/btn:translate-y-0.5 transition-transform" />
+                                            <span>Descargar ATSIT Finanzas para Windows (.exe)</span>
                                         </a>
                                         <Link
                                             href="/proyectos/finanza-facil"
-                                            className="bg-white/10 hover:bg-white/20 text-white font-bold px-6 py-4.5 rounded-2xl text-center transition-all text-sm flex items-center justify-center gap-2"
+                                            className="bg-white/10 hover:bg-white/20 text-white font-bold px-7 py-5 rounded-2xl text-center transition-all text-sm flex items-center justify-center gap-2 border border-white/10"
                                         >
-                                            Ver Detalles <ArrowRight size={16} />
+                                            Ver Ficha Técnica <ArrowRight size={16} />
                                         </Link>
                                     </div>
+                                    <p className="text-[11px] text-slate-400 mt-4 text-center sm:text-left font-medium">
+                                        * Instalador oficial verificado (.exe). 15 días de prueba gratuita con todas las funciones habilitadas.
+                                    </p>
                                 </div>
                             </div>
                         </motion.div>
