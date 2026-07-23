@@ -241,15 +241,15 @@ export default function Home() {
                             />
                             <ProjectCard
                                 id="finanza-facil"
-                                title="Finanza Fácil & Libertad"
-                                desc="Plataforma de gestión financiera personal potenciada por voz, diseñada para eliminar la fricción y maximizar la libertad financiera."
-                                tags={["Voice NLP", "Fintech", "Cloud"]}
+                                title="ATSIT Finanzas"
+                                desc="Nuestra primera app descargable para Windows. Plataforma de gestión financiera personal potenciada por voz, diseñada para eliminar la fricción y maximizar la libertad financiera."
+                                tags={["Voice NLP", "Fintech", "Windows App"]}
                                 icon={<TrendingUp size={24} />}
                                 color="purple"
                                 image="/projects/finanza-facil.png"
                                 href="/proyectos/finanza-facil"
                                 downloadLink="https://drive.google.com/file/d/1P0wetvbgd6z0lozTPXyqPto28rZ9yEqB/view?usp=sharing"
-                                downloadText="Descargar App Windows"
+                                downloadText="Descargar ATSIT Finanzas"
                                 trialBadge="15 Días de Prueba"
                                 osBadge="Solo Windows"
                                 isFeaturedDownload={true}
@@ -376,7 +376,7 @@ export default function Home() {
                             <div className="grid lg:grid-cols-12 gap-10 items-center">
                                 <div className="lg:col-span-5 relative">
                                     <div className="relative rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
-                                        <img src="/projects/finanza-facil.png" alt="Finanza Fácil App Desktop" className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-700" />
+                                        <img src="/projects/finanza-facil.png" alt="ATSIT Finanzas App Desktop" className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-700" />
                                         <div className="absolute top-4 left-4 flex flex-wrap gap-2">
                                             <span className="bg-amber-500 text-slate-950 font-black text-[10px] uppercase tracking-widest px-3 py-1 rounded-full shadow-lg flex items-center gap-1">
                                                 <Clock size={12} /> Prueba 15 Días
@@ -391,13 +391,13 @@ export default function Home() {
                                 <div className="lg:col-span-7 flex flex-col justify-between">
                                     <div>
                                         <div className="inline-flex items-center gap-2 text-purple-400 text-xs font-bold uppercase tracking-widest mb-3">
-                                            <Sparkles size={14} className="text-purple-400" /> App Destacada de Escritorio
+                                            <Sparkles size={14} className="text-purple-400" /> 🚀 Primera App Descargable para Windows
                                         </div>
                                         <h3 className="text-3xl md:text-5xl font-black mb-4 tracking-tight text-white">
-                                            Finanza Fácil & Libertad
+                                            ATSIT Finanzas
                                         </h3>
                                         <p className="text-slate-300 text-base md:text-lg font-medium leading-relaxed mb-6">
-                                            Aplicación de escritorio para la gestión financiera personal y empresarial. Incorpora comandos de voz NLP, sincronización de cuotas, indicadores de libertad financiera y reportes avanzados.
+                                            Nuestra primera aplicación nativa de escritorio para Windows. Diseñada para la gestión financiera personal y empresarial, incorpora comandos de voz NLP, control de cuotas y métricas avanzadas de libertad financiera.
                                         </p>
 
                                         <div className="grid sm:grid-cols-2 gap-4 mb-8">
@@ -411,7 +411,7 @@ export default function Home() {
                                             <div className="flex items-center gap-3 bg-white/5 border border-white/10 p-4 rounded-2xl">
                                                 <Monitor className="text-cyan-400 shrink-0" size={22} />
                                                 <div>
-                                                    <div className="text-xs font-black uppercase text-white">Exclusivo para Windows</div>
+                                                    <div className="text-xs font-black uppercase text-white">Primera App para Windows</div>
                                                     <div className="text-[11px] text-slate-400 font-medium">Compatible con Windows 10/11</div>
                                                 </div>
                                             </div>
@@ -426,7 +426,7 @@ export default function Home() {
                                             className="bg-gradient-to-r from-purple-500 via-indigo-600 to-cyan-500 hover:from-purple-600 hover:to-cyan-600 text-white font-black px-8 py-4.5 rounded-2xl shadow-xl shadow-purple-500/25 transition-all transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-3 text-base text-center"
                                         >
                                             <DownloadCloud size={22} />
-                                            <span>Descargar App Windows (15 días gratis)</span>
+                                            <span>Descargar ATSIT Finanzas (Windows)</span>
                                         </a>
                                         <Link
                                             href="/proyectos/finanza-facil"

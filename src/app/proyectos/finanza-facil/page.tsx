@@ -28,17 +28,17 @@ export default function FinanzaFacilDetail() {
                             animate={{ opacity: 1, x: 0 }}
                         >
                             <span className="inline-block px-4 py-1.5 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 text-[10px] font-bold uppercase tracking-widest mb-6">
-                                Fintech & Voice AI
+                                🚀 Primera App Descargable para Windows
                             </span>
                             <h1 className="text-6xl font-black tracking-tighter mb-8 leading-tight">
-                                Finanza <br />
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-indigo-500">Fácil & Libertad</span>
+                                ATSIT <br />
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-indigo-500">Finanzas</span>
                             </h1>
                             <p className="text-xl text-slate-300 font-medium leading-relaxed mb-8">
-                                Una plataforma disruptiva que transforma la gestión financiera personal mediante comandos de voz y algoritmos de libertad financiera, eliminando la fricción del registro tradicional.
+                                Nuestra primera aplicación de escritorio ejecutable para Windows. Transforma la gestión financiera personal y empresarial mediante comandos de voz y algoritmos de libertad financiera.
                             </p>
                             <div className="flex flex-wrap gap-3 mb-8">
-                                {["Next.js", "Prisma", "Voice NLP", "PostgreSQL", "Tailwind"].map(tag => (
+                                {["Windows App", "Next.js", "Prisma", "Voice NLP", "PostgreSQL"].map(tag => (
                                     <span key={tag} className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-slate-300 text-xs font-bold uppercase tracking-widest">
                                         {tag}
                                     </span>
@@ -53,12 +53,12 @@ export default function FinanzaFacilDetail() {
                                         <Clock size={12} /> Prueba Gratis 15 Días
                                     </span>
                                     <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 text-[10px] font-black uppercase tracking-wider">
-                                        <Smartphone size={12} className="rotate-90" /> Exclusivo Windows
+                                        <Smartphone size={12} className="rotate-90" /> Solo para Windows
                                     </span>
                                 </div>
-                                <h3 className="text-2xl font-black text-white mb-2">Descargar Aplicación de Escritorio</h3>
+                                <h3 className="text-2xl font-black text-white mb-2">Descargar ATSIT Finanzas (Desktop)</h3>
                                 <p className="text-slate-300 text-sm font-medium mb-6 leading-relaxed">
-                                    Obtén la versión ejecutable para PC con 15 días de prueba completa. Sin restricciones de funciones durante el periodo de evaluación.
+                                    Obtén el ejecutable directo para Windows con 15 días de evaluación completa sin costo ni restricciones de funciones.
                                 </p>
                                 <a
                                     href="https://drive.google.com/file/d/1P0wetvbgd6z0lozTPXyqPto28rZ9yEqB/view?usp=sharing"
@@ -67,7 +67,7 @@ export default function FinanzaFacilDetail() {
                                     className="w-full sm:w-auto inline-flex items-center justify-center gap-3 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white font-black px-8 py-4 rounded-2xl shadow-xl shadow-purple-500/25 transition-all transform hover:scale-[1.02] active:scale-95 text-base"
                                 >
                                     <Zap size={20} className="fill-white" />
-                                    Descargar App para Windows (Google Drive)
+                                    Descargar ATSIT Finanzas para Windows
                                 </a>
                             </div>
                         </motion.div>
