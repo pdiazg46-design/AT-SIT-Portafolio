@@ -248,7 +248,7 @@ export default function Home() {
                                 color="purple"
                                 image="/projects/atsit-finanzas-desktop.jpg"
                                 href="/proyectos/atsit-finanzas"
-                                downloadLink="https://github.com/pdiazg46-design/ATSIT-Finanzas/releases/download/v1.0.0/ATSIT-Finanzas-Setup-1.0.0.exe"
+                                downloadLink="https://github.com/pdiazg46-design/ATSIT-Finanzas/releases/download/v1.0.0/ATSIT.Finanzas.Setup.1.0.0.exe"
                                 downloadMacLink="https://github.com/pdiazg46-design/ATSIT-Finanzas/releases/download/v1.0.0/ATSIT-Finanzas-Mac-1.0.0.dmg"
                                 downloadText="Descargar Windows (.exe)"
                                 trialBadge="15 Días de Prueba"
@@ -484,7 +484,7 @@ export default function Home() {
                                     {/* Action Buttons Bar */}
                                     <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-6 border-t border-white/10">
                                         <a
-                                            href="https://github.com/pdiazg46-design/ATSIT-Finanzas/releases/download/v1.0.0/ATSIT-Finanzas-Setup-1.0.0.exe"
+                                            href="https://github.com/pdiazg46-design/ATSIT-Finanzas/releases/download/v1.0.0/ATSIT.Finanzas.Setup.1.0.0.exe"
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="bg-gradient-to-r from-purple-500 via-indigo-600 to-blue-600 hover:from-purple-600 hover:to-blue-700 text-white font-black px-6 py-4 rounded-2xl shadow-xl shadow-purple-500/20 transition-all transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 text-sm text-center group/btn"

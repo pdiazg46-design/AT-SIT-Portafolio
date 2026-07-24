@@ -64,7 +64,7 @@ export default function AtsitFinanzasDetail() {
                                 </p>
                                 <div className="flex flex-col sm:flex-row gap-4">
                                     <a
-                                        href="https://github.com/pdiazg46-design/ATSIT-Finanzas/releases/download/v1.0.0/ATSIT-Finanzas-Setup-1.0.0.exe"
+                                        href="https://github.com/pdiazg46-design/ATSIT-Finanzas/releases/download/v1.0.0/ATSIT.Finanzas.Setup.1.0.0.exe"
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="w-full sm:w-auto inline-flex items-center justify-center gap-3 bg-gradient-to-r from-purple-500 via-indigo-600 to-blue-600 hover:from-purple-600 hover:to-blue-700 text-white font-black px-7 py-4 rounded-2xl shadow-xl shadow-purple-500/25 transition-all transform hover:scale-[1.02] active:scale-95 text-sm"
