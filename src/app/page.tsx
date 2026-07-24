@@ -249,7 +249,7 @@ export default function Home() {
                                 image="/projects/atsit-finanzas-desktop.jpg"
                                 href="/proyectos/atsit-finanzas"
                                 downloadLink="https://github.com/pdiazg46-design/ATSIT-Finanzas/releases/download/v1.0.0/ATSIT.Finanzas.Setup.1.0.0.exe"
-                                downloadMacLink="https://github.com/pdiazg46-design/ATSIT-Finanzas/releases/download/v1.0.1/ATSIT-Finanzas-Mac-1.0.0.dmg"
+                                downloadMacLink="https://github.com/pdiazg46-design/ATSIT-Finanzas/releases/download/v1.0.0/ATSIT-Finanzas-Mac-1.0.0.dmg"
                                 downloadText="Descargar Windows (.exe)"
                                 trialBadge="15 Días de Prueba"
                                 osBadge="Windows & macOS"
@@ -493,7 +493,7 @@ export default function Home() {
                                             <span>Descargar Windows (.exe)</span>
                                         </a>
                                         <a
-                                            href="https://github.com/pdiazg46-design/ATSIT-Finanzas/releases/download/v1.0.1/ATSIT-Finanzas-Mac-1.0.0.dmg"
+                                            href="https://github.com/pdiazg46-design/ATSIT-Finanzas/releases/download/v1.0.0/ATSIT-Finanzas-Mac-1.0.0.dmg"
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="bg-gradient-to-r from-slate-700 via-slate-800 to-slate-900 hover:from-slate-800 hover:to-slate-950 text-white border border-white/20 font-black px-6 py-4 rounded-2xl shadow-xl transition-all transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 text-sm text-center group/btn"
