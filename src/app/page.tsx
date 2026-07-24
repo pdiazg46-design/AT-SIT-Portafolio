@@ -961,22 +961,36 @@ function ProjectCard({ title, desc, tags, icon, color, image, href, id, download
                     ))}
                 </div>
                 
-                <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 w-full pointer-events-auto relative z-10 mt-auto pt-2">
+                <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center justify-between gap-2 w-full pointer-events-auto relative z-10 mt-auto pt-2">
                     <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-indigo-600 opacity-100 transform translate-x-0 transition-all group-hover:translate-x-2">
                         Ver Detalles <ArrowRight size={16} />
                     </div>
-                    {downloadLink && downloadLink !== "#" && (
-                        <a
-                            href={downloadLink}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-md hover:shadow-lg transition-all active:scale-95 z-20"
-                            onClick={(e) => e.stopPropagation()}
-                        >
-                            <DownloadCloud size={14} />
-                            <span>{downloadText}</span>
-                        </a>
-                    )}
+                    <div className="flex flex-wrap items-center gap-2">
+                        {downloadLink && downloadLink !== "#" && (
+                            <a
+                                href={downloadLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow-md hover:shadow-lg transition-all active:scale-95 z-20"
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                <DownloadCloud size={14} />
+                                <span>{downloadText || 'Descargar Windows (.exe)'}</span>
+                            </a>
+                        )}
+                        {downloadMacLink && (
+                            <a
+                                href={downloadMacLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-950 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow-md hover:shadow-lg transition-all active:scale-95 z-20 border border-white/10"
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                <DownloadCloud size={14} />
+                                <span>Descargar Mac (.dmg)</span>
+                            </a>
+                        )}
+                    </div>
                 </div>
             </div>
         </motion.div>
