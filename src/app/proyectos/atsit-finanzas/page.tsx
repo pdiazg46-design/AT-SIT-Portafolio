@@ -73,13 +73,13 @@ export default function AtsitFinanzasDetail() {
                                         Descargar Windows (.exe)
                                     </a>
                                     <a
-                                        href="https://github.com/pdiazg46-design/ATSIT-Finanzas/releases/download/v1.0.0/ATSIT-Finanzas-Mac-1.0.0.dmg"
+                                        href="https://github.com/pdiazg46-design/ATSIT-Finanzas/releases/download/v1.0.0/ATSIT-Finanzas-Mac-1.0.0.zip"
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="w-full sm:w-auto inline-flex items-center justify-center gap-3 bg-gradient-to-r from-slate-700 to-slate-900 hover:from-slate-800 hover:to-slate-950 text-white border border-white/20 font-black px-7 py-4 rounded-2xl shadow-xl transition-all transform hover:scale-[1.02] active:scale-95 text-sm"
                                     >
-                                        <DownloadCloud size={18} />
-                                        Descargar Mac (.dmg)
+                                        <DownloadCloud size={20} />
+                                        Descargar Mac (.zip)
                                     </a>
                                 </div>
                             </div>
