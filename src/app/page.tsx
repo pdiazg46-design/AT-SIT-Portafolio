@@ -890,7 +890,7 @@ export default function Home() {
     );
 }
 
-function ProjectCard({ title, desc, tags, icon, color, image, href, id, downloadLink, downloadText = "App Web", trialBadge, osBadge, isFeaturedDownload }: any) {
+function ProjectCard({ title, desc, tags, icon, color, image, href, id, downloadLink, downloadMacLink, downloadText = "App Web", trialBadge, osBadge, isFeaturedDownload }: any) {
     const colors: any = {
         indigo: "text-indigo-600 bg-indigo-50 border-indigo-100 group-hover:bg-indigo-600 group-hover:text-white",
         purple: "text-violet-600 bg-violet-50 border-violet-100 group-hover:bg-violet-600 group-hover:text-white",
