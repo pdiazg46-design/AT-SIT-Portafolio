@@ -253,7 +253,7 @@ export default function Home() {
                                 downloadText="Descargar Windows (.exe)"
                                 trialBadge="15 Días de Prueba"
                                 osBadge="Windows & macOS"
-                                updateBadge="Actualizado: 01/08/2026 (08:34 hrs)"
+                                updateBadge="v1.0.0 — Actualizado: 01/08/2026 (08:34 hrs)"
                                 isFeaturedDownload={true}
                             />
                             <ProjectCard
@@ -405,6 +405,9 @@ export default function Home() {
                                             <span className="bg-cyan-400 text-slate-950 font-black text-[10px] uppercase tracking-widest px-3.5 py-1.5 rounded-full shadow-xl flex items-center gap-1.5">
                                                 <Monitor size={12} /> Windows & macOS
                                             </span>
+                                            <span className="bg-emerald-400 text-slate-950 font-black text-[10px] uppercase tracking-widest px-3.5 py-1.5 rounded-full shadow-xl flex items-center gap-1.5">
+                                                <CheckCircle2 size={12} /> v1.0.0 — Actualizado 01/08/2026 (08:34 hrs)
+                                            </span>
                                         </div>
                                     </div>
 
@@ -509,8 +512,9 @@ export default function Home() {
                                             Ficha Técnica <ArrowRight size={16} />
                                         </Link>
                                     </div>
-                                    <p className="text-[11px] text-slate-400 mt-4 text-center sm:text-left font-medium">
-                                        * Instaladores oficiales verificados desde GitHub Releases (.exe / .dmg). 15 días de prueba gratuita.
+                                    <p className="text-[11px] text-emerald-300 mt-4 text-center sm:text-left font-medium flex items-center gap-1.5 bg-emerald-950/40 border border-emerald-500/30 p-2.5 rounded-xl">
+                                        <ShieldCheck size={16} className="text-emerald-400 shrink-0" />
+                                        <span><strong>Versión v1.0.0 Publicada:</strong> 01/08/2026 (08:34 hrs) — Incluye selección obligatoria de Tipo de Movimiento.</span>
                                     </p>
                                 </div>
                             </div>
