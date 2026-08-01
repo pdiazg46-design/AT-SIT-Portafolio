@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowLeft, BarChart3, ShieldCheck, Database, Zap, Clock, DownloadCloud, FileText, Users, Building2, Monitor } from "lucide-react";
+import { ArrowLeft, BarChart3, ShieldCheck, Database, Zap, Clock, DownloadCloud, FileText, Users, Building2, Monitor, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 
 export default function AtsitFinanzasDetail() {
@@ -57,12 +57,15 @@ export default function AtsitFinanzasDetail() {
                                     <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 text-[10px] font-black uppercase tracking-wider">
                                         <Monitor size={12} /> Windows & macOS
                                     </span>
+                                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-[10px] font-black uppercase tracking-wider">
+                                        <CheckCircle2 size={12} /> Actualizado: 01 Ago 2026 (08:34 hrs)
+                                    </span>
                                 </div>
                                 <h3 className="text-2xl font-black text-white mb-2">Descargar ATSIT Finanzas</h3>
                                 <p className="text-slate-300 text-sm font-medium mb-6 leading-relaxed">
                                     Elige la versión adecuada para tu sistema operativo. Incluye 15 días de prueba completa sin restricciones.
                                 </p>
-                                <div className="flex flex-col sm:flex-row gap-4">
+                                <div className="flex flex-col sm:flex-row gap-4 mb-4">
                                     <a
                                         href="https://github.com/pdiazg46-design/ATSIT-Finanzas/releases/download/v1.0.0/ATSIT.Finanzas.Setup.1.0.0.exe"
                                         target="_blank"
@@ -81,6 +84,10 @@ export default function AtsitFinanzasDetail() {
                                         <DownloadCloud size={20} />
                                         Descargar Mac (.zip)
                                     </a>
+                                </div>
+                                <div className="pt-3 border-t border-white/10 flex items-center gap-2 text-xs text-slate-300 font-medium">
+                                    <ShieldCheck size={16} className="text-emerald-400 shrink-0" />
+                                    <span><strong>Última Versión Publicada en Nube:</strong> v1.0.0 (01/08/2026 08:34 hrs) — Selección obligatoria de Tipo de Movimiento.</span>
                                 </div>
                             </div>
                         </motion.div>

@@ -253,6 +253,7 @@ export default function Home() {
                                 downloadText="Descargar Windows (.exe)"
                                 trialBadge="15 Días de Prueba"
                                 osBadge="Windows & macOS"
+                                updateBadge="Actualizado: 01/08/2026 (08:34 hrs)"
                                 isFeaturedDownload={true}
                             />
                             <ProjectCard
@@ -890,7 +891,7 @@ export default function Home() {
     );
 }
 
-function ProjectCard({ title, desc, tags, icon, color, image, href, id, downloadLink, downloadMacLink, downloadText = "App Web", trialBadge, osBadge, isFeaturedDownload }: any) {
+function ProjectCard({ title, desc, tags, icon, color, image, href, id, downloadLink, downloadMacLink, downloadText = "App Web", trialBadge, osBadge, updateBadge, isFeaturedDownload }: any) {
     const colors: any = {
         indigo: "text-indigo-600 bg-indigo-50 border-indigo-100 group-hover:bg-indigo-600 group-hover:text-white",
         purple: "text-violet-600 bg-violet-50 border-violet-100 group-hover:bg-violet-600 group-hover:text-white",
@@ -941,6 +942,11 @@ function ProjectCard({ title, desc, tags, icon, color, image, href, id, download
                         {trialBadge && (
                             <span className="inline-flex items-center gap-1 bg-amber-50 border border-amber-200 text-amber-700 text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-lg">
                                 <Clock size={12} /> {trialBadge}
+                            </span>
+                        )}
+                        {updateBadge && (
+                            <span className="inline-flex items-center gap-1 bg-emerald-50 border border-emerald-300 text-emerald-700 text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-lg shadow-sm">
+                                <CheckCircle2 size={12} className="text-emerald-600" /> {updateBadge}
                             </span>
                         )}
                     </div>
