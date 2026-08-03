@@ -55,7 +55,7 @@ export default function AtsitFinanzasDetail() {
                                         <Clock size={12} /> Prueba Gratis 15 Días
                                     </span>
                                     <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 text-[10px] font-black uppercase tracking-wider">
-                                        <Monitor size={12} /> Windows & macOS
+                                        <Monitor size={12} /> Windows PC
                                     </span>
                                     <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-[10px] font-black uppercase tracking-wider">
                                         <CheckCircle2 size={12} /> v1.0.5 — Actualizado: 02/08/2026
@@ -63,7 +63,7 @@ export default function AtsitFinanzasDetail() {
                                 </div>
                                 <h3 className="text-2xl font-black text-white mb-2">Descargar ATSIT Finanzas</h3>
                                 <p className="text-slate-300 text-sm font-medium mb-6 leading-relaxed">
-                                    Elige la versión adecuada para tu sistema operativo. Incluye 15 días de prueba completa sin restricciones.
+                                    Instala la versión oficial para Windows. Incluye 15 días de prueba completa sin restricciones.
                                 </p>
                                 <div className="flex flex-col sm:flex-row gap-4 mb-4">
                                     <a
@@ -75,19 +75,10 @@ export default function AtsitFinanzasDetail() {
                                         <Zap size={18} className="fill-white" />
                                         Descargar Windows (.exe)
                                     </a>
-                                    <a
-                                        href="https://github.com/pdiazg46-design/ATSIT-Finanzas/releases/download/v1.0.5/ATSIT-Finanzas-Mac-Intel.dmg"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="w-full sm:w-auto inline-flex items-center justify-center gap-3 bg-gradient-to-r from-slate-700 to-slate-900 hover:from-slate-800 hover:to-slate-950 text-white border border-white/20 font-black px-7 py-4 rounded-2xl shadow-xl transition-all transform hover:scale-[1.02] active:scale-95 text-sm"
-                                    >
-                                        <DownloadCloud size={20} />
-                                        Descargar Mac (.dmg)
-                                    </a>
                                 </div>
                                 <div className="pt-3 border-t border-white/10 flex items-center gap-2 text-xs text-slate-300 font-medium">
                                     <ShieldCheck size={16} className="text-emerald-400 shrink-0" />
-                                    <span><strong>Última Versión Publicada en Nube:</strong> v1.0.5 (02/08/2026) — Servidor embebido directo sin subprocesos.</span>
+                                    <span><strong>Última Versión Publicada en Nube:</strong> v1.0.5 (02/08/2026) — Instalador oficial exclusivo para Windows.</span>
                                 </div>
                             </div>
                         </motion.div>

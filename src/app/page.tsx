@@ -242,17 +242,16 @@ export default function Home() {
                             <ProjectCard
                                 id="atsit-finanzas"
                                 title="ATSIT Finanzas"
-                                desc="Nuestra primera app descargable para Windows y macOS. Sistema integral para la gestión financiera de obras y proyectos, control de presupuestos, seguimiento de tareas, desglose de Neto + IVA (19%) e informes en PDF y Excel."
-                                tags={["Gestión de Obras", "Control de IVA", "Windows & Mac"]}
+                                desc="Nuestra primera app descargable para Windows. Sistema integral para la gestión financiera de obras y proyectos, control de presupuestos, seguimiento de tareas, desglose de Neto + IVA (19%) e informes en PDF y Excel."
+                                tags={["Gestión de Obras", "Control de IVA", "Windows Nativo"]}
                                 icon={<TrendingUp size={24} />}
                                 color="purple"
                                 image="/projects/atsit-finanzas-desktop.jpg"
                                 href="/proyectos/atsit-finanzas"
                                 downloadLink="https://github.com/pdiazg46-design/ATSIT-Finanzas/releases/download/v1.0.5/ATSIT-Finanzas-Setup-1.0.5.exe"
-                                downloadMacLink="https://github.com/pdiazg46-design/ATSIT-Finanzas/releases/download/v1.0.5/ATSIT-Finanzas-Mac-Intel.dmg"
                                 downloadText="Descargar Windows (.exe)"
                                 trialBadge="15 Días de Prueba"
-                                osBadge="Windows & macOS"
+                                osBadge="Windows Nativo"
                                 updateBadge="v1.0.5 — Actualizado: 02/08/2026"
                                 isFeaturedDownload={true}
                             />
@@ -403,10 +402,10 @@ export default function Home() {
                                                 <Clock size={12} /> Prueba Gratis 15 Días
                                             </span>
                                             <span className="bg-cyan-400 text-slate-950 font-black text-[10px] uppercase tracking-widest px-3.5 py-1.5 rounded-full shadow-xl flex items-center gap-1.5">
-                                                <Monitor size={12} /> Windows & macOS
+                                                <Monitor size={12} /> Windows PC
                                             </span>
                                             <span className="bg-emerald-400 text-slate-950 font-black text-[10px] uppercase tracking-widest px-3.5 py-1.5 rounded-full shadow-xl flex items-center gap-1.5">
-                                                <CheckCircle2 size={12} /> v1.0.3 — Actualizado 01/08/2026
+                                                <CheckCircle2 size={12} /> v1.0.5 — Actualizado 02/08/2026
                                             </span>
                                         </div>
                                     </div>
@@ -414,7 +413,7 @@ export default function Home() {
                                     {/* Tech Quick Badges */}
                                     <div className="mt-6 flex flex-wrap justify-center gap-2">
                                         <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 bg-white/5 border border-white/10 px-3 py-1 rounded-xl">
-                                            Electron Multi-Platform
+                                            Electron Nativo
                                         </span>
                                         <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 bg-white/5 border border-white/10 px-3 py-1 rounded-xl">
                                             SQLite Offline
@@ -438,7 +437,7 @@ export default function Home() {
                                         </h3>
 
                                         <p className="text-slate-300 text-base md:text-lg font-medium leading-relaxed mb-8">
-                                            Nuestra solución insignia de escritorio para el control integral de obras, presupuestos y finanzas. Disponible para Windows y macOS, diseñada para trabajar 100% offline o sincronizada.
+                                            Nuestra solución insignia de escritorio para el control integral de obras, presupuestos y finanzas. Disponible para Windows, diseñada para trabajar 100% offline o sincronizada.
                                         </p>
 
                                         {/* 4 Feature Cards Grid */}
@@ -491,19 +490,10 @@ export default function Home() {
                                             href="https://github.com/pdiazg46-design/ATSIT-Finanzas/releases/download/v1.0.5/ATSIT-Finanzas-Setup-1.0.5.exe"
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="bg-gradient-to-r from-purple-500 via-indigo-600 to-blue-600 hover:from-purple-600 hover:to-blue-700 text-white font-black px-6 py-4 rounded-2xl shadow-xl shadow-purple-500/20 transition-all transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 text-sm text-center group/btn"
+                                            className="bg-gradient-to-r from-purple-500 via-indigo-600 to-blue-600 hover:from-purple-600 hover:to-blue-700 text-white font-black px-8 py-4 rounded-2xl shadow-xl shadow-purple-500/20 transition-all transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 text-sm text-center group/btn"
                                         >
                                             <DownloadCloud size={20} className="group-hover/btn:translate-y-0.5 transition-transform" />
                                             <span>Descargar Windows (.exe)</span>
-                                        </a>
-                                        <a
-                                            href="https://github.com/pdiazg46-design/ATSIT-Finanzas/releases/download/v1.0.5/ATSIT-Finanzas-Mac-Intel.dmg"
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="bg-gradient-to-r from-slate-700 via-slate-800 to-slate-900 hover:from-slate-800 hover:to-slate-950 text-white border border-white/20 font-black px-6 py-4 rounded-2xl shadow-xl transition-all transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 text-sm text-center group/btn"
-                                        >
-                                            <DownloadCloud size={20} className="group-hover/btn:translate-y-0.5 transition-transform" />
-                                            <span>Descargar Mac (.dmg)</span>
                                         </a>
                                         <Link
                                             href="/proyectos/atsit-finanzas"
@@ -514,7 +504,7 @@ export default function Home() {
                                     </div>
                                     <p className="text-[11px] text-emerald-300 mt-4 text-center sm:text-left font-medium flex items-center gap-1.5 bg-emerald-950/40 border border-emerald-500/30 p-2.5 rounded-xl">
                                         <ShieldCheck size={16} className="text-emerald-400 shrink-0" />
-                                        <span><strong>Versión v1.0.5 Publicada:</strong> 02/08/2026 — Servidor Next.js embebido directamente en el proceso de Electron.</span>
+                                        <span><strong>Versión v1.0.5 Publicada:</strong> 02/08/2026 — Instalador oficial exclusivo para Windows.</span>
                                     </p>
                                 </div>
                             </div>
