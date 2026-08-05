@@ -242,17 +242,17 @@ export default function Home() {
                             <ProjectCard
                                 id="atsit-finanzas"
                                 title="ATSIT Finanzas"
-                                desc="Nuestra primera app descargable para Windows. Sistema integral para la gestión financiera de obras y proyectos, control de presupuestos, seguimiento de tareas, desglose de Neto + IVA (19%) e informes en PDF y Excel."
-                                tags={["Gestión de Obras", "Control de IVA", "Windows Nativo"]}
+                                desc="Nuestra primera app descargable para Windows. Sistema integral para la gestión financiera de obras y proyectos, control de presupuestos, seguimiento de tareas, desglose de IVA/IGV y Retenciones por País e informes en PDF y Excel."
+                                tags={["Gestión de Obras", "Impuestos Sudamérica", "Windows Nativo"]}
                                 icon={<TrendingUp size={24} />}
                                 color="purple"
                                 image="/projects/atsit-finanzas-desktop.jpg"
                                 href="/proyectos/atsit-finanzas"
-                                downloadLink="https://github.com/pdiazg46-design/ATSIT-Finanzas/releases/download/v1.0.5/ATSIT-Finanzas-Setup-1.0.5.exe"
+                                downloadLink="https://github.com/pdiazg46-design/ATSIT-Finanzas/releases/download/v1.1.0/ATSIT-Finanzas-Setup-1.1.0.exe"
                                 downloadText="Descargar Windows (.exe)"
                                 trialBadge="15 Días de Prueba"
                                 osBadge="Windows Nativo"
-                                updateBadge="v1.0.5 — Actualizado: 02/08/2026"
+                                updateBadge="v1.1.0 — Actualizado: 05/08/2026"
                                 isFeaturedDownload={true}
                             />
                             <ProjectCard
