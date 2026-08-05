@@ -264,7 +264,6 @@ export default function Home() {
                                 color="purple"
                                 image="/projects/finanza-facil.png"
                                 href="/proyectos/finanza-facil"
-                                downloadLink="https://at-sit-final.vercel.app/"
                             />
                             <ProjectCard
                                 id="emprende"
@@ -275,7 +274,6 @@ export default function Home() {
                                 color="cyan"
                                 image="/projects/emprende.png"
                                 href="/proyectos/emprende"
-                                downloadLink="https://emprende-atsit.vercel.app/"
                             />
                             <ProjectCard
                                 id="easy-management"
@@ -286,7 +284,6 @@ export default function Home() {
                                 color="indigo"
                                 image="/projects/easy-management.png"
                                 href="/proyectos/easy-management"
-                                downloadLink="https://easymanagement-ai.vercel.app/"
                             />
                             <ProjectCard
                                 id="miperai"
@@ -297,7 +294,6 @@ export default function Home() {
                                 color="purple"
                                 image="/projects/miperai.png"
                                 href="/proyectos/miperai"
-                                downloadLink="https://miper-ai.vercel.app/"
                             />
                             <ProjectCard
                                 id="gpsit"
@@ -348,7 +344,6 @@ export default function Home() {
                                 color="indigo"
                                 image="/projects/moviles-diaz.png"
                                 href="/proyectos/moviles-diaz"
-                                downloadLink="https://movilesdiaz.atsit.cl"
                             />
                         </div>
                     </div>
@@ -885,7 +880,7 @@ export default function Home() {
     );
 }
 
-function ProjectCard({ title, desc, tags, icon, color, image, href, id, downloadLink, downloadMacLink, downloadText = "App Web", trialBadge, osBadge, updateBadge, isFeaturedDownload }: any) {
+function ProjectCard({ title, desc, tags, icon, color, image, href, id, downloadLink, downloadMacLink, downloadText = "Descargar Windows (.exe)", trialBadge, osBadge, updateBadge, isFeaturedDownload }: any) {
     const colors: any = {
         indigo: "text-indigo-600 bg-indigo-50 border-indigo-100 group-hover:bg-indigo-600 group-hover:text-white",
         purple: "text-violet-600 bg-violet-50 border-violet-100 group-hover:bg-violet-600 group-hover:text-white",

@@ -46,14 +46,6 @@ export default function FinanzaFacilDetail() {
                                     </span>
                                 ))}
                             </div>
-                            <a
-                                href="https://at-sit-final.vercel.app/"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-3 bg-purple-600 hover:bg-purple-700 text-white font-bold px-8 py-4 rounded-2xl shadow-xl shadow-purple-600/20 transition-all"
-                            >
-                                Acceder a la App Web <Zap size={18} />
-                            </a>
                         </motion.div>
                         <motion.div
                             initial={{ opacity: 0, scale: 0.9 }}
