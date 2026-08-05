@@ -57,6 +57,9 @@ export default function AtsitFinanzasDetail() {
                                     <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 text-[10px] font-black uppercase tracking-wider">
                                         <Monitor size={12} /> Windows PC
                                     </span>
+                                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-500/20 border border-purple-400/40 text-purple-300 text-[10px] font-black uppercase tracking-wider">
+                                        <DownloadCloud size={12} /> +124 Descargas Realizadas
+                                    </span>
                                     <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-[10px] font-black uppercase tracking-wider">
                                         <CheckCircle2 size={12} /> v1.1.0 — Actualizado: 05/08/2026 (Sudamérica)
                                     </span>

@@ -399,6 +399,9 @@ export default function Home() {
                                             <span className="bg-cyan-400 text-slate-950 font-black text-[10px] uppercase tracking-widest px-3.5 py-1.5 rounded-full shadow-xl flex items-center gap-1.5">
                                                 <Monitor size={12} /> Windows PC
                                             </span>
+                                            <span className="bg-purple-600 text-white font-black text-[10px] uppercase tracking-widest px-3.5 py-1.5 rounded-full shadow-xl flex items-center gap-1.5">
+                                                <DownloadCloud size={12} /> +124 Descargas Realizadas
+                                            </span>
                                             <span className="bg-emerald-400 text-slate-950 font-black text-[10px] uppercase tracking-widest px-3.5 py-1.5 rounded-full shadow-xl flex items-center gap-1.5">
                                                 <CheckCircle2 size={12} /> v1.1.0 — Actualizado 05/08/2026 (Sudamérica)
                                             </span>
