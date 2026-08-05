@@ -405,7 +405,7 @@ export default function Home() {
                                                 <Monitor size={12} /> Windows PC
                                             </span>
                                             <span className="bg-emerald-400 text-slate-950 font-black text-[10px] uppercase tracking-widest px-3.5 py-1.5 rounded-full shadow-xl flex items-center gap-1.5">
-                                                <CheckCircle2 size={12} /> v1.0.5 — Actualizado 02/08/2026
+                                                <CheckCircle2 size={12} /> v1.1.0 — Actualizado 05/08/2026 (Sudamérica)
                                             </span>
                                         </div>
                                     </div>
@@ -429,7 +429,7 @@ export default function Home() {
                                     <div>
                                         <div className="inline-flex items-center gap-2 text-purple-400 text-xs font-black uppercase tracking-widest mb-4">
                                             <Sparkles size={16} className="text-purple-400 animate-pulse" />
-                                            🚀 Aplicación Oficial de Escritorio
+                                            🚀 Aplicación Oficial de Escritorio (Multipaís)
                                         </div>
 
                                         <h3 className="text-4xl md:text-6xl font-black mb-6 tracking-tight text-white leading-none">
@@ -437,7 +437,7 @@ export default function Home() {
                                         </h3>
 
                                         <p className="text-slate-300 text-base md:text-lg font-medium leading-relaxed mb-8">
-                                            Nuestra solución insignia de escritorio para el control integral de obras, presupuestos y finanzas. Disponible para Windows, diseñada para trabajar 100% offline o sincronizada.
+                                            Nuestra solución insignia de escritorio para el control integral de obras, presupuestos y finanzas en Sudamérica. Adaptable por país (IVA, Retenciones y Moneda), diseñada para trabajar 100% offline o sincronizada.
                                         </p>
 
                                         {/* 4 Feature Cards Grid */}
@@ -457,8 +457,8 @@ export default function Home() {
                                                     <ShieldCheck size={20} />
                                                 </div>
                                                 <div>
-                                                    <div className="text-xs font-black uppercase text-white tracking-wider mb-0.5">Gestión de IVA (19%)</div>
-                                                    <div className="text-[11px] text-slate-400 font-medium">Cálculo automático de Débito/Crédito Fiscal y facturas.</div>
+                                                    <div className="text-xs font-black uppercase text-white tracking-wider mb-0.5">Multipaís e Impuestos</div>
+                                                    <div className="text-[11px] text-slate-400 font-medium">Cálculo automático de IVA/IGV y Retenciones por País.</div>
                                                 </div>
                                             </div>
 
@@ -487,7 +487,7 @@ export default function Home() {
                                     {/* Action Buttons Bar */}
                                     <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-6 border-t border-white/10">
                                         <a
-                                            href="https://github.com/pdiazg46-design/ATSIT-Finanzas/releases/download/v1.0.5/ATSIT-Finanzas-Setup-1.0.5.exe"
+                                            href="https://github.com/pdiazg46-design/ATSIT-Finanzas/releases/download/v1.1.0/ATSIT-Finanzas-Setup-1.1.0.exe"
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="bg-gradient-to-r from-purple-500 via-indigo-600 to-blue-600 hover:from-purple-600 hover:to-blue-700 text-white font-black px-8 py-4 rounded-2xl shadow-xl shadow-purple-500/20 transition-all transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 text-sm text-center group/btn"
@@ -504,7 +504,7 @@ export default function Home() {
                                     </div>
                                     <p className="text-[11px] text-emerald-300 mt-4 text-center sm:text-left font-medium flex items-center gap-1.5 bg-emerald-950/40 border border-emerald-500/30 p-2.5 rounded-xl">
                                         <ShieldCheck size={16} className="text-emerald-400 shrink-0" />
-                                        <span><strong>Versión v1.0.5 Publicada:</strong> 02/08/2026 — Instalador oficial exclusivo para Windows.</span>
+                                        <span><strong>Versión v1.1.0 Publicada:</strong> 05/08/2026 — Edición Sudamérica (Instalador ejecutable Windows).</span>
                                     </p>
                                 </div>
                             </div>
