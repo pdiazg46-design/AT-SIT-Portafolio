@@ -63,75 +63,81 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: env(safe-area-inset-top, 10px) 10px calc(env(safe-area-inset-bottom, 12px) + 64px) 10px;
-      font-size: 13px;
+      padding: env(safe-area-inset-top, 12px) 14px calc(env(safe-area-inset-bottom, 16px) + 76px) 14px;
+      font-size: 14.5px;
+      line-height: 1.5;
     }
 
     /* Container - Responsive Mobile & Desktop Layout */
     .app-viewport {
       width: 100%;
-      max-width: 440px;
+      max-width: 480px;
       margin: 0 auto;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 16px;
       transition: max-width 0.25s ease;
     }
 
     /* Desktop Viewport Enhancement */
     @media (min-width: 820px) {
       body {
-        padding: 24px 24px 60px 24px;
+        padding: 28px 32px 70px 32px;
+        font-size: 15.5px;
       }
       .app-viewport {
-        max-width: 1020px;
-        gap: 16px;
+        max-width: 1140px;
+        gap: 20px;
       }
       header.app-header {
-        padding: 6px 12px;
+        padding: 8px 16px;
       }
       .brand-title {
-        font-size: 18px !important;
+        font-size: 20px !important;
       }
       #viewQR.active {
         display: grid !important;
-        grid-template-columns: 370px 1fr !important;
-        gap: 20px !important;
+        grid-template-columns: 420px 1fr !important;
+        gap: 24px !important;
         align-items: start !important;
       }
       .qr-hero-card {
         grid-column: 1;
         position: sticky;
-        top: 20px;
+        top: 24px;
+      }
+      #qrCanvas {
+        width: 290px !important;
+        height: 290px !important;
       }
       .qr-controls-card {
         grid-column: 2;
         display: flex !important;
         flex-direction: column !important;
-        gap: 14px !important;
+        gap: 18px !important;
       }
       .checkbox-list {
         display: grid !important;
-        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)) !important;
-        gap: 8px !important;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+        gap: 10px !important;
         max-height: none !important;
         overflow-y: visible !important;
       }
       .contacts-grid-wrapper {
         display: grid !important;
-        grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)) !important;
-        gap: 12px !important;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)) !important;
+        gap: 16px !important;
       }
       .profiles-bento-layout {
         display: grid !important;
-        grid-template-columns: 340px 1fr !important;
-        gap: 20px !important;
+        grid-template-columns: 380px 1fr !important;
+        gap: 24px !important;
         align-items: start !important;
       }
       nav.bottom-nav {
-        max-width: 480px !important;
-        bottom: 16px !important;
-        padding: 6px 14px !important;
+        max-width: 520px !important;
+        bottom: 20px !important;
+        padding: 8px 16px !important;
       }
     }
 
@@ -340,33 +346,42 @@
       margin-bottom: 8px;
     }
 
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
     .form-label {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--text-muted);
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #f1f5f9;
       display: flex;
       justify-content: space-between;
+      letter-spacing: -0.2px;
     }
 
     .form-input, .form-select, .form-textarea {
       width: 100%;
-      background: rgba(11, 15, 25, 0.7);
-      border: 1px solid rgba(56, 189, 248, 0.2);
-      border-radius: 10px;
-      padding: 7px 11px;
-      font-size: 12.5px;
-      color: var(--text-main);
+      background: rgba(11, 15, 25, 0.85);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 12px;
+      padding: 11px 14px;
+      font-size: 14.5px;
+      font-weight: 500;
+      color: #ffffff;
       outline: none;
       transition: border-color 0.2s, box-shadow 0.2s;
     }
 
     .form-input:focus, .form-select:focus, .form-textarea:focus {
       border-color: var(--accent);
-      box-shadow: 0 0 8px var(--accent-glow);
+      box-shadow: 0 0 10px var(--accent-glow);
     }
 
     .form-textarea {
-      min-height: 56px;
+      min-height: 70px;
       resize: vertical;
     }
 
@@ -376,52 +391,52 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 8px;
+      gap: 12px;
       position: relative;
       overflow: hidden;
     }
 
     .qr-canvas-container {
       background: #ffffff;
-      padding: 8px;
-      border-radius: 16px;
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5), 0 0 18px rgba(56, 189, 248, 0.25);
+      padding: 14px;
+      border-radius: 24px;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6), 0 0 24px rgba(56, 189, 248, 0.3);
       position: relative;
       display: inline-block;
-      margin: 4px 0;
+      margin: 6px 0;
     }
 
     #qrCanvas {
       display: block;
-      width: 175px;
-      height: 175px;
-      border-radius: 6px;
+      width: 250px;
+      height: 250px;
+      border-radius: 8px;
     }
 
     .profile-pill-header {
       display: flex;
       align-items: center;
-      gap: 10px;
-      background: rgba(11, 15, 25, 0.6);
+      gap: 14px;
+      background: rgba(11, 15, 25, 0.75);
       border: 1px solid var(--border-subtle);
-      padding: 6px 12px;
-      border-radius: 30px;
+      padding: 10px 16px;
+      border-radius: 40px;
       width: 100%;
     }
 
     .pill-avatar {
-      width: 34px;
-      height: 34px;
+      width: 48px;
+      height: 48px;
       border-radius: 50%;
       background: linear-gradient(135deg, #0284c7, #818cf8);
       color: #fff;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 14px;
+      font-size: 19px;
       font-weight: 800;
       overflow: hidden;
-      border: 2px solid var(--accent);
+      border: 2.5px solid var(--accent);
       flex-shrink: 0;
     }
 
@@ -438,56 +453,57 @@
     }
 
     .pill-name {
-      font-size: 13.5px;
-      font-weight: 700;
+      font-size: 16.5px;
+      font-weight: 800;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      color: #ffffff;
     }
 
     .pill-role {
-      font-size: 11px;
+      font-size: 13px;
       color: var(--accent);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      font-weight: 600;
     }
 
     /* Modular Presets & Checkboxes */
     .presets-row {
       display: flex;
-      gap: 4px;
+      gap: 6px;
       flex-wrap: wrap;
-      margin-bottom: 8px;
+      margin-bottom: 12px;
     }
 
     .preset-chip {
-      background: rgba(30, 41, 59, 0.7);
+      background: rgba(30, 41, 59, 0.75);
       border: 1px solid var(--border-subtle);
       color: var(--text-muted);
-      font-size: 10px;
+      font-size: 12.5px;
       font-weight: 700;
-      padding: 4px 8px;
-      border-radius: 16px;
+      padding: 7px 12px;
+      border-radius: 20px;
       cursor: pointer;
       transition: all 0.15s ease;
       display: flex;
       align-items: center;
-      gap: 3px;
+      gap: 5px;
     }
 
     .preset-chip:hover, .preset-chip.active {
-      background: rgba(2, 132, 199, 0.35);
+      background: rgba(2, 132, 199, 0.4);
       border-color: var(--accent);
       color: #fff;
+      box-shadow: 0 0 12px var(--accent-glow);
     }
 
     .checkbox-list {
       display: flex;
       flex-direction: column;
-      gap: 6px;
-      max-height: 180px;
-      overflow-y: auto;
+      gap: 8px;
       padding-right: 2px;
     }
 
@@ -495,52 +511,53 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: rgba(11, 15, 25, 0.6);
+      background: rgba(11, 15, 25, 0.7);
       border: 1px solid var(--border-subtle);
-      border-radius: 10px;
-      padding: 7px 10px;
+      border-radius: 12px;
+      padding: 10px 14px;
       cursor: pointer;
       transition: border-color 0.15s, background 0.15s;
     }
 
     .checkbox-item:hover {
       border-color: var(--accent);
-      background: rgba(18, 26, 43, 0.9);
+      background: rgba(18, 26, 43, 0.95);
     }
 
     .checkbox-left {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 12px;
       overflow: hidden;
     }
 
     .checkbox-icon {
-      font-size: 15px;
+      font-size: 18px;
       flex-shrink: 0;
     }
 
     .checkbox-text {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-main);
+      font-size: 14px;
+      font-weight: 700;
+      color: #ffffff;
     }
 
     .checkbox-sub {
-      font-size: 10px;
-      color: var(--text-muted);
+      font-size: 12.5px;
+      color: #94a3b8;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      max-width: 220px;
+      max-width: 280px;
+      font-weight: 500;
     }
 
     .custom-checkbox {
-      width: 16px;
-      height: 16px;
-      border-radius: 4px;
-      border: 1.5px solid var(--border-subtle);
-      background: rgba(11, 15, 25, 0.8);
+      width: 20px;
+      height: 20px;
+      border-radius: 6px;
+      border: 2px solid var(--border-subtle);
+      background: rgba(11, 15, 25, 0.9);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -2248,7 +2265,7 @@
         whatsappUser: '@PatoDiazg',
         phoneWork: '+56 9 9335 1620',
         emailWork: 'pdiaz@atsit.cl',
-        emailPersonal: 'pdiazg46@gmail.com',
+        emailPersonal: '',
         website: 'https://atsit.cl',
         linkedIn: 'https://www.linkedin.com/in/patriciod1/',
         instagram: '@pdiazg37',
@@ -2265,11 +2282,21 @@
         this.activeProfileId = OFFICIAL_PATRICIO_PROFILE.id;
         this.saveAll();
       } else {
-        // Auto-migrate legacy mock profile if it has placeholder number
+        // Auto-migrate legacy mock profile and remove personal email
         const main = this.profiles[0];
-        if (main && (main.phoneMobile === '+56 9 1234 5678' || main.whatsappUser === '@atsit_cl')) {
-          Object.assign(main, OFFICIAL_PATRICIO_PROFILE);
-          this.saveAll();
+        if (main) {
+          if (main.phoneMobile === '+56 9 1234 5678' || main.whatsappUser === '@atsit_cl' || main.emailPersonal) {
+            main.phoneMobile = '+56 9 9335 1620';
+            main.whatsappUser = '@PatoDiazg';
+            main.title = 'Director Ejecutivo / Consultor TI / Fundador';
+            main.emailWork = 'pdiaz@atsit.cl';
+            main.emailPersonal = '';
+            main.linkedIn = 'https://www.linkedin.com/in/patriciod1/';
+            main.instagram = '@pdiazg37';
+            main.tiktok = '@pato.diaz84';
+            main.website = 'https://atsit.cl';
+            this.saveAll();
+          }
         }
         this.activeProfileId = localStorage.getItem(StorageKeys.ACTIVE_PROFILE_ID) || this.profiles[0].id;
       }
