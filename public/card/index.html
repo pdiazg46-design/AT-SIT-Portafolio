@@ -2852,27 +2852,39 @@
       if (saved) {
         try { this.contacts = JSON.parse(saved); } catch (e) { this.contacts = []; }
       }
+
+      const OFFICIAL_ATSIT_CONTACT = {
+        id: 'cont_patricio_atsit',
+        firstName: 'Patricio',
+        lastName: 'Díaz',
+        org: 'ATSIT',
+        title: 'Director Ejecutivo / Consultor TI / Fundador',
+        phoneMobile: '+56 9 9335 1620',
+        whatsappUser: '@PatoDiazg',
+        phoneWork: '+56 9 9335 1620',
+        emailWork: 'pdiaz@atsit.cl',
+        website: 'https://atsit.cl',
+        linkedIn: 'https://www.linkedin.com/in/patriciod1/',
+        instagram: '@pdiazg37',
+        tiktok: '@pato.diaz84',
+        address: 'Santiago, Chile',
+        bio: 'Especialista en arquitectura de software de alta eficiencia, ciberseguridad e inteligencia artificial empresarial.'
+      };
+
       if (!this.contacts || this.contacts.length === 0) {
-        // Sample starter contact
-        this.contacts = [
-          {
-            id: 'cont_1',
-            firstName: 'ATSIT',
-            lastName: 'Soporte',
-            org: 'ATSIT',
-            title: 'Mesa de Ayuda & Consultoría',
-            phoneMobile: '+56 9 1234 5678',
-            whatsappUser: '@atsit_cl',
-            emailWork: 'contacto@atsit.cl',
-            website: 'https://atsit.cl',
-            linkedIn: 'atsit',
-            instagram: '@atsit_cl',
-            tiktok: '@atsit_tech',
-            address: 'Santiago, Chile',
-            bio: 'Canal oficial de soporte y servicios tecnológicos.'
-          }
-        ];
+        this.contacts = [OFFICIAL_ATSIT_CONTACT];
         this.saveAll();
+      } else {
+        // Auto-migrate legacy mock contact (e.g. ATSIT Soporte with 1234 5678)
+        let modified = false;
+        this.contacts = this.contacts.map(c => {
+          if (c.phoneMobile === '+56 9 1234 5678' || c.whatsappUser === '@atsit_cl' || (c.firstName === 'ATSIT' && c.lastName === 'Soporte')) {
+            modified = true;
+            return Object.assign({}, OFFICIAL_ATSIT_CONTACT);
+          }
+          return c;
+        });
+        if (modified) this.saveAll();
       }
       this.renderContacts(this.contacts);
     },
@@ -2883,6 +2895,8 @@
 
     addContact: function(contactObj) {
       if (!contactObj.id) contactObj.id = 'cont_' + Date.now();
+      // Avoid duplicate contacts with same phone or name
+      this.contacts = this.contacts.filter(c => c.id !== contactObj.id && `${c.firstName}_${c.lastName}` !== `${contactObj.firstName}_${contactObj.lastName}`);
       this.contacts.unshift(contactObj);
       this.saveAll();
       this.renderContacts(this.contacts);
@@ -2918,7 +2932,7 @@
         container.innerHTML = `
           <div class="empty-state glass-card">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><circle cx="12" cy="12" r="10"></circle><line x1="8" y1="12" x2="16" y2="12"></line></svg>
-            <p>No se encontraron contactos</p>
+            <p>No se encontraron contactos en tu libreta</p>
           </div>
         `;
         return;
@@ -2928,12 +2942,12 @@
         const card = document.createElement('div');
         card.className = 'bento-contact-card';
 
-        // Action Buttons Row
+        // Action Buttons Row - Real Channels
         let actionsHtml = '';
         if (c.phoneMobile || c.phoneWork) {
-          const tel = c.phoneMobile || c.phoneWork;
+          const tel = (c.phoneMobile || c.phoneWork).replace(/\s+/g, '');
           actionsHtml += `
-            <a href="tel:${Security.sanitizeText(tel)}" class="bento-action-btn call-btn">
+            <a href="tel:${Security.sanitizeText(tel)}" class="bento-action-btn call-btn" title="Llamar">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
               <span>Llamar</span>
             </a>
@@ -2945,7 +2959,7 @@
         if (waSource) {
           const waUrl = Security.getWhatsAppUrl(waSource);
           actionsHtml += `
-            <a href="${waUrl}" target="_blank" class="bento-action-btn wa-btn">
+            <a href="${waUrl}" target="_blank" class="bento-action-btn wa-btn" title="WhatsApp">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
               <span>WhatsApp</span>
             </a>
@@ -2955,7 +2969,7 @@
         if (c.emailWork || c.emailPersonal) {
           const em = c.emailWork || c.emailPersonal;
           actionsHtml += `
-            <a href="mailto:${Security.sanitizeText(em)}" class="bento-action-btn mail-btn">
+            <a href="mailto:${Security.sanitizeText(em)}" class="bento-action-btn mail-btn" title="Enviar Email">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
               <span>Email</span>
             </a>
@@ -2963,11 +2977,22 @@
         }
 
         if (c.linkedIn) {
-          const lUrl = c.linkedIn.startsWith('http') ? c.linkedIn : `https://linkedin.com/in/${c.linkedIn}`;
+          const lUrl = c.linkedIn.startsWith('http') ? c.linkedIn : `https://www.linkedin.com/in/${c.linkedIn}`;
           actionsHtml += `
-            <a href="${Security.sanitizeUrl(lUrl, 'https')}" target="_blank" class="bento-action-btn link-btn">
+            <a href="${Security.sanitizeUrl(lUrl, 'https')}" target="_blank" class="bento-action-btn link-btn" title="LinkedIn">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect width="4" height="12" x="2" y="9"></rect><circle cx="4" cy="4" r="2"></circle></svg>
               <span>LinkedIn</span>
+            </a>
+          `;
+        }
+
+        if (c.instagram) {
+          const iHandle = c.instagram.replace('@', '').trim();
+          const iUrl = c.instagram.startsWith('http') ? c.instagram : `https://instagram.com/${iHandle}`;
+          actionsHtml += `
+            <a href="${Security.sanitizeUrl(iUrl, 'https')}" target="_blank" class="bento-action-btn" style="color: #e1306c;" title="Instagram">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"></line></svg>
+              <span>Instagram</span>
             </a>
           `;
         }
@@ -2975,9 +3000,18 @@
         if (c.tiktok) {
           const tUrl = Security.getTikTokUrl(c.tiktok);
           actionsHtml += `
-            <a href="${tUrl}" target="_blank" class="bento-action-btn" style="color: #ec4899;">
+            <a href="${tUrl}" target="_blank" class="bento-action-btn" style="color: #ec4899;" title="TikTok">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"></path></svg>
               <span>TikTok</span>
+            </a>
+          `;
+        }
+
+        if (c.website) {
+          actionsHtml += `
+            <a href="${Security.sanitizeUrl(c.website, 'https')}" target="_blank" class="bento-action-btn" style="color: var(--accent);" title="Sitio Web">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" x2="22" y1="12" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+              <span>Web</span>
             </a>
           `;
         }
@@ -2985,7 +3019,7 @@
         card.innerHTML = `
           <div class="bento-header">
             <div class="bento-avatar">
-              ${c.avatarData ? `<img src="${c.avatarData}" alt="avatar"/>` : ((c.firstName ? c.firstName[0] : 'U') + (c.lastName ? c.lastName[0] : ''))}
+              ${(c.firstName ? c.firstName[0] : 'P') + (c.lastName ? c.lastName[0] : 'D')}
             </div>
             <div class="bento-details">
               <div class="bento-name">${Security.sanitizeText(c.firstName)} ${Security.sanitizeText(c.lastName || '')}</div>
@@ -3446,12 +3480,18 @@
         address: d.adr || '',
         bio: d.bio || ''
       });
-      alert('✅ Contacto guardado en tu Libreta VentoCard.');
+      alert(`✅ ${d.fn || 'Contacto'} ${d.ln || ''} guardado en tus Contactos VentoCard.`);
+      window.location.hash = '';
+      document.getElementById('recipientView').classList.remove('active');
+      document.querySelector('.bottom-nav').style.display = 'flex';
+      AppNav.switchTab('directory');
     },
 
     startNewApp: function() {
       window.location.hash = '';
-      window.location.reload();
+      document.getElementById('recipientView').classList.remove('active');
+      document.querySelector('.bottom-nav').style.display = 'flex';
+      AppNav.switchTab('profiles');
     }
   };
 
