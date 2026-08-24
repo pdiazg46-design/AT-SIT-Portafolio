@@ -3304,7 +3304,7 @@
         address: d.adr || '',
         bio: d.bio || ''
       });
-      alert('✅ Contacto guardado en tu Libreta SmartCard.');
+      alert('✅ Contacto guardado en tu Libreta VentoCard.');
     },
 
     startNewApp: function() {
@@ -3369,7 +3369,7 @@
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `SmartCard_Backup_${new Date().toISOString().slice(0, 10)}.json`;
+      link.download = `VentoCard_Backup_${new Date().toISOString().slice(0, 10)}.json`;
       link.click();
       URL.revokeObjectURL(url);
     },
@@ -3380,19 +3380,15 @@
       const reader = new FileReader();
       reader.onload = (e) => {
         try {
-          const data = JSON.parse(e.target.result);
-          if (data.profiles && Array.isArray(data.profiles)) {
-            ProfilesModule.profiles = data.profiles;
-            ProfilesModule.activeProfileId = data.profiles[0].id;
-            ProfilesModule.saveAll();
+          const backup = JSON.parse(e.target.result);
+          if (backup.profiles && Array.isArray(backup.profiles)) {
+            localStorage.setItem(StorageKeys.PROFILES, JSON.stringify(backup.profiles));
           }
-          if (data.contacts && Array.isArray(data.contacts)) {
-            DirectoryModule.contacts = data.contacts;
-            DirectoryModule.saveAll();
+          if (backup.contacts && Array.isArray(backup.contacts)) {
+            localStorage.setItem(StorageKeys.CONTACTS, JSON.stringify(backup.contacts));
           }
-          if (data.settings) {
-            this.settings = data.settings;
-            this.save();
+          if (backup.settings) {
+            localStorage.setItem(StorageKeys.SETTINGS, JSON.stringify(backup.settings));
           }
           alert('✅ Respaldo restaurado con éxito.');
           window.location.reload();
@@ -3458,7 +3454,7 @@
     // 3. Register Service Worker for 100% Offline PWA functionality
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('./sw.js').then((reg) => {
-        console.log('✅ SmartCard PWA ServiceWorker registrado:', reg.scope);
+        console.log('✅ VentoCard PWA ServiceWorker registrado:', reg.scope);
       }).catch((err) => {
         console.log('ℹ️ ServiceWorker local info:', err);
       });
