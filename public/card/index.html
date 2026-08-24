@@ -2237,37 +2237,41 @@
       if (saved) {
         try { this.profiles = JSON.parse(saved); } catch (e) { this.profiles = []; }
       }
+      const OFFICIAL_PATRICIO_PROFILE = {
+        id: 'prof_atsit_master',
+        profileTag: 'ATSIT Trabajo',
+        firstName: 'Patricio',
+        lastName: 'Díaz',
+        org: 'ATSIT',
+        title: 'Director Ejecutivo / Consultor TI / Fundador',
+        phoneMobile: '+56 9 9335 1620',
+        whatsappUser: '@PatoDiazg',
+        phoneWork: '+56 9 9335 1620',
+        emailWork: 'pdiaz@atsit.cl',
+        emailPersonal: 'pdiazg46@gmail.com',
+        website: 'https://atsit.cl',
+        linkedIn: 'https://www.linkedin.com/in/patriciod1/',
+        instagram: '@pdiazg37',
+        tiktok: '@pato.diaz84',
+        github: 'pdiazg46-design',
+        address: 'Santiago, Chile',
+        bio: 'Especialista en arquitectura de software de alta eficiencia, ciberseguridad e inteligencia artificial empresarial.',
+        avatarData: '',
+        customFields: []
+      };
+
       if (!this.profiles || this.profiles.length === 0) {
-        const defaultProfile = {
-          id: 'prof_' + Date.now(),
-          profileTag: 'ATSIT Trabajo',
-          firstName: 'Patricio',
-          lastName: 'Díaz',
-          org: 'ATSIT',
-          title: 'Consultor TI & Soluciones',
-          phoneMobile: '+56 9 1234 5678',
-          whatsappUser: '@atsit_cl',
-          phoneWork: '+56 2 2345 6789',
-          emailWork: 'contacto@atsit.cl',
-          emailPersonal: 'patricio@gmail.com',
-          website: 'https://atsit.cl',
-          linkedIn: 'patriciodiaz',
-          instagram: '@atsit_cl',
-          tiktok: '@atsit_tech',
-          github: 'pdiaz',
-          address: 'Santiago, Chile',
-          bio: 'Especialista en arquitectura de software de alta eficiencia y ciberseguridad.',
-          avatarData: '',
-          customFields: [
-            { id: 'cf_threads', label: 'Threads', value: '@atsit_tech' },
-            { id: 'cf_telegram', label: 'Telegram', value: '@atsit_soporte' }
-          ]
-        };
-        this.profiles = [defaultProfile];
-        this.activeProfileId = defaultProfile.id;
+        this.profiles = [OFFICIAL_PATRICIO_PROFILE];
+        this.activeProfileId = OFFICIAL_PATRICIO_PROFILE.id;
         this.saveAll();
       } else {
-        this.activeProfileId = localStorage.getItem(StorageKeys.ACTIVE_PROFILE_ID) || localStorage.getItem('smartcard_active_profile_id') || this.profiles[0].id;
+        // Auto-migrate legacy mock profile if it has placeholder number
+        const main = this.profiles[0];
+        if (main && (main.phoneMobile === '+56 9 1234 5678' || main.whatsappUser === '@atsit_cl')) {
+          Object.assign(main, OFFICIAL_PATRICIO_PROFILE);
+          this.saveAll();
+        }
+        this.activeProfileId = localStorage.getItem(StorageKeys.ACTIVE_PROFILE_ID) || this.profiles[0].id;
       }
       this.renderProfilesList();
       this.populateFormWithActive();
