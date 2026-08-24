@@ -17,10 +17,21 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="VentoCard" />
-  <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png" />
-  <link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png" />
-  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png" />
+  <!-- OpenGraph & Social Preview for WhatsApp, LinkedIn, Telegram & iMessage -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="VentoCard by ATSIT" />
+  <meta property="og:title" content="VentoCard • Tarjeta Digital Ejecutiva ATSIT" />
+  <meta property="og:description" content="Tarjeta de contacto inteligente. Accede a canales directos (Llamar, WhatsApp, LinkedIn, Web) y guarda el contacto en tu teléfono en un clic." />
+  <meta property="og:image" content="https://www.atsit.cl/card/icon-512.png" />
+  <meta property="og:image:secure_url" content="https://www.atsit.cl/card/icon-512.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="512" />
+  <meta property="og:image:height" content="512" />
+  <meta property="og:url" content="https://www.atsit.cl/card/" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="VentoCard • Tarjeta Digital Ejecutiva ATSIT" />
+  <meta name="twitter:description" content="Tarjeta de contacto inteligente by ATSIT." />
+  <meta name="twitter:image" content="https://www.atsit.cl/card/icon-512.png" />
 
   <style>
     :root {
@@ -2875,14 +2886,34 @@
 
     shareViaWhatsApp: function() {
       const p = ProfilesModule.getActiveProfile();
+      if (!p || !p.firstName) {
+        alert('Por favor completa tu perfil en la pestaña Perfiles antes de compartir.');
+        return;
+      }
       const shareData = this.getShareDataObject();
       const encoded = DataCodec.encodePayload(shareData);
       const baseUrl = this.getShareBaseUrl();
       const link = `${baseUrl}#card=${encoded}`;
       const name = `${p.firstName || ''} ${p.lastName || ''}`.trim() || 'Contacto';
-      const org = p.org ? ` (${p.org})` : '';
-      const msg = encodeURIComponent(`👋 Estimado(a), le comparto la tarjeta de contacto ejecutiva de ${name}${org}:\n\n${link}\n\n(Acceso a canales directos y guardado en libreta de contactos en un clic).`);
-      window.open(`https://api.whatsapp.com/send?text=${msg}`, '_blank');
+      const org = p.org ? ` • *${p.org}*` : '';
+      const title = p.title ? `\n💼 *Cargo:* ${p.title}` : '';
+      const phone = p.phoneMobile ? `\n📱 *Móvil:* ${p.phoneMobile}` : '';
+      const email = p.emailWork ? `\n✉️ *Email:* ${p.emailWork}` : '';
+      const web = p.website ? `\n🌐 *Web:* ${p.website}` : '';
+
+      const textMessage = `📇 *Tarjeta Digital Ejecutiva*\n*${name}*${org}${title}${phone}${email}${web}\n\n📲 *Ver Tarjeta Interactiva y Guardar en tu Teléfono:*\n${link}`;
+
+      if (navigator.share && /mobile|android|iphone|ipad/i.test(navigator.userAgent)) {
+        navigator.share({
+          title: `Tarjeta Digital de ${name}`,
+          text: `📇 Tarjeta de Contacto de ${name}${org}${title}`,
+          url: link
+        }).catch(() => {
+          window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(textMessage)}`, '_blank');
+        });
+      } else {
+        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(textMessage)}`, '_blank');
+      }
     },
 
     refresh: function() {
