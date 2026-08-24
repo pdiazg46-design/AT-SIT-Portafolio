@@ -1514,6 +1514,16 @@
 
           <hr style="border: 0; border-top: 1px solid var(--border-subtle);" />
 
+          <h3 style="font-size: 14px; font-weight: 700; color: #f87171;">Mantenimiento & Reinicio</h3>
+          <p style="font-size: 12px; color: var(--text-muted);">
+            ¿Deseas configurar la app desde cero? Puedes restablecer el almacenamiento local de este teléfono en un clic.
+          </p>
+          <button type="button" class="btn btn-secondary btn-sm" style="color: #f87171; border-color: rgba(239, 68, 68, 0.4); width: 100%; font-weight: 700;" onclick="SettingsModule.resetAppData()">
+            🧹 Borrar Datos Locales y Empezar en Blanco
+          </button>
+
+          <hr style="border: 0; border-top: 1px solid var(--border-subtle);" />
+
           <div style="font-size: 11px; color: var(--text-dim); text-align: center; line-height: 1.5;">
             VentoCard v1.2.0 • PWA Autónoma 100% Local<br>
             Ciberseguridad OWASP & Protección de Datos Soberana
@@ -3806,6 +3816,21 @@
         }
       };
       reader.readAsText(file);
+    },
+
+    resetAppData: async function() {
+      const ok = await UIModal.confirm(
+        'Reiniciar VentoCard',
+        '¿Deseas borrar los datos locales de esta app en este dispositivo para iniciar completamente en blanco?',
+        '🧹',
+        'Borrar y Reiniciar',
+        'Cancelar'
+      );
+      if (ok) {
+        localStorage.clear();
+        sessionStorage.clear();
+        window.location.href = window.location.origin + window.location.pathname;
+      }
     }
   };
 
