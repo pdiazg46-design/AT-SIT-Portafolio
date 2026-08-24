@@ -620,14 +620,6 @@ export default function Home() {
                                         >
                                             <DownloadCloud size={16} /> Descargar ZIP
                                         </a>
-                                        <a
-                                            href="https://github.com/pdiazg46-design/Ventocard"
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="bg-white/5 hover:bg-white/10 text-slate-300 font-semibold px-4 py-4 rounded-2xl text-center transition-all text-xs flex items-center justify-center gap-1.5 border border-white/5"
-                                        >
-                                            GitHub
-                                        </a>
                                     </div>
                                     <p className="text-[11px] text-sky-300 mt-4 text-center sm:text-left font-medium flex items-center gap-1.5 bg-sky-950/40 border border-sky-500/30 p-2.5 rounded-xl">
                                         <ShieldCheck size={16} className="text-sky-400 shrink-0" />

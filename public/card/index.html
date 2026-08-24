@@ -2233,7 +2233,7 @@
         linkedIn: 'https://www.linkedin.com/in/patriciod1/',
         instagram: '@pdiazg37',
         tiktok: '@pato.diaz84',
-        github: 'pdiazg46-design',
+        github: '',
         address: 'Santiago, Chile',
         bio: 'Especialista en arquitectura de software de alta eficiencia, ciberseguridad e inteligencia artificial empresarial.',
         avatarData: '',
@@ -2245,15 +2245,16 @@
         this.activeProfileId = OFFICIAL_PATRICIO_PROFILE.id;
         this.saveAll();
       } else {
-        // Auto-migrate legacy mock profile and remove personal email
+        // Auto-migrate legacy mock profile and remove personal email / github
         const main = this.profiles[0];
         if (main) {
-          if (main.phoneMobile === '+56 9 1234 5678' || main.whatsappUser === '@atsit_cl' || main.emailPersonal) {
+          if (main.phoneMobile === '+56 9 1234 5678' || main.whatsappUser === '@atsit_cl' || main.emailPersonal || main.github) {
             main.phoneMobile = '+56 9 9335 1620';
             main.whatsappUser = '@PatoDiazg';
             main.title = 'Director Ejecutivo / Consultor TI / Fundador';
             main.emailWork = 'pdiaz@atsit.cl';
             main.emailPersonal = '';
+            main.github = '';
             main.linkedIn = 'https://www.linkedin.com/in/patriciod1/';
             main.instagram = '@pdiazg37';
             main.tiktok = '@pato.diaz84';
