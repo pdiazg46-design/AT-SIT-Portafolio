@@ -1339,6 +1339,18 @@
     <!-- VIEW 5: SETTINGS & BACKUP (Ajustes)         -->
     <!-- ========================================== -->
     <div id="viewSettings" class="view-panel">
+      <!-- Native PWA Install Card -->
+      <div id="pwaInstallCard" class="glass-card" style="border: 1.5px solid rgba(56, 189, 248, 0.4); background: linear-gradient(135deg, rgba(2, 132, 199, 0.2), rgba(7, 11, 20, 0.9)); margin-bottom: 14px;">
+        <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 12px;">
+          <img src="icon-192.png" alt="VentoCard Logo" style="width: 48px; height: 48px; border-radius: 12px; border: 1.5px solid var(--accent); background: #070b14;" />
+          <div>
+            <div style="font-size: 15px; font-weight: 800; color: #fff;">Instalar VentoCard en tu Celular</div>
+            <div style="font-size: 12px; color: #94a3b8;">Instala la app oficial con el logo ATSIT limpio en tu pantalla</div>
+          </div>
+        </div>
+        <button type="button" class="btn btn-primary" style="width: 100%; font-size: 14px; font-weight: 800; padding: 11px;" onclick="PWAInstallManager.triggerInstall()">📲 Instalar App Oficial en este Celular</button>
+      </div>
+
       <div class="glass-card">
         <h2 class="section-title">Ajustes & Seguridad</h2>
 
@@ -3647,6 +3659,37 @@
   };
 
   // ----------------------------------------------------
+  // 12. NATIVE PWA INSTALL MANAGER (WebAPK Samsung)
+  // ----------------------------------------------------
+  const PWAInstallManager = {
+    deferredPrompt: null,
+
+    init: function() {
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        this.deferredPrompt = e;
+      });
+
+      window.addEventListener('appinstalled', () => {
+        this.deferredPrompt = null;
+        console.log('✅ VentoCard instalada exitosamente como WebAPK');
+      });
+    },
+
+    triggerInstall: async function() {
+      if (this.deferredPrompt) {
+        this.deferredPrompt.prompt();
+        const { outcome } = await this.deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+          this.deferredPrompt = null;
+        }
+      } else {
+        alert('📲 Para instalar la app oficial con icono completo:\n\n1. Toca el menú de 3 puntos (⋮) de tu navegador arriba a la derecha.\n2. Elige "Instalar aplicación" o "Agregar a la pantalla de inicio".\n3. Pulsa "Instalar".');
+      }
+    }
+  };
+
+  // ----------------------------------------------------
   // INITIALIZATION ON DOM READY
   // ----------------------------------------------------
   window.addEventListener('DOMContentLoaded', () => {
@@ -3661,8 +3704,9 @@
     SettingsModule.init();
     AppNav.updateHeader();
 
-    // 3. Initialize Auto-Update Engine
+    // 3. Initialize Auto-Update Engine & Native Installer
     UpdateManager.init();
+    PWAInstallManager.init();
   });
 
   // Listen for hash changes

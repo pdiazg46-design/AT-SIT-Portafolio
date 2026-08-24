@@ -1,36 +1,36 @@
 {
+  "id": "/card/",
   "name": "VentoCard by ATSIT",
   "short_name": "VentoCard",
-  "description": "Tarjeta de contacto digital PWA 100% autónoma, privada y ultra rápida con QR inteligente, vCard 3.0, redes sociales y motor de voz.",
+  "description": "Tarjeta de contacto digital 100% soberana, autónoma y ultra rápida con QR inteligente y vCard 3.0",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
-  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
   "background_color": "#070b14",
   "theme_color": "#070b14",
   "orientation": "portrait",
   "categories": ["business", "productivity", "utilities"],
   "icons": [
     {
-      "src": "./icon-192.png",
+      "src": "icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "./icon-maskable-192.png",
+      "src": "icon-maskable-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "./icon-512.png",
+      "src": "icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "./icon-maskable-512.png",
+      "src": "icon-maskable-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
