@@ -507,6 +507,127 @@ export default function Home() {
                                 </div>
                             </div>
                         </motion.div>
+
+                        {/* Featured VentoCard PWA Card */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 40 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.6, delay: 0.2 }}
+                            className="mt-12 bg-gradient-to-br from-slate-900/90 via-sky-950/40 to-slate-950 border border-sky-500/30 rounded-[3.5rem] p-8 md:p-16 backdrop-blur-2xl relative overflow-hidden shadow-2xl shadow-sky-950/50 hover:border-sky-500/60 transition-all duration-700 group"
+                        >
+                            {/* Ambient Top Glow */}
+                            <div className="absolute top-0 right-0 w-96 h-96 bg-sky-500/10 rounded-full blur-3xl pointer-events-none group-hover:bg-sky-500/20 transition-all duration-700" />
+
+                            <div className="grid lg:grid-cols-12 gap-12 items-center relative z-10">
+                                {/* Visual Image / Mockup Side */}
+                                <div className="lg:col-span-5 relative">
+                                    <div className="relative rounded-[2.5rem] overflow-hidden border border-white/15 shadow-2xl bg-slate-950 p-8 flex flex-col items-center justify-center text-center group-hover:scale-[1.02] transition-transform duration-700">
+                                        <div className="w-20 h-20 rounded-3xl bg-gradient-to-tr from-sky-500 to-indigo-500 p-0.5 shadow-2xl shadow-sky-500/40 mb-4">
+                                            <div className="w-full h-full bg-slate-950 rounded-[22px] flex items-center justify-center">
+                                                <Smartphone size={36} className="text-sky-400" />
+                                            </div>
+                                        </div>
+                                        <h3 className="text-2xl font-black text-white mb-2 tracking-tight">VentoCard <span className="text-sky-400 text-sm font-medium">by ATSIT</span></h3>
+                                        <p className="text-xs text-slate-400 max-w-xs mb-4">Tarjeta de Presentación Digital PWA 100% Autónoma, Offline & Soberana.</p>
+                                        
+                                        <div className="flex flex-wrap justify-center gap-2">
+                                            <span className="bg-sky-400/20 text-sky-300 border border-sky-400/30 text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full">
+                                                PWA Móvil & PC
+                                            </span>
+                                            <span className="bg-emerald-400/20 text-emerald-300 border border-emerald-400/30 text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full">
+                                                vCard 3.0 Nativo
+                                            </span>
+                                            <span className="bg-purple-400/20 text-purple-300 border border-purple-400/30 text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full">
+                                                Voz NLP Local
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    {/* Tech Quick Badges */}
+                                    <div className="mt-6 flex flex-wrap justify-center gap-2">
+                                        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 bg-white/5 border border-white/10 px-3 py-1 rounded-xl">
+                                            Zero Server
+                                        </span>
+                                        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 bg-white/5 border border-white/10 px-3 py-1 rounded-xl">
+                                            OWASP Top 10
+                                        </span>
+                                        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 bg-white/5 border border-white/10 px-3 py-1 rounded-xl">
+                                            WhatsApp Usernames
+                                        </span>
+                                    </div>
+                                </div>
+
+                                {/* Content Side */}
+                                <div className="lg:col-span-7 flex flex-col justify-between">
+                                    <div>
+                                        <div className="inline-flex items-center gap-2 text-sky-400 text-xs font-black uppercase tracking-widest mb-4">
+                                            <Sparkles size={16} className="text-sky-400 animate-pulse" />
+                                            ⚡ Identidad Ejecutiva & Networking Inteligente
+                                        </div>
+                                        <h3 className="text-3xl md:text-4xl font-black text-white mb-4 tracking-tight">
+                                            VentoCard by ATSIT
+                                        </h3>
+                                        <p className="text-slate-300 text-sm md:text-base font-normal leading-relaxed mb-6">
+                                            Crea, comparte y almacena tarjetas digitales ejecutivas con códigos QR de lectura instantánea (0.1s), soporte de WhatsApp usernames, exportación universal vCard 3.0 e inteligencia de comandos por voz en español.
+                                        </p>
+
+                                        {/* Features List */}
+                                        <div className="grid sm:grid-cols-2 gap-4 mb-8">
+                                            <div className="flex items-start gap-3.5 bg-white/5 border border-white/10 p-4 rounded-2xl hover:bg-white/[0.08] transition-colors">
+                                                <div className="p-2.5 rounded-xl bg-sky-500/20 text-sky-300 shrink-0">
+                                                    <ShieldCheck size={20} />
+                                                </div>
+                                                <div>
+                                                    <div className="text-xs font-black uppercase text-white tracking-wider mb-0.5">100% Soberana & Privada</div>
+                                                    <div className="text-[11px] text-slate-400 font-medium">Tus datos nunca salen de tu teléfono. Sin servidores centrales.</div>
+                                                </div>
+                                            </div>
+
+                                            <div className="flex items-start gap-3.5 bg-white/5 border border-white/10 p-4 rounded-2xl hover:bg-white/[0.08] transition-colors">
+                                                <div className="p-2.5 rounded-xl bg-emerald-500/20 text-emerald-300 shrink-0">
+                                                    <Zap size={20} />
+                                                </div>
+                                                <div>
+                                                    <div className="text-xs font-black uppercase text-white tracking-wider mb-0.5">Escaneo en 0.1 Segundos</div>
+                                                    <div className="text-[11px] text-slate-400 font-medium">Cualquier cámara de smartphone lo guarda directo en Contactos.</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Action Buttons Bar */}
+                                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-6 border-t border-white/10">
+                                        <a
+                                            href="/card/"
+                                            className="bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-600 hover:from-sky-600 hover:to-indigo-700 text-white font-black px-8 py-4 rounded-2xl shadow-xl shadow-sky-500/20 transition-all transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 text-sm text-center group/btn"
+                                        >
+                                            <ExternalLink size={20} className="group-hover/btn:translate-x-0.5 transition-transform" />
+                                            <span>Abrir VentoCard en Vivo</span>
+                                        </a>
+                                        <a
+                                            href="/card/VentoCard_ATSIT_Deploy.zip"
+                                            download
+                                            className="bg-white/10 hover:bg-white/20 text-white font-bold px-5 py-4 rounded-2xl text-center transition-all text-sm flex items-center justify-center gap-2 border border-white/10"
+                                        >
+                                            <DownloadCloud size={16} /> Descargar ZIP
+                                        </a>
+                                        <a
+                                            href="https://github.com/pdiazg46-design/Ventocard"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="bg-white/5 hover:bg-white/10 text-slate-300 font-semibold px-4 py-4 rounded-2xl text-center transition-all text-xs flex items-center justify-center gap-1.5 border border-white/5"
+                                        >
+                                            GitHub
+                                        </a>
+                                    </div>
+                                    <p className="text-[11px] text-sky-300 mt-4 text-center sm:text-left font-medium flex items-center gap-1.5 bg-sky-950/40 border border-sky-500/30 p-2.5 rounded-xl">
+                                        <ShieldCheck size={16} className="text-sky-400 shrink-0" />
+                                        <span><strong>Versión v1.0.0 Lista:</strong> PWA instalable en Android y iOS desde tu navegador.</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </motion.div>
                     </div>
                 </section>
 

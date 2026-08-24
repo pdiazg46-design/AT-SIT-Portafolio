@@ -1,0 +1,3478 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>VentoCard • Tarjeta Digital Soberana</title>
+  <meta name="description" content="VentoCard: Tarjeta de presentación digital PWA 100% autónoma, privada y ultra rápida con QR inteligente, vCard 3.0, redes sociales y motor de voz." />
+  
+  <!-- Security Headers & Anti-Tamper Policy -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' blob: data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; connect-src 'self'; object-src 'none'; base-uri 'self';" />
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <meta name="referrer" content="no-referrer" />
+  
+  <!-- PWA & Mobile Meta Tags -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#0284c7" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="VentoCard" />
+  <link rel="icon" type="image/svg+xml" href="icon.svg" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+
+  <style>
+    :root {
+      --bg-dark: #070b14;
+      --bg-card: rgba(18, 26, 43, 0.75);
+      --bg-card-hover: rgba(28, 39, 64, 0.85);
+      --border-subtle: rgba(56, 189, 248, 0.15);
+      --border-focus: #38bdf8;
+      --primary: #0284c7;
+      --primary-hover: #0369a1;
+      --accent: #38bdf8;
+      --accent-glow: rgba(56, 189, 248, 0.4);
+      --accent-purple: #818cf8;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --radius-lg: 20px;
+      --radius-md: 14px;
+      --radius-sm: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(2, 132, 199, 0.18) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(129, 140, 248, 0.15) 0px, transparent 50%);
+      background-attachment: fixed;
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: env(safe-area-inset-top, 10px) 10px calc(env(safe-area-inset-bottom, 12px) + 64px) 10px;
+      font-size: 13px;
+    }
+
+    /* Container - True Mobile Dimensions */
+    .app-viewport {
+      width: 100%;
+      max-width: 385px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* Header */
+    header.app-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 2px 2px;
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-logo svg {
+      width: 24px;
+      height: 24px;
+      filter: drop-shadow(0 0 8px var(--accent-glow));
+    }
+
+    .brand-title {
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+      background: linear-gradient(135deg, #38bdf8, #818cf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-badge {
+      font-size: 9px;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      padding: 2px 6px;
+      border-radius: 12px;
+      background: rgba(56, 189, 248, 0.12);
+      color: var(--accent);
+      border: 1px solid var(--border-subtle);
+    }
+
+    /* Glass Cards */
+    .glass-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 14px 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      transition: all 0.2s ease;
+    }
+
+    /* Navigation Bottom Bar */
+    nav.bottom-nav {
+      position: fixed;
+      bottom: env(safe-area-inset-bottom, 8px);
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 20px);
+      max-width: 365px;
+      background: rgba(13, 20, 36, 0.94);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 24px;
+      padding: 4px 6px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 12px rgba(2, 132, 199, 0.2);
+      z-index: 1000;
+    }
+
+    .nav-item {
+      background: transparent;
+      border: none;
+      color: var(--text-dim);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 6px 10px;
+      border-radius: 16px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+    }
+
+    .nav-item svg {
+      width: 18px;
+      height: 18px;
+      stroke-width: 2;
+      transition: transform 0.2s ease;
+    }
+
+    .nav-item.active {
+      color: #fff;
+      background: linear-gradient(135deg, rgba(2, 132, 199, 0.85), rgba(129, 140, 248, 0.85));
+      box-shadow: 0 3px 10px rgba(2, 132, 199, 0.4);
+    }
+
+    .nav-item.active svg {
+      transform: translateY(-1px) scale(1.06);
+    }
+
+    /* Views */
+    .view-panel {
+      display: none;
+      animation: fadeIn 0.25s ease-out;
+    }
+
+    .view-panel.active {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Typography & Buttons */
+    h2.section-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 9px 14px;
+      font-size: 12.5px;
+      font-weight: 700;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-decoration: none;
+      user-select: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #0284c7, #2563eb);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);
+    }
+
+    .btn-primary:active {
+      transform: scale(0.98);
+      filter: brightness(1.1);
+    }
+
+    .btn-secondary {
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(51, 65, 85, 0.9);
+      border-color: var(--accent);
+    }
+
+    .btn-accent {
+      background: linear-gradient(135deg, #38bdf8, #818cf8);
+      color: #070b14;
+      font-weight: 800;
+      box-shadow: 0 4px 14px rgba(56, 189, 248, 0.35);
+    }
+
+    .btn-outline-danger {
+      background: transparent;
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: var(--danger);
+    }
+
+    .btn-sm {
+      padding: 5px 9px;
+      font-size: 11px;
+      border-radius: 8px;
+    }
+
+    .btn-block {
+      width: 100%;
+    }
+
+    /* Form Fields */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 8px;
+    }
+
+    .form-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      background: rgba(11, 15, 25, 0.7);
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      border-radius: 10px;
+      padding: 7px 11px;
+      font-size: 12.5px;
+      color: var(--text-main);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 8px var(--accent-glow);
+    }
+
+    .form-textarea {
+      min-height: 56px;
+      resize: vertical;
+    }
+
+    /* QR Presentation Area */
+    .qr-hero-card {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .qr-canvas-container {
+      background: #ffffff;
+      padding: 8px;
+      border-radius: 16px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5), 0 0 18px rgba(56, 189, 248, 0.25);
+      position: relative;
+      display: inline-block;
+      margin: 4px 0;
+    }
+
+    #qrCanvas {
+      display: block;
+      width: 175px;
+      height: 175px;
+      border-radius: 6px;
+    }
+
+    .profile-pill-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(11, 15, 25, 0.6);
+      border: 1px solid var(--border-subtle);
+      padding: 6px 12px;
+      border-radius: 30px;
+      width: 100%;
+    }
+
+    .pill-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #0284c7, #818cf8);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 800;
+      overflow: hidden;
+      border: 2px solid var(--accent);
+      flex-shrink: 0;
+    }
+
+    .pill-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .pill-info {
+      text-align: left;
+      flex-grow: 1;
+      overflow: hidden;
+    }
+
+    .pill-name {
+      font-size: 13.5px;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .pill-role {
+      font-size: 11px;
+      color: var(--accent);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Modular Presets & Checkboxes */
+    .presets-row {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+
+    .preset-chip {
+      background: rgba(30, 41, 59, 0.7);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 16px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .preset-chip:hover, .preset-chip.active {
+      background: rgba(2, 132, 199, 0.35);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .checkbox-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 180px;
+      overflow-y: auto;
+      padding-right: 2px;
+    }
+
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(11, 15, 25, 0.6);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 7px 10px;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+    }
+
+    .checkbox-item:hover {
+      border-color: var(--accent);
+      background: rgba(18, 26, 43, 0.9);
+    }
+
+    .checkbox-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow: hidden;
+    }
+
+    .checkbox-icon {
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+
+    .checkbox-text {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .checkbox-sub {
+      font-size: 10px;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 220px;
+    }
+
+    .custom-checkbox {
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
+      border: 1.5px solid var(--border-subtle);
+      background: rgba(11, 15, 25, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.15s;
+    }
+
+    .checkbox-item.checked .custom-checkbox {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .checkbox-item.checked .custom-checkbox::after {
+      content: "✓";
+      color: #070b14;
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    /* Density / Readability Badge */
+    .readability-meter {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 10px;
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--success);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .readability-meter.warn {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--warning);
+      border-color: rgba(245, 158, 11, 0.3);
+    }
+
+    /* Directorio / Rolodex */
+    .search-box-wrapper {
+      position: relative;
+      margin-bottom: 2px;
+    }
+
+    .search-input {
+      padding-left: 32px;
+      padding-right: 68px;
+      font-size: 12px;
+    }
+
+    .search-icon-left {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-dim);
+      pointer-events: none;
+    }
+
+    .voice-search-btn {
+      position: absolute;
+      right: 4px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid var(--border-subtle);
+      color: var(--accent);
+      padding: 4px 8px;
+      border-radius: 16px;
+      font-size: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .voice-search-btn:active {
+      transform: translateY(-50%) scale(0.95);
+    }
+
+    .contacts-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .bento-contact-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 11px 13px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .bento-contact-card:hover {
+      border-color: var(--accent);
+      background: var(--bg-card-hover);
+    }
+
+    .bento-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .bento-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #0284c7, #818cf8);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      font-weight: 800;
+      flex-shrink: 0;
+      border: 1.5px solid var(--border-subtle);
+      overflow: hidden;
+    }
+
+    .bento-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .bento-details {
+      flex-grow: 1;
+      overflow: hidden;
+    }
+
+    .bento-name {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .bento-org {
+      font-size: 11px;
+      color: var(--accent);
+    }
+
+    .bento-title {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    /* Action Buttons Bento Row */
+    .bento-actions-row {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 4px;
+    }
+
+    .bento-action-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      padding: 6px 3px;
+      background: rgba(11, 15, 25, 0.7);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      color: var(--text-main);
+      text-decoration: none;
+      font-size: 9.5px;
+      font-weight: 700;
+      transition: all 0.15s;
+      cursor: pointer;
+    }
+
+    .bento-action-btn svg {
+      width: 15px;
+      height: 15px;
+    }
+
+    .bento-action-btn:hover {
+      border-color: var(--accent);
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    .bento-action-btn.call-btn { color: #34d399; }
+    .bento-action-btn.wa-btn { color: #22c55e; }
+    .bento-action-btn.mail-btn { color: #38bdf8; }
+    .bento-action-btn.link-btn { color: #818cf8; }
+
+    /* Voice Wave Modal */
+    .voice-modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(7, 11, 20, 0.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      z-index: 2000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .voice-modal-backdrop.active {
+      display: flex;
+      animation: fadeIn 0.2s ease-out;
+    }
+
+    .voice-card {
+      background: rgba(18, 26, 43, 0.95);
+      border: 1px solid var(--border-focus);
+      border-radius: 28px;
+      padding: 28px 24px;
+      width: 100%;
+      max-width: 380px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.6), 0 0 30px var(--accent-glow);
+    }
+
+    .voice-mic-icon {
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #0284c7, #818cf8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      box-shadow: 0 0 25px var(--accent-glow);
+      animation: pulseMic 1.5s infinite;
+    }
+
+    @keyframes pulseMic {
+      0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.7); }
+      70% { transform: scale(1.08); box-shadow: 0 0 0 18px rgba(56, 189, 248, 0); }
+      100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(56, 189, 248, 0); }
+    }
+
+    .voice-waves-container {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      height: 36px;
+    }
+
+    .voice-bar {
+      width: 5px;
+      background: var(--accent);
+      border-radius: 4px;
+      animation: waveAnimation 1s ease-in-out infinite alternate;
+    }
+
+    .voice-bar:nth-child(1) { height: 12px; animation-delay: 0.1s; }
+    .voice-bar:nth-child(2) { height: 26px; animation-delay: 0.3s; }
+    .voice-bar:nth-child(3) { height: 34px; animation-delay: 0.2s; }
+    .voice-bar:nth-child(4) { height: 20px; animation-delay: 0.4s; }
+    .voice-bar:nth-child(5) { height: 14px; animation-delay: 0.15s; }
+
+    @keyframes waveAnimation {
+      0% { transform: scaleY(0.4); }
+      100% { transform: scaleY(1.3); }
+    }
+
+    .voice-transcript {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-main);
+      min-height: 24px;
+    }
+
+    .voice-hint {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* Recipient View (Public Landing View) */
+    .recipient-view-wrapper {
+      display: none;
+      flex-direction: column;
+      gap: 16px;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .recipient-view-wrapper.active {
+      display: flex;
+    }
+
+    .viral-banner {
+      background: linear-gradient(135deg, rgba(2, 132, 199, 0.25), rgba(129, 140, 248, 0.25));
+      border: 1px solid var(--accent);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Utilities */
+    .empty-state {
+      text-align: center;
+      padding: 30px 20px;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .empty-state svg {
+      width: 48px;
+      height: 48px;
+      color: var(--text-dim);
+    }
+
+    /* Modal general */
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(7, 11, 20, 0.85);
+      backdrop-filter: blur(10px);
+      z-index: 1500;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal-backdrop.active {
+      display: flex;
+      animation: fadeIn 0.2s ease-out;
+    }
+
+    .modal-box {
+      background: #0f172a;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 440px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Voice Engine Modal -->
+  <div id="voiceModal" class="voice-modal-backdrop">
+    <div class="voice-card">
+      <div class="voice-mic-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+          <line x1="12" x2="12" y1="19" y2="22"></line>
+        </svg>
+      </div>
+      <div class="voice-waves-container">
+        <div class="voice-bar"></div>
+        <div class="voice-bar"></div>
+        <div class="voice-bar"></div>
+        <div class="voice-bar"></div>
+        <div class="voice-bar"></div>
+      </div>
+      <div id="voiceTranscript" class="voice-transcript">Escuchando... Di un comando</div>
+      <p class="voice-hint">
+        Prueba decir:<br>
+        • <em>"Llamar a [Nombre]"</em><br>
+        • <em>"WhatsApp a [Nombre]"</em><br>
+        • <em>"LinkedIn de [Nombre]"</em><br>
+        • <em>"Buscar ATSIT"</em> ó <em>"Mi QR"</em>
+      </p>
+      <button class="btn btn-secondary btn-sm" onclick="VoiceEngine.stopListening()">Cancelar</button>
+    </div>
+  </div>
+
+  <div class="app-viewport">
+    
+    <!-- Top Header -->
+    <header class="app-header">
+      <div class="brand-logo">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect width="18" height="18" x="3" y="3" rx="2"></rect>
+          <path d="M7 7h.01"></path>
+          <path d="M17 7h.01"></path>
+          <path d="M7 17h.01"></path>
+          <path d="M17 17h.01"></path>
+          <path d="M12 12h.01"></path>
+        </svg>
+        <div>
+          <h1 class="brand-title" style="font-size: 16px;">VentoCard <span style="font-size: 11px; font-weight: 500; opacity: 0.8; color: var(--accent);">by ATSIT</span></h1>
+        </div>
+      </div>
+      <div style="display: flex; gap: 8px; align-items: center;">
+        <span class="brand-badge" style="background: rgba(2, 132, 199, 0.2); border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; font-size: 9.5px; font-weight: 800;">
+          ATSIT • CORPORATE ID
+        </span>
+      </div>
+    </header>
+
+    <!-- ========================================== -->
+    <!-- VIEW 1: RECIPIENT PUBLIC CARD (If hash payload) -->
+    <!-- ========================================== -->
+    <div id="recipientView" class="recipient-view-wrapper">
+      <div class="glass-card" style="text-align: center; display: flex; flex-direction: column; align-items: center; gap: 14px;">
+        <div id="recAvatar" class="pill-avatar" style="width: 80px; height: 80px; font-size: 32px; margin-top: 6px;"></div>
+        <div>
+          <h2 id="recName" style="font-size: 22px; font-weight: 800;">Nombre Completo</h2>
+          <p id="recOrg" style="font-size: 14px; color: var(--accent); font-weight: 600;"></p>
+          <p id="recTitle" style="font-size: 13px; color: var(--text-muted);"></p>
+        </div>
+        <p id="recBio" style="font-size: 13px; color: var(--text-muted); max-width: 360px; line-height: 1.4;"></p>
+
+        <!-- Recipient Action Bento Buttons -->
+        <div id="recActionsGrid" class="bento-actions-row" style="width: 100%; grid-template-columns: repeat(3, 1fr); margin-top: 8px;">
+          <!-- Dynamically populated buttons -->
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 10px; width: 100%; margin-top: 10px;">
+          <button class="btn btn-primary btn-block" onclick="RecipientManager.downloadVCard()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" x2="12" y1="15" y2="3"></line></svg>
+            Guardar en Mi Agenda Móvil
+          </button>
+          
+          <button class="btn btn-secondary btn-block" onclick="RecipientManager.saveToAppDirectory()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+            Guardar en Mi Libreta VentoCard
+          </button>
+        </div>
+      </div>
+
+      <!-- Viral Invitation Card -->
+      <div class="viral-banner">
+        <h3 style="font-size: 15px; font-weight: 800; color: #fff;">¿Quieres crear tu propia VentoCard?</h3>
+        <p style="font-size: 12px; color: var(--text-muted); max-width: 320px;">
+          100% gratuita, privada, sin servidores y con códigos QR visuales interactivos.
+        </p>
+        <button class="btn btn-accent btn-sm" onclick="RecipientManager.startNewApp()">
+          ✨ Crear Mi Propia VentoCard Gratis
+        </button>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- VIEW 2: MY QR CARD (Main Sharing Console)   -->
+    <!-- ========================================== -->
+    <div id="viewQR" class="view-panel active">
+      
+      <!-- Profile Header Pill -->
+      <div class="profile-pill-header">
+        <div id="pillAvatar" class="pill-avatar">TU</div>
+        <div class="pill-info">
+          <div id="pillName" class="pill-name">Mi Perfil</div>
+          <div id="pillRole" class="pill-role">Empresa / Profesión</div>
+        </div>
+        <button class="btn btn-secondary btn-sm" onclick="AppNav.switchTab('profiles')">
+          Cambiar
+        </button>
+      </div>
+
+      <!-- QR Hero Canvas -->
+      <div class="glass-card qr-hero-card">
+        <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+          <h2 class="section-title" style="margin-bottom: 0;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"></rect><path d="M7 7h.01"></path><path d="M17 7h.01"></path><path d="M7 17h.01"></path><path d="M17 17h.01"></path></svg>
+            Mi Código QR Dinámico
+          </h2>
+          <div id="readabilityBadge" class="readability-meter">
+            <span style="font-size: 14px;">●</span> Lectura Óptima
+          </div>
+        </div>
+
+        <!-- QR Format Mode Switcher -->
+        <div style="display: flex; gap: 4px; width: 100%; background: rgba(11, 15, 25, 0.6); padding: 3px; border-radius: 12px; border: 1px solid var(--border-subtle); margin-top: 4px;">
+          <button type="button" class="btn btn-sm qr-mode-btn active" data-mode="vcard" onclick="QRModule.setQRMode('vcard')" style="flex: 1; padding: 5px 6px; font-size: 11px;">
+            📇 Agenda Móvil (vCard)
+          </button>
+          <button type="button" class="btn btn-sm qr-mode-btn" data-mode="web" onclick="QRModule.setQRMode('web')" style="flex: 1; padding: 5px 6px; font-size: 11px;">
+            🌐 Tarjeta Web App
+          </button>
+        </div>
+
+        <!-- Canvas with Central Avatar -->
+        <div class="qr-canvas-container" style="background: #ffffff; padding: 10px; border-radius: 20px; box-shadow: 0 8px 30px rgba(0,0,0,0.5);">
+          <canvas id="qrCanvas" width="240" height="240" style="width: 190px; height: 190px; display: block;"></canvas>
+        </div>
+
+        <p id="qrModeHint" style="font-size: 11.5px; color: var(--text-muted); line-height: 1.4;">
+          📱 <b>Modo Agenda Directa (Limpio):</b> Tu cámara de Samsung reconocerá el contacto al instante para guardarlo en la libreta nativa.
+        </p>
+
+        <!-- Presets Selector -->
+        <div style="width: 100%; text-align: left;">
+          <div class="form-label" style="margin-bottom: 6px;">
+            <span>Campos a Compartir en este QR:</span>
+            <span id="fieldsCount" style="color: var(--accent);">0 seleccionados</span>
+          </div>
+
+          <div class="presets-row">
+            <button class="preset-chip active" onclick="QRModule.applyPreset('quick')">⚡ Rápido</button>
+            <button class="preset-chip" onclick="QRModule.applyPreset('work')">💼 Trabajo</button>
+            <button class="preset-chip" onclick="QRModule.applyPreset('personal')">👤 Personal</button>
+            <button class="preset-chip" onclick="QRModule.applyPreset('all')">🌟 Todo</button>
+          </div>
+
+          <!-- Modular Checkbox List -->
+          <div id="qrCheckboxList" class="checkbox-list">
+            <!-- Dynamically populated from active profile -->
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display: flex; flex-direction: column; gap: 6px; width: 100%; margin-top: 8px;">
+          <!-- Direct WhatsApp Sharing Button -->
+          <button class="btn btn-block" style="background: linear-gradient(135deg, #22c55e, #16a34a); color: #ffffff; font-weight: 800; box-shadow: 0 4px 14px rgba(34, 197, 94, 0.4);" onclick="QRModule.shareViaWhatsApp()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+            Compartir por WhatsApp
+          </button>
+
+          <div style="display: flex; gap: 6px; width: 100%;">
+            <button class="btn btn-primary" style="flex: 1;" onclick="QRModule.downloadVCard()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" x2="12" y1="15" y2="3"></line></svg>
+              Bajar .vcf
+            </button>
+            <button class="btn btn-secondary" style="flex: 1;" onclick="QRModule.copyShareLink()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg>
+              Copiar Link
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- VIEW 3: SMART ROLODEX (Directorio Contactos) -->
+    <!-- ========================================== -->
+    <div id="viewDirectory" class="view-panel">
+      <div class="glass-card" style="padding: 16px;">
+        
+        <!-- Search bar with Voice Button -->
+        <div class="search-box-wrapper">
+          <svg class="search-icon-left" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" x2="21" y1="21" y2="16.65"></line></svg>
+          <input type="text" id="directorySearchInput" class="form-input search-input" placeholder="Buscar por nombre, empresa o cargo..." oninput="DirectoryModule.filterContacts(this.value)" />
+          <button class="voice-search-btn" onclick="VoiceEngine.startListening()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" x2="12" y1="19" y2="22"></line></svg>
+            Voz
+          </button>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+          <span id="contactsCountLabel" style="font-size: 12px; color: var(--text-muted); font-weight: 600;">0 contactos</span>
+          <button class="btn btn-secondary btn-sm" onclick="DirectoryModule.openAddModal()">+ Agregar Manual</button>
+        </div>
+      </div>
+
+      <!-- Contacts Bento List -->
+      <div id="contactsContainer" class="contacts-grid">
+        <!-- Dynamically rendered -->
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- VIEW 4: PROFILES MANAGER (Mis Identidades)  -->
+    <!-- ========================================== -->
+    <div id="viewProfiles" class="view-panel">
+      <div class="glass-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <h2 class="section-title" style="margin-bottom: 0;">Mis Identidades</h2>
+          <button class="btn btn-primary btn-sm" onclick="ProfilesModule.createNewProfile()">+ Nuevo Perfil</button>
+        </div>
+        
+        <div id="profilesList" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px;">
+          <!-- Profile selectors -->
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid var(--border-subtle); margin: 16px 0;" />
+
+        <!-- Profile Form Editor -->
+        <h3 id="profileEditorTitle" style="font-size: 15px; font-weight: 700; color: var(--accent); margin-bottom: 12px;">
+          Editar Perfil Activo
+        </h3>
+
+        <form id="profileForm" onsubmit="event.preventDefault(); ProfilesModule.saveActiveProfile();">
+          
+          <div class="form-group">
+            <label class="form-label">Nombre del Perfil (ej: ATSIT Trabajo, Personal)</label>
+            <input type="text" id="inputProfileTag" class="form-input" required />
+          </div>
+
+          <div style="display: flex; gap: 10px;">
+            <div class="form-group" style="flex: 1;">
+              <label class="form-label">Nombre</label>
+              <input type="text" id="inputFirstName" class="form-input" required />
+            </div>
+            <div class="form-group" style="flex: 1;">
+              <label class="form-label">Apellido</label>
+              <input type="text" id="inputLastName" class="form-input" />
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 10px;">
+            <div class="form-group" style="flex: 1;">
+              <label class="form-label">Empresa / Organización</label>
+              <input type="text" id="inputOrg" class="form-input" placeholder="ej. ATSIT SpA" />
+            </div>
+            <div class="form-group" style="flex: 1;">
+              <label class="form-label">Cargo / Título</label>
+              <input type="text" id="inputTitle" class="form-input" placeholder="ej. Consultor Senior" />
+            </div>
+          </div>
+
+          <!-- Phones & WhatsApp User -->
+          <div style="display: flex; gap: 10px;">
+            <div class="form-group" style="flex: 1;">
+              <label class="form-label">Teléfono Móvil</label>
+              <input type="tel" id="inputPhoneMobile" class="form-input" placeholder="+56 9 1234 5678" oninput="PhoneFormatter.handleInput(this)" />
+            </div>
+            <div class="form-group" style="flex: 1;">
+              <label class="form-label">WhatsApp (@usuario o tel)</label>
+              <input type="text" id="inputWhatsApp" class="form-input" placeholder="@usuario o +56 9..." oninput="PhoneFormatter.handleWhatsAppInput(this)" />
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 10px;">
+            <div class="form-group" style="flex: 1;">
+              <label class="form-label">Teléfono Trabajo / Fijo</label>
+              <input type="tel" id="inputPhoneWork" class="form-input" placeholder="+56 2 2345 6789" oninput="PhoneFormatter.handleInput(this)" />
+            </div>
+            <div class="form-group" style="flex: 1;">
+              <label class="form-label">Email Laboral</label>
+              <input type="email" id="inputEmailWork" class="form-input" placeholder="contacto@atsit.cl" />
+            </div>
+          </div>
+
+          <!-- Personal Email & Website -->
+          <div style="display: flex; gap: 10px;">
+            <div class="form-group" style="flex: 1;">
+              <label class="form-label">Email Personal</label>
+              <input type="email" id="inputEmailPersonal" class="form-input" placeholder="personal@gmail.com" />
+            </div>
+            <div class="form-group" style="flex: 1;">
+              <label class="form-label">Sitio Web / Portafolio</label>
+              <input type="url" id="inputWebsite" class="form-input" placeholder="https://atsit.cl" />
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 10px;">
+            <div class="form-group" style="flex: 1;">
+              <label class="form-label">LinkedIn (Usuario o URL)</label>
+              <input type="text" id="inputLinkedIn" class="form-input" placeholder="patriciodiaz" />
+            </div>
+            <div class="form-group" style="flex: 1;">
+              <label class="form-label">Instagram (Usuario)</label>
+              <input type="text" id="inputInstagram" class="form-input" placeholder="@usuario" />
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 10px;">
+            <div class="form-group" style="flex: 1;">
+              <label class="form-label">TikTok (Usuario @)</label>
+              <input type="text" id="inputTikTok" class="form-input" placeholder="@usuario" />
+            </div>
+            <div class="form-group" style="flex: 1;">
+              <label class="form-label">GitHub</label>
+              <input type="text" id="inputGitHub" class="form-input" placeholder="usuario" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Dirección / Ciudad</label>
+            <input type="text" id="inputAddress" class="form-input" placeholder="Santiago, Chile" />
+          </div>
+
+          <!-- Custom Dynamic Fields Section -->
+          <div style="background: rgba(11, 15, 25, 0.45); border: 1px dashed var(--border-subtle); border-radius: 12px; padding: 10px; margin: 8px 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <span style="font-size: 11px; font-weight: 700; color: var(--accent);">➕ Nuevas Redes & Datos Extra</span>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="ProfilesModule.addCustomFieldPrompt()">+ Crear Campo</button>
+            </div>
+            <div id="customFieldsContainer" style="display: flex; flex-direction: column; gap: 6px;">
+              <!-- Dynamically populated custom fields -->
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Foto de Perfil / Logo (Para el centro del QR)</label>
+            <input type="file" id="inputAvatarFile" class="form-input" accept="image/*" onchange="ProfilesModule.handleAvatarUpload(event)" />
+            <div style="display: flex; align-items: center; gap: 10px; margin-top: 6px;">
+              <div id="previewAvatarImg" class="pill-avatar" style="width: 40px; height: 40px; font-size: 16px;"></div>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="ProfilesModule.removeAvatar()">Quitar Foto</button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Nota Bio / Resumen</label>
+            <textarea id="inputBio" class="form-textarea" placeholder="Breve descripción o especialidad"></textarea>
+          </div>
+
+          <div style="display: flex; gap: 10px; margin-top: 14px;">
+            <button type="submit" class="btn btn-primary" style="flex: 2;">Guardar Cambios</button>
+            <button type="button" class="btn btn-outline-danger" style="flex: 1;" onclick="ProfilesModule.deleteActiveProfile()">Eliminar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- VIEW 5: SETTINGS & BACKUP (Ajustes)         -->
+    <!-- ========================================== -->
+    <div id="viewSettings" class="view-panel">
+      <div class="glass-card">
+        <h2 class="section-title">Ajustes & Seguridad</h2>
+
+        <div style="display: flex; flex-direction: column; gap: 14px; margin-top: 10px;">
+          
+          <!-- Auto-Listen Toggle -->
+          <div class="checkbox-item" onclick="SettingsModule.toggleAutoListen()">
+            <div class="checkbox-left">
+              <span class="checkbox-icon">🎤</span>
+              <div>
+                <div class="checkbox-text">Escucha por Voz al Iniciar</div>
+                <div class="checkbox-sub">Abre el micrófono al abrir la app para comandos manos libres</div>
+              </div>
+            </div>
+            <div id="settingAutoListenCheck" class="custom-checkbox"></div>
+          </div>
+
+          <!-- Voice Feedback Toggle -->
+          <div class="checkbox-item" onclick="SettingsModule.toggleVoiceFeedback()">
+            <div class="checkbox-left">
+              <span class="checkbox-icon">🔊</span>
+              <div>
+                <div class="checkbox-text">Respuesta Auditiva (Voz)</div>
+                <div class="checkbox-sub">Confirmación por voz al ejecutar comandos</div>
+              </div>
+            </div>
+            <div id="settingVoiceFeedbackCheck" class="custom-checkbox"></div>
+          </div>
+
+          <hr style="border: 0; border-top: 1px solid var(--border-subtle);" />
+
+          <h3 style="font-size: 14px; font-weight: 700; color: var(--accent);">Copia de Seguridad Soberana</h3>
+          <p style="font-size: 12px; color: var(--text-muted);">
+            Exporta todos tus perfiles y contactos guardados en un archivo JSON seguro e impórtalos en cualquier dispositivo sin servidores.
+          </p>
+
+          <div style="display: flex; gap: 10px;">
+            <button class="btn btn-secondary btn-sm" style="flex: 1;" onclick="SettingsModule.exportBackup()">
+              📥 Exportar JSON
+            </button>
+            <label class="btn btn-secondary btn-sm" style="flex: 1; cursor: pointer;">
+              📤 Importar JSON
+              <input type="file" accept=".json" style="display: none;" onchange="SettingsModule.importBackup(event)" />
+            </label>
+          </div>
+
+          <hr style="border: 0; border-top: 1px solid var(--border-subtle);" />
+
+          <div style="font-size: 11px; color: var(--text-dim); text-align: center; line-height: 1.5;">
+            VentoCard v1.0 • PWA Autónoma 100% Local<br>
+            Ciberseguridad OWASP & Protección de Datos Soberana
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div> <!-- End App Viewport -->
+
+  <!-- Bottom Navigation Bar -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" onclick="AppNav.switchTab('qr')">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect width="18" height="18" x="3" y="3" rx="2"></rect><path d="M7 7h.01"></path><path d="M17 7h.01"></path><path d="M7 17h.01"></path><path d="M17 17h.01"></path></svg>
+      <span>Mi QR</span>
+    </button>
+    <button class="nav-item" onclick="AppNav.switchTab('directory')">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+      <span>Contactos</span>
+    </button>
+    <button class="nav-item" onclick="AppNav.switchTab('profiles')">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+      <span>Perfiles</span>
+    </button>
+    <button class="nav-item" onclick="AppNav.switchTab('settings')">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+      <span>Ajustes</span>
+    </button>
+  </nav>
+
+  <!-- ========================================== -->
+  <!-- JAVASCRIPT: MOTOR COMPLETO LOCAL           -->
+  <!-- ========================================== -->
+  <script>
+  /**
+   * SMARTCARD SOVEREIGN CORE ENGINE
+   * 100% Client-Side, Zero External Dependencies, Offline-First
+   */
+
+  // ----------------------------------------------------
+  // 1. INLINE HIGH-PRECISION QR CODE ENGINE (Pure JS)
+  // ----------------------------------------------------
+  const QREngine = (function() {
+    // Standard Galois Field & Reed-Solomon polynomial math for QR
+    const QRMode = { MODE_8BIT_BYTE: 4 };
+    const QRErrorCorrectLevel = { L: 1, M: 0, Q: 3, H: 2 };
+    const QRMaskPattern = { PATTERN000: 0, PATTERN001: 1, PATTERN010: 2, PATTERN011: 3, PATTERN100: 4, PATTERN101: 5, PATTERN110: 6, PATTERN111: 7 };
+
+    const QRMath = {
+      glog: function(n) { if (n < 1) throw new Error("glog(" + n + ")"); return QRMath.LOG_TABLE[n]; },
+      gexp: function(n) { while (n < 0) n += 255; while (n >= 256) n -= 255; return QRMath.EXP_TABLE[n]; },
+      EXP_TABLE: new Array(256),
+      LOG_TABLE: new Array(256)
+    };
+    for (let i = 0; i < 8; i++) QRMath.EXP_TABLE[i] = 1 << i;
+    for (let i = 8; i < 256; i++) QRMath.EXP_TABLE[i] = QRMath.EXP_TABLE[i - 4] ^ QRMath.EXP_TABLE[i - 5] ^ QRMath.EXP_TABLE[i - 6] ^ QRMath.EXP_TABLE[i - 8];
+    for (let i = 0; i < 255; i++) QRMath.LOG_TABLE[QRMath.EXP_TABLE[i]] = i;
+
+    function QRPolynomial(num, shift) {
+      if (num.length === undefined) throw new Error(num.length + "/" + shift);
+      let offset = 0;
+      while (offset < num.length && num[offset] === 0) offset++;
+      this.num = new Array(num.length - offset + shift);
+      for (let i = 0; i < num.length - offset; i++) this.num[i] = num[i + offset];
+    }
+    QRPolynomial.prototype = {
+      get: function(i) { return this.num[i]; },
+      getLength: function() { return this.num.length; },
+      multiply: function(e) {
+        const num = new Array(this.getLength() + e.getLength() - 1);
+        for (let i = 0; i < this.getLength(); i++) {
+          for (let j = 0; j < e.getLength(); j++) {
+            num[i + j] ^= QRMath.gexp(QRMath.glog(this.get(i)) + QRMath.glog(e.get(j)));
+          }
+        }
+        return new QRPolynomial(num, 0);
+      },
+      mod: function(e) {
+        if (this.getLength() - e.getLength() < 0) return this;
+        const ratio = QRMath.glog(this.get(0)) - QRMath.glog(e.get(0));
+        const num = new Array(this.getLength());
+        for (let i = 0; i < this.getLength(); i++) num[i] = this.get(i);
+        for (let i = 0; i < e.getLength(); i++) num[i] ^= QRMath.gexp(QRMath.glog(e.get(i)) + ratio);
+        return new QRPolynomial(num, 0).mod(e);
+      }
+    };
+
+    function QRRSBlock(totalCount, dataCount) {
+      this.totalCount = totalCount;
+      this.dataCount = dataCount;
+    }
+    QRRSBlock.RS_BLOCK_TABLE = [
+      // 1
+      [1, 26, 19], [1, 26, 16], [1, 26, 13], [1, 26, 9],
+      // 2
+      [1, 44, 34], [1, 44, 28], [1, 44, 22], [1, 44, 16],
+      // 3
+      [1, 70, 55], [1, 70, 44], [2, 35, 17], [2, 35, 13],
+      // 4
+      [1, 100, 80], [2, 50, 32], [2, 50, 24], [4, 25, 9],
+      // 5
+      [1, 134, 108], [2, 67, 43], [2, 33, 15, 2, 34, 16], [2, 33, 11, 2, 34, 12],
+      // 6
+      [2, 86, 68], [4, 43, 27], [4, 43, 19], [4, 43, 15],
+      // 7
+      [2, 98, 78], [4, 49, 31], [2, 32, 14, 4, 33, 15], [4, 39, 13, 1, 40, 14],
+      // 8
+      [2, 121, 97], [2, 60, 38, 2, 61, 39], [4, 40, 18, 2, 41, 19], [4, 40, 14, 2, 41, 15],
+      // 9
+      [2, 146, 116], [3, 58, 36, 2, 59, 37], [4, 36, 16, 4, 37, 17], [4, 36, 12, 4, 37, 13],
+      // 10
+      [2, 86, 68, 2, 87, 69], [4, 69, 43, 1, 70, 44], [6, 43, 19, 2, 44, 20], [6, 43, 15, 2, 44, 16],
+      // 11
+      [4, 101, 81], [1, 80, 50, 4, 81, 51], [4, 50, 22, 4, 51, 23], [3, 36, 12, 8, 37, 13],
+      // 12
+      [2, 116, 92, 2, 117, 93], [6, 58, 36, 2, 59, 37], [4, 46, 20, 6, 47, 21], [7, 42, 14, 4, 43, 15],
+      // 13
+      [4, 133, 107], [8, 59, 37, 1, 60, 38], [8, 44, 20, 4, 45, 21], [12, 33, 11, 4, 34, 12],
+      // 14
+      [3, 145, 115, 1, 146, 116], [4, 64, 40, 5, 65, 41], [11, 36, 16, 5, 37, 17], [11, 36, 12, 5, 37, 13],
+      // 15
+      [5, 109, 87, 1, 110, 88], [5, 65, 41, 5, 66, 42], [5, 54, 24, 7, 55, 25], [11, 36, 12, 7, 37, 13],
+      // 16
+      [5, 122, 98, 1, 123, 99], [7, 73, 45, 3, 74, 46], [15, 43, 19, 2, 44, 20], [3, 45, 15, 13, 46, 16],
+      // 17
+      [1, 135, 107, 5, 136, 108], [10, 74, 46, 1, 75, 47], [1, 50, 22, 15, 51, 23], [2, 42, 14, 17, 43, 15],
+      // 18
+      [5, 150, 120, 1, 151, 121], [9, 69, 43, 4, 70, 44], [17, 50, 22, 1, 51, 23], [2, 42, 14, 19, 43, 15],
+      // 19
+      [3, 141, 113, 4, 142, 114], [3, 70, 44, 11, 71, 45], [17, 47, 21, 4, 48, 22], [9, 39, 13, 16, 40, 14],
+      // 20
+      [3, 135, 107, 5, 136, 108], [3, 67, 41, 13, 68, 42], [15, 54, 24, 5, 55, 25], [15, 43, 15, 10, 44, 16],
+      // 21
+      [4, 144, 116, 4, 145, 117], [17, 68, 42], [17, 50, 22, 6, 51, 23], [19, 46, 16, 6, 47, 17],
+      // 22
+      [2, 139, 111, 7, 140, 112], [17, 74, 46], [7, 54, 24, 16, 55, 25], [34, 37, 13],
+      // 23
+      [4, 151, 121, 5, 152, 122], [4, 75, 47, 14, 76, 48], [11, 54, 24, 14, 55, 25], [16, 45, 15, 14, 46, 16],
+      // 24
+      [6, 147, 117, 4, 148, 118], [6, 73, 45, 14, 74, 46], [11, 54, 24, 16, 55, 25], [30, 46, 16, 2, 47, 17],
+      // 25
+      [8, 132, 106, 4, 133, 107], [8, 75, 47, 13, 76, 48], [7, 54, 24, 22, 55, 25], [22, 45, 15, 13, 46, 16],
+      // 26
+      [10, 142, 114, 2, 143, 115], [19, 74, 46, 4, 75, 47], [28, 50, 22, 6, 51, 23], [33, 46, 16, 4, 47, 17],
+      // 27
+      [8, 152, 122, 4, 153, 123], [22, 73, 45, 3, 74, 46], [8, 53, 23, 26, 54, 24], [12, 45, 15, 28, 46, 16],
+      // 28
+      [3, 147, 117, 10, 148, 118], [3, 73, 45, 23, 74, 46], [4, 54, 24, 31, 55, 25], [11, 45, 15, 31, 46, 16],
+      // 29
+      [7, 146, 116, 7, 147, 117], [21, 73, 45, 7, 74, 46], [1, 53, 23, 37, 54, 24], [19, 45, 15, 26, 46, 16],
+      // 30
+      [5, 145, 115, 10, 146, 116], [19, 75, 47, 10, 76, 48], [15, 54, 24, 25, 55, 25], [23, 45, 15, 25, 46, 16],
+      // 31
+      [13, 145, 115, 3, 146, 116], [2, 74, 46, 29, 75, 47], [42, 54, 24, 1, 55, 25], [23, 45, 15, 28, 46, 16],
+      // 32
+      [17, 145, 115], [10, 74, 46, 23, 75, 47], [10, 54, 24, 35, 55, 25], [19, 45, 15, 35, 46, 16],
+      // 33
+      [17, 145, 115, 1, 146, 116], [14, 74, 46, 21, 75, 47], [29, 54, 24, 19, 55, 25], [11, 45, 15, 46, 46, 16],
+      // 34
+      [13, 145, 115, 6, 146, 116], [14, 74, 46, 23, 75, 47], [44, 54, 24, 7, 55, 25], [59, 46, 16, 1, 47, 17],
+      // 35
+      [12, 151, 121, 7, 152, 122], [12, 75, 47, 26, 76, 48], [39, 54, 24, 14, 55, 25], [22, 45, 15, 41, 46, 16],
+      // 36
+      [6, 151, 121, 14, 152, 122], [6, 75, 47, 34, 76, 48], [46, 54, 24, 10, 55, 25], [2, 45, 15, 64, 46, 16],
+      // 37
+      [17, 152, 122, 4, 153, 123], [29, 74, 46, 14, 75, 47], [49, 54, 24, 10, 55, 25], [24, 45, 15, 46, 46, 16],
+      // 38
+      [4, 152, 122, 18, 153, 123], [13, 74, 46, 32, 75, 47], [48, 54, 24, 14, 55, 25], [42, 45, 15, 32, 46, 16],
+      // 39
+      [20, 147, 117, 4, 148, 118], [40, 75, 47, 7, 76, 48], [43, 54, 24, 22, 55, 25], [10, 45, 15, 67, 46, 16],
+      // 40
+      [19, 148, 118, 6, 149, 119], [18, 75, 47, 31, 76, 48], [34, 54, 24, 34, 55, 25], [20, 45, 15, 61, 46, 16]
+    ];
+    QRRSBlock.getRSBlocks = function(typeNumber, errorCorrectLevel) {
+      const rsBlock = QRRSBlock.getRsBlockTable(typeNumber, errorCorrectLevel);
+      if (!rsBlock) throw new Error("bad rs block @ typeNumber:" + typeNumber);
+      const length = rsBlock.length / 3;
+      const list = [];
+      for (let i = 0; i < length; i++) {
+        const count = rsBlock[i * 3 + 0];
+        const totalCount = rsBlock[i * 3 + 1];
+        const dataCount = rsBlock[i * 3 + 2];
+        for (let j = 0; j < count; j++) list.push(new QRRSBlock(totalCount, dataCount));
+      }
+      return list;
+    };
+    QRRSBlock.getRsBlockTable = function(typeNumber, errorCorrectLevel) {
+      switch (errorCorrectLevel) {
+        case QRErrorCorrectLevel.L: return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 0];
+        case QRErrorCorrectLevel.M: return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 1];
+        case QRErrorCorrectLevel.Q: return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 2];
+        case QRErrorCorrectLevel.H: return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 3];
+        default: return undefined;
+      }
+    };
+
+    function QRBitBuffer() {
+      this.buffer = [];
+      this.length = 0;
+    }
+    QRBitBuffer.prototype = {
+      get: function(i) { return ((this.buffer[Math.floor(i / 8)] >>> (7 - (i % 8))) & 1) === 1; },
+      put: function(num, length) { for (let i = 0; i < length; i++) this.putBit(((num >>> (length - i - 1)) & 1) === 1); },
+      putBit: function(bit) {
+        const bufIndex = Math.floor(this.length / 8);
+        if (this.buffer.length <= bufIndex) this.buffer.push(0);
+        if (bit) this.buffer[bufIndex] |= 0x80 >>> (this.length % 8);
+        this.length++;
+      }
+    };
+
+    function QR8bitByte(data) {
+      this.mode = QRMode.MODE_8BIT_BYTE;
+      this.data = data;
+      this.parsedData = [];
+      // UTF-8 encode
+      for (let i = 0; i < this.data.length; i++) {
+        let byteArray = [];
+        let code = this.data.charCodeAt(i);
+        if (code > 0x10000) {
+          byteArray[0] = 0xf0 | ((code & 0x1c0000) >>> 18);
+          byteArray[1] = 0x80 | ((code & 0x3f000) >>> 12);
+          byteArray[2] = 0x80 | ((code & 0xfc0) >>> 6);
+          byteArray[3] = 0x80 | (code & 0x3f);
+        } else if (code > 0x800) {
+          byteArray[0] = 0xe0 | ((code & 0xf000) >>> 12);
+          byteArray[1] = 0x80 | ((code & 0xfc0) >>> 6);
+          byteArray[2] = 0x80 | (code & 0x3f);
+        } else if (code > 0x80) {
+          byteArray[0] = 0xc0 | ((code & 0x7c0) >>> 6);
+          byteArray[1] = 0x80 | (code & 0x3f);
+        } else {
+          byteArray[0] = code;
+        }
+        this.parsedData.push(byteArray);
+      }
+      this.parsedData = Array.prototype.concat.apply([], this.parsedData);
+    }
+    QR8bitByte.prototype = {
+      getLength: function() { return this.parsedData.length; },
+      write: function(buffer) { for (let i = 0; i < this.parsedData.length; i++) buffer.put(this.parsedData[i], 8); }
+    };
+
+    function QRCodeModel(typeNumber, errorCorrectLevel) {
+      this.typeNumber = typeNumber;
+      this.errorCorrectLevel = errorCorrectLevel;
+      this.modules = null;
+      this.moduleCount = 0;
+      this.dataCache = null;
+      this.dataList = [];
+    }
+    QRCodeModel.prototype = {
+      addData: function(data) { this.dataList.push(new QR8bitByte(data)); this.dataCache = null; },
+      isDark: function(row, col) { return this.modules[row][col]; },
+      getModuleCount: function() { return this.moduleCount; },
+      make: function() {
+        if (this.typeNumber < 1) {
+          let typeNumber = 1;
+          for (typeNumber = 1; typeNumber <= 40; typeNumber++) {
+            const rsBlocks = QRRSBlock.getRSBlocks(typeNumber, this.errorCorrectLevel);
+            const buffer = new QRBitBuffer();
+            let totalDataCount = 0;
+            for (let i = 0; i < rsBlocks.length; i++) totalDataCount += rsBlocks[i].dataCount;
+            for (let i = 0; i < this.dataList.length; i++) {
+              const data = this.dataList[i];
+              buffer.put(data.mode, 4);
+              buffer.put(data.getLength(), typeNumber < 10 ? 8 : 16);
+              data.write(buffer);
+            }
+            if (buffer.length <= totalDataCount * 8) break;
+          }
+          if (typeNumber > 40) typeNumber = 40;
+          this.typeNumber = typeNumber;
+        }
+        this.makeImpl(false, this.getBestMaskPattern());
+      },
+      makeImpl: function(test, maskPattern) {
+        this.moduleCount = this.typeNumber * 4 + 17;
+        this.modules = new Array(this.moduleCount);
+        for (let row = 0; row < this.moduleCount; row++) {
+          this.modules[row] = new Array(this.moduleCount);
+          for (let col = 0; col < this.moduleCount; col++) this.modules[row][col] = null;
+        }
+        this.setupPositionProbePattern(0, 0);
+        this.setupPositionProbePattern(this.moduleCount - 7, 0);
+        this.setupPositionProbePattern(0, this.moduleCount - 7);
+        this.setupPositionAdjustPattern();
+        this.setupTimingPattern();
+        this.setupTypeInfo(test, maskPattern);
+        if (this.typeNumber >= 7) this.setupTypeNumber(test);
+        if (this.dataCache === null) this.dataCache = QRCodeModel.createData(this.typeNumber, this.errorCorrectLevel, this.dataList);
+        this.mapData(this.dataCache, maskPattern);
+      },
+      setupPositionProbePattern: function(row, col) {
+        for (let r = -1; r <= 7; r++) {
+          if (row + r <= -1 || this.moduleCount <= row + r) continue;
+          for (let c = -1; c <= 7; c++) {
+            if (col + c <= -1 || this.moduleCount <= col + c) continue;
+            if ((0 <= r && r <= 6 && (c === 0 || c === 6)) || (0 <= c && c <= 6 && (r === 0 || r === 6)) || (2 <= r && r <= 4 && 2 <= c && c <= 4)) {
+              this.modules[row + r][col + c] = true;
+            } else {
+              this.modules[row + r][col + c] = false;
+            }
+          }
+        }
+      },
+      getBestMaskPattern: function() {
+        let minLostPoint = 0, pattern = 0;
+        for (let i = 0; i < 8; i++) {
+          this.makeImpl(true, i);
+          const lostPoint = QRUtil.getLostPoint(this);
+          if (i === 0 || minLostPoint > lostPoint) { minLostPoint = lostPoint; pattern = i; }
+        }
+        return pattern;
+      },
+      setupTimingPattern: function() {
+        for (let r = 8; r < this.moduleCount - 8; r++) {
+          if (this.modules[r][6] !== null) continue;
+          this.modules[r][6] = (r % 2 === 0);
+        }
+        for (let c = 8; c < this.moduleCount - 8; c++) {
+          if (this.modules[6][c] !== null) continue;
+          this.modules[6][c] = (c % 2 === 0);
+        }
+      },
+      setupPositionAdjustPattern: function() {
+        const pos = QRUtil.getPatternPosition(this.typeNumber);
+        for (let i = 0; i < pos.length; i++) {
+          for (let j = 0; j < pos.length; j++) {
+            const row = pos[i], col = pos[j];
+            if (this.modules[row][col] !== null) continue;
+            for (let r = -2; r <= 2; r++) {
+              for (let c = -2; c <= 2; c++) {
+                this.modules[row + r][col + c] = (r === -2 || r === 2 || c === -2 || c === 2 || (r === 0 && c === 0));
+              }
+            }
+          }
+        }
+      },
+      setupTypeNumber: function(test) {
+        const bits = QRUtil.getBCHTypeNumber(this.typeNumber);
+        for (let i = 0; i < 18; i++) {
+          const mod = (!test && ((bits >> i) & 1) === 1);
+          this.modules[Math.floor(i / 3)][(i % 3) + this.moduleCount - 8 - 3] = mod;
+          this.modules[(i % 3) + this.moduleCount - 8 - 3][Math.floor(i / 3)] = mod;
+        }
+      },
+      setupTypeInfo: function(test, maskPattern) {
+        const data = (this.errorCorrectLevel << 3) | maskPattern;
+        const bits = QRUtil.getBCHTypeInfo(data);
+        for (let i = 0; i < 15; i++) {
+          const mod = (!test && ((bits >> i) & 1) === 1);
+          if (i < 6) this.modules[i][8] = mod;
+          else if (i < 8) this.modules[i + 1][8] = mod;
+          else this.modules[this.moduleCount - 15 + i][8] = mod;
+
+          if (i < 8) this.modules[8][this.moduleCount - i - 1] = mod;
+          else if (i < 9) this.modules[8][15 - i - 1 + 1] = mod;
+          else this.modules[8][15 - i - 1] = mod;
+        }
+        this.modules[this.moduleCount - 8][8] = !test;
+      },
+      mapData: function(data, maskPattern) {
+        let inc = -1, row = this.moduleCount - 1, bitIndex = 7, byteIndex = 0;
+        for (let col = this.moduleCount - 1; col > 0; col -= 2) {
+          if (col === 6) col--;
+          while (true) {
+            for (let c = 0; c < 2; c++) {
+              if (this.modules[row][col - c] === null) {
+                let dark = false;
+                if (byteIndex < data.length) dark = (((data[byteIndex] >>> bitIndex) & 1) === 1);
+                const mask = QRUtil.getMask(maskPattern, row, col - c);
+                if (mask) dark = !dark;
+                this.modules[row][col - c] = dark;
+                bitIndex--;
+                if (bitIndex === -1) { byteIndex++; bitIndex = 7; }
+              }
+            }
+            row += inc;
+            if (row < 0 || this.moduleCount <= row) { row -= inc; inc = -inc; break; }
+          }
+        }
+      }
+    };
+
+    QRCodeModel.createData = function(typeNumber, errorCorrectLevel, dataList) {
+      const rsBlocks = QRRSBlock.getRSBlocks(typeNumber, errorCorrectLevel);
+      const buffer = new QRBitBuffer();
+      for (let i = 0; i < dataList.length; i++) {
+        const data = dataList[i];
+        buffer.put(data.mode, 4);
+        buffer.put(data.getLength(), typeNumber < 10 ? 8 : 16);
+        data.write(buffer);
+      }
+      let totalDataCount = 0;
+      for (let i = 0; i < rsBlocks.length; i++) totalDataCount += rsBlocks[i].dataCount;
+      if (buffer.length > totalDataCount * 8) throw new Error("code length overflow. (" + buffer.length + ">" + (totalDataCount * 8) + ")");
+      if (buffer.length + 4 <= totalDataCount * 8) buffer.put(0, 4);
+      while (buffer.length % 8 !== 0) buffer.putBit(false);
+      while (true) {
+        if (buffer.length >= totalDataCount * 8) break;
+        buffer.put(0xec, 8);
+        if (buffer.length >= totalDataCount * 8) break;
+        buffer.put(0x11, 8);
+      }
+      return QRCodeModel.createBytes(buffer, rsBlocks);
+    };
+
+    QRCodeModel.createBytes = function(buffer, rsBlocks) {
+      let offset = 0, maxDcCount = 0, maxEcCount = 0;
+      const dcdata = new Array(rsBlocks.length), ecdata = new Array(rsBlocks.length);
+      for (let r = 0; r < rsBlocks.length; r++) {
+        const dcCount = rsBlocks[r].dataCount, ecCount = rsBlocks[r].totalCount - dcCount;
+        maxDcCount = Math.max(maxDcCount, dcCount);
+        maxEcCount = Math.max(maxEcCount, ecCount);
+        dcdata[r] = new Array(dcCount);
+        for (let i = 0; i < dcdata[r].length; i++) dcdata[r][i] = 0xff & buffer.buffer[i + offset];
+        offset += dcCount;
+        const rsPoly = QRUtil.getErrorCorrectPolynomial(ecCount);
+        const rawPoly = new QRPolynomial(dcdata[r], rsPoly.getLength() - 1);
+        const modPoly = rawPoly.mod(rsPoly);
+        ecdata[r] = new Array(rsPoly.getLength() - 1);
+        for (let i = 0; i < ecdata[r].length; i++) {
+          const modIndex = i + modPoly.getLength() - ecdata[r].length;
+          ecdata[r][i] = (modIndex >= 0) ? modPoly.get(modIndex) : 0;
+        }
+      }
+      let totalCodeCount = 0;
+      for (let i = 0; i < rsBlocks.length; i++) totalCodeCount += rsBlocks[i].totalCount;
+      const data = new Array(totalCodeCount);
+      let index = 0;
+      for (let i = 0; i < maxDcCount; i++) {
+        for (let r = 0; r < rsBlocks.length; r++) {
+          if (i < dcdata[r].length) data[index++] = dcdata[r][i];
+        }
+      }
+      for (let i = 0; i < maxEcCount; i++) {
+        for (let r = 0; r < rsBlocks.length; r++) {
+          if (i < ecdata[r].length) data[index++] = ecdata[r][i];
+        }
+      }
+      return data;
+    };
+
+    const QRUtil = {
+      PATTERN_POSITION_TABLE: [
+        [], [6, 18], [6, 22], [6, 26], [6, 30], [6, 34], [6, 22, 38], [6, 24, 42],
+        [6, 26, 46], [6, 28, 50], [6, 30, 54], [6, 32, 58], [6, 34, 62], [6, 26, 46, 66],
+        [6, 26, 48, 70], [6, 26, 50, 74], [6, 30, 54, 78], [6, 30, 56, 82], [6, 30, 58, 86],
+        [6, 34, 62, 90], [6, 28, 50, 72, 94], [6, 26, 50, 74, 98], [6, 30, 54, 78, 102],
+        [6, 28, 54, 80, 106], [6, 32, 58, 84, 110], [6, 30, 58, 86, 114], [6, 34, 62, 90, 118],
+        [6, 26, 50, 74, 98, 122], [6, 30, 54, 78, 102, 126], [6, 26, 52, 78, 104, 130],
+        [6, 30, 56, 82, 108, 134], [6, 34, 60, 86, 112, 138], [6, 30, 58, 86, 114, 142],
+        [6, 34, 62, 90, 118, 146], [6, 30, 54, 78, 102, 126, 150], [6, 24, 50, 76, 102, 128, 154],
+        [6, 28, 54, 80, 106, 132, 158], [6, 32, 58, 84, 110, 136, 162], [6, 26, 54, 82, 110, 138, 166],
+        [6, 30, 58, 86, 114, 142, 170]
+      ],
+      G15: (1 << 10) | (1 << 8) | (1 << 5) | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0),
+      G18: (1 << 12) | (1 << 11) | (1 << 10) | (1 << 9) | (1 << 8) | (1 << 5) | (1 << 2) | (1 << 0),
+      G15_MASK: (1 << 14) | (1 << 12) | (1 << 10) | (1 << 4) | (1 << 1),
+      getBCHTypeInfo: function(data) {
+        let d = data << 10;
+        while (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G15) >= 0) {
+          d ^= (QRUtil.G15 << (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G15)));
+        }
+        return ((data << 10) | d) ^ QRUtil.G15_MASK;
+      },
+      getBCHTypeNumber: function(data) {
+        let d = data << 12;
+        while (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G18) >= 0) {
+          d ^= (QRUtil.G18 << (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G18)));
+        }
+        return (data << 12) | d;
+      },
+      getBCHDigit: function(data) {
+        let digit = 0;
+        while (data !== 0) { digit++; data >>>= 1; }
+        return digit;
+      },
+      getPatternPosition: function(typeNumber) { return QRUtil.PATTERN_POSITION_TABLE[typeNumber - 1]; },
+      getMask: function(maskPattern, i, j) {
+        switch (maskPattern) {
+          case QRMaskPattern.PATTERN000: return (i + j) % 2 === 0;
+          case QRMaskPattern.PATTERN001: return i % 2 === 0;
+          case QRMaskPattern.PATTERN010: return j % 3 === 0;
+          case QRMaskPattern.PATTERN011: return (i + j) % 3 === 0;
+          case QRMaskPattern.PATTERN100: return (Math.floor(i / 2) + Math.floor(j / 3)) % 2 === 0;
+          case QRMaskPattern.PATTERN101: return (i * j) % 2 + (i * j) % 3 === 0;
+          case QRMaskPattern.PATTERN110: return ((i * j) % 2 + (i * j) % 3) % 2 === 0;
+          case QRMaskPattern.PATTERN111: return ((i * j) % 3 + (i + j) % 2) % 2 === 0;
+          default: throw new Error("bad maskPattern:" + maskPattern);
+        }
+      },
+      getErrorCorrectPolynomial: function(errorCorrectLength) {
+        let a = new QRPolynomial([1], 0);
+        for (let i = 0; i < errorCorrectLength; i++) a = a.multiply(new QRPolynomial([1, QRMath.gexp(i)], 0));
+        return a;
+      },
+      getLostPoint: function(qrCode) {
+        const moduleCount = qrCode.getModuleCount();
+        let lostPoint = 0;
+        for (let row = 0; row < moduleCount; row++) {
+          for (let col = 0; col < moduleCount; col++) {
+            let sameCount = 0;
+            const dark = qrCode.isDark(row, col);
+            for (let r = -1; r <= 1; r++) {
+              if (row + r < 0 || moduleCount <= row + r) continue;
+              for (let c = -1; c <= 1; c++) {
+                if (col + c < 0 || moduleCount <= col + c) continue;
+                if (r === 0 && c === 0) continue;
+                if (dark === qrCode.isDark(row + r, col + c)) sameCount++;
+              }
+            }
+            if (sameCount > 5) lostPoint += (3 + sameCount - 5);
+          }
+        }
+        return lostPoint;
+      }
+    };
+
+    return {
+      drawOnCanvas: function(canvas, text, options = {}) {
+        const ecLevel = options.errorCorrectLevel !== undefined ? options.errorCorrectLevel : (options.avatarImg ? QRErrorCorrectLevel.Q : QRErrorCorrectLevel.M);
+        const qr = new QRCodeModel(0, ecLevel);
+        qr.addData(text);
+        qr.make();
+
+        const moduleCount = qr.getModuleCount();
+        const size = canvas.width;
+        const ctx = canvas.getContext('2d');
+        const margin = options.margin !== undefined ? options.margin : 16;
+        const availableSize = size - margin * 2;
+        const moduleSize = availableSize / moduleCount;
+
+        // Clear canvas with crisp white background
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, size, size);
+
+        // Draw pure black QR modules with pixel-perfect alignment
+        ctx.fillStyle = options.darkColor || '#000000';
+        for (let row = 0; row < moduleCount; row++) {
+          for (let col = 0; col < moduleCount; col++) {
+            if (qr.isDark(row, col)) {
+              ctx.fillRect(
+                Math.round(margin + col * moduleSize),
+                Math.round(margin + row * moduleSize),
+                Math.ceil(moduleSize),
+                Math.ceil(moduleSize)
+              );
+            }
+          }
+        }
+
+        // Draw Central Avatar overlay if provided
+        if (options.avatarImg) {
+          const centerSize = Math.floor(size * 0.22);
+          const centerPos = (size - centerSize) / 2;
+          const radius = centerSize / 2;
+
+          // Clear a circular safe quiet zone
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(size / 2, size / 2, radius + 4, 0, Math.PI * 2);
+          ctx.fillStyle = '#ffffff';
+          ctx.fill();
+
+          // Border glow on avatar
+          ctx.beginPath();
+          ctx.arc(size / 2, size / 2, radius, 0, Math.PI * 2);
+          ctx.clip();
+          ctx.drawImage(options.avatarImg, centerPos, centerPos, centerSize, centerSize);
+          ctx.restore();
+
+          // Draw border ring
+          ctx.beginPath();
+          ctx.arc(size / 2, size / 2, radius + 1, 0, Math.PI * 2);
+          ctx.lineWidth = 3;
+          ctx.strokeStyle = '#0284c7';
+          ctx.stroke();
+        }
+
+        return { moduleCount, textLength: text.length };
+      }
+    };
+  })();
+
+  // ----------------------------------------------------
+  // 2. SECURITY, SANITIZATION & ANTI-TAMPER ENGINE (OWASP-Compliant)
+  // ----------------------------------------------------
+  const Security = {
+    sanitizeText: function(str, maxLen = 500) {
+      if (!str) return '';
+      return String(str)
+        .replace(/\0/g, '') // Strip null bytes
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;')
+        .slice(0, maxLen)
+        .trim();
+    },
+
+    sanitizeVCardField: function(str, maxLen = 300) {
+      if (!str) return '';
+      return String(str)
+        .replace(/[\r\n\0]/g, ' ') // Strip CRLF injections
+        .replace(/[\\;:,]/g, (m) => '\\' + m)
+        .slice(0, maxLen)
+        .trim();
+    },
+
+    sanitizeUrl: function(url, protocol = 'https') {
+      if (!url) return '';
+      const clean = String(url).trim();
+      // Block dangerous javascript:, vbscript:, data:, blob:, file: vectors
+      if (/^(javascript|vbscript|data|file|blob|about):/i.test(clean)) {
+        return '#';
+      }
+      if (protocol === 'https') {
+        if (/^https?:\/\//i.test(clean)) {
+          return clean.slice(0, 500);
+        }
+        return ('https://' + clean.replace(/^[a-zA-Z0-9_-]+:\/\//, '')).slice(0, 500);
+      }
+      if (protocol === 'tel') {
+        const telClean = clean.replace(/[^0-9+]/g, '');
+        return telClean ? `tel:${telClean}` : '#';
+      }
+      if (protocol === 'mailto') {
+        const mailClean = clean.replace(/[^\w.@+-]/g, '');
+        return mailClean ? `mailto:${mailClean}` : '#';
+      }
+      return clean.slice(0, 500);
+    },
+
+    getWhatsAppUrl: function(val) {
+      if (!val) return '';
+      const clean = String(val).trim();
+      if (/^(javascript|data|file|blob):/i.test(clean)) return '';
+      if (clean.startsWith('http://') || clean.startsWith('https://')) {
+        return this.sanitizeUrl(clean, 'https');
+      }
+      if (clean.startsWith('@')) {
+        const userClean = clean.substring(1).replace(/[^a-zA-Z0-9_.-]/g, '');
+        return `https://wa.me/${userClean}`;
+      }
+      if (/^[a-zA-Z0-9_.-]+$/.test(clean) && isNaN(clean)) {
+        return `https://wa.me/${clean}`;
+      }
+      const numOnly = clean.replace(/[^0-9]/g, '');
+      return numOnly ? `https://wa.me/${numOnly}` : '';
+    },
+
+    getTikTokUrl: function(val) {
+      if (!val) return '';
+      const clean = String(val).trim();
+      if (/^(javascript|data|file|blob):/i.test(clean)) return '';
+      if (clean.startsWith('http://') || clean.startsWith('https://')) {
+        return this.sanitizeUrl(clean, 'https');
+      }
+      const handle = clean.replace('@', '').replace(/[^a-zA-Z0-9_.-]/g, '');
+      return `https://www.tiktok.com/@${handle}`;
+    },
+
+    validatePayloadSchema: function(raw) {
+      if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
+      // Strip prototype pollution keys
+      const cleanObj = Object.create(null);
+      const allowedKeys = ['fn', 'ln', 'org', 'tit', 'mob', 'wau', 'wrk', 'emw', 'emp', 'web', 'lin', 'ins', 'tik', 'git', 'adr', 'bio', 'cs', 't'];
+      allowedKeys.forEach(k => {
+        if (typeof raw[k] === 'string') {
+          cleanObj[k] = raw[k].slice(0, 500);
+        } else {
+          cleanObj[k] = '';
+        }
+      });
+      cleanObj.cf = [];
+      if (Array.isArray(raw.cf)) {
+        raw.cf.slice(0, 20).forEach(item => {
+          if (item && typeof item === 'object') {
+            cleanObj.cf.push({
+              id: String(item.id || '').slice(0, 50),
+              l: String(item.l || item.label || '').slice(0, 80),
+              v: String(item.v || item.value || '').slice(0, 300)
+            });
+          }
+        });
+      }
+      return cleanObj;
+    },
+
+    // Fast local hash for integrity verification
+    generateChecksum: function(payloadObj) {
+      const canonical = JSON.stringify(payloadObj);
+      let hash = 0x811c9dc5;
+      for (let i = 0; i < canonical.length; i++) {
+        hash ^= canonical.charCodeAt(i);
+        hash += (hash << 1) + (hash << 4) + (hash << 7) + (hash << 8) + (hash << 24);
+      }
+      return (hash >>> 0).toString(16);
+    },
+
+    verifyChecksum: function(payloadObj, checksum) {
+      if (!checksum) return true; // Backward compatibility
+      return this.generateChecksum(payloadObj) === checksum;
+    }
+  };
+
+  // ----------------------------------------------------
+  // 3. CHILEAN PHONE FORMATTER (+56 X XXXX XXXX)
+  // ----------------------------------------------------
+  const PhoneFormatter = {
+    format: function(value) {
+      if (!value) return '';
+      let clean = String(value).trim();
+      let digits = clean.replace(/\D/g, '');
+      if (digits.startsWith('56')) {
+        digits = digits.substring(2);
+      }
+      digits = digits.substring(0, 9);
+      if (digits.length === 0) return '';
+      if (digits.length === 1) {
+        return `+56 ${digits}`;
+      } else if (digits.length <= 5) {
+        return `+56 ${digits[0]} ${digits.substring(1)}`;
+      } else {
+        return `+56 ${digits[0]} ${digits.substring(1, 5)} ${digits.substring(5)}`;
+      }
+    },
+
+    handleInput: function(inputEl) {
+      const val = inputEl.value;
+      if (!val) return;
+      inputEl.value = this.format(val);
+    },
+
+    handleWhatsAppInput: function(inputEl) {
+      const val = inputEl.value;
+      if (!val) return;
+      if (val.startsWith('@')) return; // Preserve @username
+      if (/\d/.test(val)) {
+        inputEl.value = this.format(val);
+      }
+    }
+  };
+
+  // ----------------------------------------------------
+  // 4. COMPACT PAYLOAD COMPRESSOR (URL Safe)
+  // ----------------------------------------------------
+  const DataCodec = {
+    encodePayload: function(obj) {
+      try {
+        const json = JSON.stringify(obj);
+        return encodeURIComponent(btoa(unescape(encodeURIComponent(json))));
+      } catch (e) {
+        console.error('Encoding error:', e);
+        return '';
+      }
+    },
+
+    decodePayload: function(encodedStr) {
+      try {
+        const json = decodeURIComponent(escape(atob(decodeURIComponent(encodedStr))));
+        return JSON.parse(json);
+      } catch (e) {
+        console.error('Decoding error:', e);
+        return null;
+      }
+    }
+  };
+
+  // ----------------------------------------------------
+  // 5. VCARD 3.0 GENERATOR (RFC 2426 Standard)
+  // ----------------------------------------------------
+  const VCardGenerator = {
+    buildVCardString: function(profile, selectedKeys = null) {
+      const p = profile;
+      const isSelected = (k) => !selectedKeys || selectedKeys.includes(k);
+
+      let vcf = 'BEGIN:VCARD\r\nVERSION:3.0\r\n';
+      
+      const fn = `${p.firstName || ''} ${p.lastName || ''}`.trim() || 'Contacto';
+      vcf += `FN:${fn}\r\n`;
+      vcf += `N:${p.lastName || ''};${p.firstName || ''};;;\r\n`;
+
+      if (isSelected('org') && p.org) vcf += `ORG:${p.org}\r\n`;
+      if (isSelected('title') && p.title) vcf += `TITLE:${p.title}\r\n`;
+      if (isSelected('phoneMobile') && p.phoneMobile) vcf += `TEL;TYPE=CELL:${p.phoneMobile.replace(/\s+/g, '')}\r\n`;
+      if (isSelected('whatsappUser') && p.whatsappUser) {
+        const wUrl = Security.getWhatsAppUrl(p.whatsappUser);
+        vcf += `URL;TYPE=WhatsApp:${wUrl}\r\n`;
+      }
+      if (isSelected('phoneWork') && p.phoneWork) vcf += `TEL;TYPE=WORK:${p.phoneWork.replace(/\s+/g, '')}\r\n`;
+      if (isSelected('emailWork') && p.emailWork) vcf += `EMAIL;TYPE=WORK:${p.emailWork}\r\n`;
+      if (isSelected('emailPersonal') && p.emailPersonal) vcf += `EMAIL;TYPE=HOME:${p.emailPersonal}\r\n`;
+      if (isSelected('website') && p.website) vcf += `URL:${Security.sanitizeUrl(p.website, 'https')}\r\n`;
+      if (isSelected('linkedIn') && p.linkedIn) {
+        const lUrl = p.linkedIn.startsWith('http') ? p.linkedIn : `https://linkedin.com/in/${p.linkedIn}`;
+        vcf += `URL;TYPE=LinkedIn:${lUrl}\r\n`;
+      }
+      if (isSelected('instagram') && p.instagram) {
+        const iHandle = p.instagram.replace('@', '');
+        vcf += `URL;TYPE=Instagram:https://instagram.com/${iHandle}\r\n`;
+      }
+      if (isSelected('tiktok') && p.tiktok) {
+        const tUrl = Security.getTikTokUrl(p.tiktok);
+        vcf += `URL;TYPE=TikTok:${tUrl}\r\n`;
+      }
+      if (isSelected('github') && p.github) {
+        vcf += `URL;TYPE=GitHub:https://github.com/${p.github}\r\n`;
+      }
+      if (isSelected('address') && p.address) vcf += `ADR;TYPE=WORK:;;${p.address};;;;\r\n`;
+      if (isSelected('bio') && p.bio) vcf += `NOTE:${p.bio.replace(/[\r\n]+/g, ' ')}\r\n`;
+
+      // Custom Dynamic Fields Export
+      if (p.customFields && Array.isArray(p.customFields)) {
+        p.customFields.forEach(cf => {
+          if (isSelected('custom_' + cf.id) && cf.value) {
+            const cleanVal = cf.value.trim();
+            if (cleanVal.startsWith('http://') || cleanVal.startsWith('https://')) {
+              vcf += `URL;TYPE=${cf.label}:${cleanVal}\r\n`;
+            } else if (cleanVal.startsWith('@')) {
+              vcf += `URL;TYPE=${cf.label}:https://instagram.com/${cleanVal.substring(1)}\r\n`;
+            } else {
+              vcf += `NOTE;TYPE=${cf.label}:${cf.label}: ${cleanVal}\r\n`;
+            }
+          }
+        });
+      }
+
+      vcf += 'END:VCARD\r\n';
+      return vcf;
+    },
+
+    downloadVCardFile: function(filename, vcardContent) {
+      const blob = new Blob([vcardContent], { type: 'text/vcard;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', filename.endsWith('.vcf') ? filename : `${filename}.vcf`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+  };
+
+  // ----------------------------------------------------
+  // 6. PROFILES & STORAGE MANAGER
+  // ----------------------------------------------------
+  const StorageKeys = {
+    PROFILES: 'ventocard_profiles_v1',
+    ACTIVE_PROFILE_ID: 'ventocard_active_profile_id',
+    CONTACTS: 'ventocard_contacts_v1',
+    SETTINGS: 'ventocard_settings_v1'
+  };
+
+  const ProfilesModule = {
+    profiles: [],
+    activeProfileId: null,
+
+    init: function() {
+      const saved = localStorage.getItem(StorageKeys.PROFILES) || localStorage.getItem('smartcard_profiles_v1');
+      if (saved) {
+        try { this.profiles = JSON.parse(saved); } catch (e) { this.profiles = []; }
+      }
+      if (!this.profiles || this.profiles.length === 0) {
+        const defaultProfile = {
+          id: 'prof_' + Date.now(),
+          profileTag: 'ATSIT Trabajo',
+          firstName: 'Patricio',
+          lastName: 'Díaz',
+          org: 'ATSIT',
+          title: 'Consultor TI & Soluciones',
+          phoneMobile: '+56 9 1234 5678',
+          whatsappUser: '@atsit_cl',
+          phoneWork: '+56 2 2345 6789',
+          emailWork: 'contacto@atsit.cl',
+          emailPersonal: 'patricio@gmail.com',
+          website: 'https://atsit.cl',
+          linkedIn: 'patriciodiaz',
+          instagram: '@atsit_cl',
+          tiktok: '@atsit_tech',
+          github: 'pdiaz',
+          address: 'Santiago, Chile',
+          bio: 'Especialista en arquitectura de software de alta eficiencia y ciberseguridad.',
+          avatarData: '',
+          customFields: [
+            { id: 'cf_threads', label: 'Threads', value: '@atsit_tech' },
+            { id: 'cf_telegram', label: 'Telegram', value: '@atsit_soporte' }
+          ]
+        };
+        this.profiles = [defaultProfile];
+        this.activeProfileId = defaultProfile.id;
+        this.saveAll();
+      } else {
+        this.activeProfileId = localStorage.getItem(StorageKeys.ACTIVE_PROFILE_ID) || localStorage.getItem('smartcard_active_profile_id') || this.profiles[0].id;
+      }
+      this.renderProfilesList();
+      this.populateFormWithActive();
+    },
+
+    getActiveProfile: function() {
+      return this.profiles.find(p => p.id === this.activeProfileId) || this.profiles[0];
+    },
+
+    saveAll: function() {
+      localStorage.setItem(StorageKeys.PROFILES, JSON.stringify(this.profiles));
+      localStorage.setItem(StorageKeys.ACTIVE_PROFILE_ID, this.activeProfileId);
+    },
+
+    renderProfilesList: function() {
+      const listEl = document.getElementById('profilesList');
+      listEl.innerHTML = '';
+      this.profiles.forEach(p => {
+        const item = document.createElement('div');
+        item.className = `checkbox-item ${p.id === this.activeProfileId ? 'checked' : ''}`;
+        item.onclick = () => {
+          this.activeProfileId = p.id;
+          this.saveAll();
+          this.renderProfilesList();
+          this.populateFormWithActive();
+          QRModule.refresh();
+          AppNav.updateHeader();
+        };
+        item.innerHTML = `
+          <div class="checkbox-left">
+            <span class="checkbox-icon">💼</span>
+            <div>
+              <div class="checkbox-text">${Security.sanitizeText(p.profileTag || 'Perfil')}</div>
+              <div class="checkbox-sub">${Security.sanitizeText(p.firstName)} ${Security.sanitizeText(p.lastName)} • ${Security.sanitizeText(p.org || '')}</div>
+            </div>
+          </div>
+          <div class="custom-checkbox"></div>
+        `;
+        listEl.appendChild(item);
+      });
+    },
+
+    renderCustomFields: function() {
+      const p = this.getActiveProfile();
+      const container = document.getElementById('customFieldsContainer');
+      if (!container) return;
+      container.innerHTML = '';
+
+      if (!p.customFields || p.customFields.length === 0) {
+        container.innerHTML = '<div style="font-size: 11px; color: var(--text-dim); text-align: center; padding: 4px;">Sin campos extra creados</div>';
+        return;
+      }
+
+      p.customFields.forEach(cf => {
+        const row = document.createElement('div');
+        row.style.display = 'flex';
+        row.style.gap = '6px';
+        row.style.alignItems = 'center';
+        row.innerHTML = `
+          <div style="flex: 1;">
+            <input type="text" class="form-input" value="${Security.sanitizeText(cf.label)}" placeholder="Nombre de Campo" onchange="ProfilesModule.updateCustomFieldLabel('${cf.id}', this.value)" style="font-weight: 700; color: var(--accent);" />
+          </div>
+          <div style="flex: 2;">
+            <input type="text" class="form-input" value="${Security.sanitizeText(cf.value)}" placeholder="Valor o @usuario o URL" oninput="ProfilesModule.updateCustomFieldValue('${cf.id}', this.value)" />
+          </div>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="ProfilesModule.removeCustomField('${cf.id}')" title="Eliminar campo" style="color: var(--danger); padding: 7px 9px;">🗑️</button>
+        `;
+        container.appendChild(row);
+      });
+    },
+
+    addCustomFieldPrompt: function() {
+      const label = prompt('Nombre de la nueva red social o dato (ej: Threads, Telegram, Discord, RUT, Calendly, Spotify):');
+      if (!label || !label.trim()) return;
+      const p = this.getActiveProfile();
+      if (!p.customFields) p.customFields = [];
+      const newField = {
+        id: 'cf_' + Date.now(),
+        label: label.trim(),
+        value: ''
+      };
+      p.customFields.push(newField);
+      this.saveAll();
+      this.renderCustomFields();
+      QRModule.refresh();
+    },
+
+    updateCustomFieldLabel: function(id, newLabel) {
+      const p = this.getActiveProfile();
+      if (!p.customFields) return;
+      const cf = p.customFields.find(f => f.id === id);
+      if (cf && newLabel) {
+        cf.label = newLabel.trim();
+        this.saveAll();
+        QRModule.refresh();
+      }
+    },
+
+    updateCustomFieldValue: function(id, newVal) {
+      const p = this.getActiveProfile();
+      if (!p.customFields) return;
+      const cf = p.customFields.find(f => f.id === id);
+      if (cf) {
+        cf.value = newVal.trim();
+        this.saveAll();
+        QRModule.refresh();
+      }
+    },
+
+    removeCustomField: function(id) {
+      const p = this.getActiveProfile();
+      if (!p.customFields) return;
+      p.customFields = p.customFields.filter(f => f.id !== id);
+      this.saveAll();
+      this.renderCustomFields();
+      QRModule.refresh();
+    },
+
+    populateFormWithActive: function() {
+      const p = this.getActiveProfile();
+      if (!p) return;
+      document.getElementById('inputProfileTag').value = p.profileTag || '';
+      document.getElementById('inputFirstName').value = p.firstName || '';
+      document.getElementById('inputLastName').value = p.lastName || '';
+      document.getElementById('inputOrg').value = p.org || '';
+      document.getElementById('inputTitle').value = p.title || '';
+      document.getElementById('inputPhoneMobile').value = p.phoneMobile || '';
+      document.getElementById('inputWhatsApp').value = p.whatsappUser || '';
+      document.getElementById('inputPhoneWork').value = p.phoneWork || '';
+      document.getElementById('inputEmailWork').value = p.emailWork || '';
+      document.getElementById('inputEmailPersonal').value = p.emailPersonal || '';
+      document.getElementById('inputWebsite').value = p.website || '';
+      document.getElementById('inputLinkedIn').value = p.linkedIn || '';
+      document.getElementById('inputInstagram').value = p.instagram || '';
+      document.getElementById('inputTikTok').value = p.tiktok || '';
+      document.getElementById('inputGitHub').value = p.github || '';
+      document.getElementById('inputAddress').value = p.address || '';
+      document.getElementById('inputBio').value = p.bio || '';
+      
+      this.renderCustomFields();
+
+      const prevAvatar = document.getElementById('previewAvatarImg');
+      if (p.avatarData) {
+        prevAvatar.innerHTML = `<img src="${p.avatarData}" alt="Avatar" />`;
+      } else {
+        prevAvatar.innerHTML = (p.firstName ? p.firstName[0] : 'U') + (p.lastName ? p.lastName[0] : '');
+      }
+    },
+
+    saveActiveProfile: function() {
+      const p = this.getActiveProfile();
+      p.profileTag = document.getElementById('inputProfileTag').value.trim();
+      p.firstName = document.getElementById('inputFirstName').value.trim();
+      p.lastName = document.getElementById('inputLastName').value.trim();
+      p.org = document.getElementById('inputOrg').value.trim();
+      p.title = document.getElementById('inputTitle').value.trim();
+      p.phoneMobile = document.getElementById('inputPhoneMobile').value.trim();
+      p.whatsappUser = document.getElementById('inputWhatsApp').value.trim();
+      p.phoneWork = document.getElementById('inputPhoneWork').value.trim();
+      p.emailWork = document.getElementById('inputEmailWork').value.trim();
+      p.emailPersonal = document.getElementById('inputEmailPersonal').value.trim();
+      p.website = document.getElementById('inputWebsite').value.trim();
+      p.linkedIn = document.getElementById('inputLinkedIn').value.trim();
+      p.instagram = document.getElementById('inputInstagram').value.trim();
+      p.tiktok = document.getElementById('inputTikTok').value.trim();
+      p.github = document.getElementById('inputGitHub').value.trim();
+      p.address = document.getElementById('inputAddress').value.trim();
+      p.bio = document.getElementById('inputBio').value.trim();
+
+      this.saveAll();
+      this.renderProfilesList();
+      QRModule.refresh();
+      AppNav.updateHeader();
+      alert('✅ Perfil guardado correctamente.');
+    },
+
+    createNewProfile: function() {
+      const newP = {
+        id: 'prof_' + Date.now(),
+        profileTag: 'Nueva Identidad',
+        firstName: 'Nombre',
+        lastName: '',
+        org: '',
+        title: '',
+        phoneMobile: '',
+        whatsappUser: '',
+        phoneWork: '',
+        emailWork: '',
+        emailPersonal: '',
+        website: '',
+        linkedIn: '',
+        instagram: '',
+        tiktok: '',
+        github: '',
+        address: '',
+        bio: '',
+        avatarData: '',
+        customFields: []
+      };
+      this.profiles.push(newP);
+      this.activeProfileId = newP.id;
+      this.saveAll();
+      this.renderProfilesList();
+      this.populateFormWithActive();
+      QRModule.refresh();
+      AppNav.updateHeader();
+    },
+
+    deleteActiveProfile: function() {
+      if (this.profiles.length <= 1) {
+        alert('Debes mantener al menos un perfil activo.');
+        return;
+      }
+      if (confirm('¿Eliminar esta identidad?')) {
+        this.profiles = this.profiles.filter(p => p.id !== this.activeProfileId);
+        this.activeProfileId = this.profiles[0].id;
+        this.saveAll();
+        this.renderProfilesList();
+        this.populateFormWithActive();
+        QRModule.refresh();
+        AppNav.updateHeader();
+      }
+    },
+
+    handleAvatarUpload: function(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        // Resize and compress avatar to keep data light
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const maxDim = 160;
+          let w = img.width, h = img.height;
+          if (w > h) { h = Math.round((h * maxDim) / w); w = maxDim; }
+          else { w = Math.round((w * maxDim) / h); h = maxDim; }
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          const compressed = canvas.toDataURL('image/jpeg', 0.82);
+          
+          const p = ProfilesModule.getActiveProfile();
+          p.avatarData = compressed;
+          ProfilesModule.saveAll();
+          ProfilesModule.populateFormWithActive();
+          QRModule.refresh();
+          AppNav.updateHeader();
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    },
+
+    removeAvatar: function() {
+      const p = this.getActiveProfile();
+      p.avatarData = '';
+      this.saveAll();
+      this.populateFormWithActive();
+      QRModule.refresh();
+      AppNav.updateHeader();
+    }
+  };
+
+  // ----------------------------------------------------
+  // 6. QR GENERATION & MODULAR SHARING MODULE
+  // ----------------------------------------------------
+  const QRModule = {
+    qrMode: 'vcard', // 'vcard' (default clean) | 'web'
+    selectedKeys: [],
+    avatarImageObj: null,
+
+    setQRMode: function(mode) {
+      this.qrMode = mode;
+      document.querySelectorAll('.qr-mode-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.mode === mode);
+      });
+      const hint = document.getElementById('qrModeHint');
+      if (hint) {
+        if (mode === 'vcard') {
+          hint.innerHTML = '📱 <b>Modo Agenda Directa (Limpio):</b> Tu cámara de Samsung/iPhone reconocerá el contacto al instante para guardarlo en la libreta nativa.';
+        } else {
+          hint.innerHTML = '🌐 <b>Modo Tarjeta Web:</b> Abre la app web interactiva en el navegador del teléfono vía Wi-Fi local.';
+        }
+      }
+      this.generateQR();
+    },
+
+    allAvailableFields: [
+      { key: 'phoneMobile', label: 'Celular', icon: '📱', group: ['personal', 'quick'] },
+      { key: 'whatsappUser', label: 'WhatsApp (@usuario o tel)', icon: '💬', group: ['personal', 'work', 'quick'] },
+      { key: 'phoneWork', label: 'Teléfono Trabajo', icon: '📞', group: ['work'] },
+      { key: 'emailWork', label: 'Email Laboral', icon: '✉️', group: ['work'] },
+      { key: 'emailPersonal', label: 'Email Personal', icon: '📧', group: ['personal'] },
+      { key: 'org', label: 'Empresa / Organización', icon: '🏢', group: ['work'] },
+      { key: 'title', label: 'Cargo / Profesión', icon: '💼', group: ['work'] },
+      { key: 'website', label: 'Sitio Web', icon: '🌐', group: ['work'] },
+      { key: 'linkedIn', label: 'LinkedIn', icon: '💼', group: ['work', 'personal'] },
+      { key: 'instagram', label: 'Instagram', icon: '📸', group: ['personal'] },
+      { key: 'tiktok', label: 'TikTok', icon: '🎵', group: ['personal'] },
+      { key: 'github', label: 'GitHub', icon: '💻', group: ['work', 'personal'] },
+      { key: 'address', label: 'Dirección', icon: '📍', group: ['work'] },
+      { key: 'bio', label: 'Nota / Resumen', icon: '📝', group: ['work', 'personal'] }
+    ],
+
+    init: function() {
+      this.applyPreset('quick');
+    },
+
+    applyPreset: function(presetName) {
+      const p = ProfilesModule.getActiveProfile();
+      const availableWithValue = this.allAvailableFields.filter(f => Boolean(p[f.key]));
+
+      if (presetName === 'all') {
+        this.selectedKeys = availableWithValue.map(f => f.key);
+        if (p.customFields) {
+          p.customFields.filter(cf => Boolean(cf.value)).forEach(cf => this.selectedKeys.push('custom_' + cf.id));
+        }
+      } else if (presetName === 'work') {
+        this.selectedKeys = availableWithValue.filter(f => f.group.includes('work')).map(f => f.key);
+      } else if (presetName === 'personal') {
+        this.selectedKeys = availableWithValue.filter(f => f.group.includes('personal')).map(f => f.key);
+        if (p.customFields) {
+          p.customFields.filter(cf => Boolean(cf.value)).forEach(cf => this.selectedKeys.push('custom_' + cf.id));
+        }
+      } else if (presetName === 'quick') {
+        this.selectedKeys = availableWithValue.filter(f => f.group.includes('quick')).map(f => f.key);
+      }
+
+      // Update preset buttons styling
+      document.querySelectorAll('.preset-chip').forEach(btn => {
+        btn.classList.toggle('active', btn.textContent.toLowerCase().includes(presetName));
+      });
+
+      this.renderCheckboxes();
+      this.generateQR();
+    },
+
+    toggleKey: function(key) {
+      if (this.selectedKeys.includes(key)) {
+        this.selectedKeys = this.selectedKeys.filter(k => k !== key);
+      } else {
+        this.selectedKeys.push(key);
+      }
+      this.renderCheckboxes();
+      this.generateQR();
+    },
+
+    renderCheckboxes: function() {
+      const p = ProfilesModule.getActiveProfile();
+      const container = document.getElementById('qrCheckboxList');
+      container.innerHTML = '';
+
+      let count = 0;
+      this.allAvailableFields.forEach(f => {
+        const val = p[f.key];
+        if (!val) return; // Only show fields that have values entered in profile
+
+        const isChecked = this.selectedKeys.includes(f.key);
+        if (isChecked) count++;
+
+        const item = document.createElement('div');
+        item.className = `checkbox-item ${isChecked ? 'checked' : ''}`;
+        item.onclick = () => this.toggleKey(f.key);
+        item.innerHTML = `
+          <div class="checkbox-left">
+            <span class="checkbox-icon">${f.icon}</span>
+            <div>
+              <div class="checkbox-text">${f.label}</div>
+              <div class="checkbox-sub">${Security.sanitizeText(val)}</div>
+            </div>
+          </div>
+          <div class="custom-checkbox"></div>
+        `;
+        container.appendChild(item);
+      });
+
+      // Render Dynamic Custom Fields in Checkbox List
+      if (p.customFields && Array.isArray(p.customFields)) {
+        p.customFields.forEach(cf => {
+          if (!cf.value) return;
+          const k = 'custom_' + cf.id;
+          const isChecked = this.selectedKeys.includes(k);
+          if (isChecked) count++;
+
+          const item = document.createElement('div');
+          item.className = `checkbox-item ${isChecked ? 'checked' : ''}`;
+          item.onclick = () => this.toggleKey(k);
+          item.innerHTML = `
+            <div class="checkbox-left">
+              <span class="checkbox-icon">🔗</span>
+              <div>
+                <div class="checkbox-text">${Security.sanitizeText(cf.label)}</div>
+                <div class="checkbox-sub">${Security.sanitizeText(cf.value)}</div>
+              </div>
+            </div>
+            <div class="custom-checkbox"></div>
+          `;
+          container.appendChild(item);
+        });
+      }
+
+      document.getElementById('fieldsCount').textContent = `${count} seleccionados`;
+    },
+
+    getShareBaseUrl: function() {
+      let baseUrl = window.location.href.split('#')[0];
+      if (baseUrl.startsWith('file://') || baseUrl.includes('localhost') || baseUrl.includes('127.0.0.1') || baseUrl.includes('192.168.')) {
+        return 'https://atsit.cl/card/';
+      }
+      return baseUrl;
+    },
+
+    generateQR: function() {
+      const p = ProfilesModule.getActiveProfile();
+      const canvas = document.getElementById('qrCanvas');
+      if (!p || !canvas) return;
+
+      let qrPayloadText = '';
+      if (this.qrMode === 'vcard') {
+        // Super Clean vCard 3.0 string for 1-touch mobile camera scanner
+        qrPayloadText = VCardGenerator.buildVCardString(p, this.selectedKeys);
+      } else {
+        // Interactive Web URL (Official ATSIT Domain)
+        const shareData = this.getShareDataObject();
+        const encoded = DataCodec.encodePayload(shareData);
+        const baseUrl = this.getShareBaseUrl();
+        qrPayloadText = `${baseUrl}#card=${encoded}`;
+      }
+
+      // Load avatar image for canvas overlay
+      if (p.avatarData) {
+        const img = new Image();
+        img.onload = () => {
+          this.avatarImageObj = img;
+          this.renderCanvas(canvas, qrPayloadText, img);
+        };
+        img.src = p.avatarData;
+      } else {
+        this.avatarImageObj = null;
+        this.renderCanvas(canvas, qrPayloadText, null);
+      }
+    },
+
+    renderCanvas: function(canvas, text, avatarImg) {
+      const result = QREngine.drawOnCanvas(canvas, text, {
+        errorCorrectLevel: avatarImg ? 3 : 0, // Level Q with avatar, Level M without
+        avatarImg: avatarImg,
+        darkColor: '#070b14'
+      });
+
+      // Update readability indicator
+      const badge = document.getElementById('readabilityBadge');
+      if (result.moduleCount <= 45) {
+        badge.className = 'readability-meter';
+        badge.innerHTML = '● Lectura Ultra Rápida';
+      } else {
+        badge.className = 'readability-meter warn';
+        badge.innerHTML = '● Densidad Alta';
+      }
+    },
+
+    getShareDataObject: function() {
+      const p = ProfilesModule.getActiveProfile();
+      const selectedCustom = [];
+      if (p.customFields && Array.isArray(p.customFields)) {
+        p.customFields.forEach(cf => {
+          if (this.selectedKeys.includes('custom_' + cf.id) && cf.value) {
+            selectedCustom.push({ id: cf.id, l: cf.label, v: cf.value });
+          }
+        });
+      }
+
+      const shareData = {
+        fn: p.firstName || '',
+        ln: p.lastName || '',
+        org: this.selectedKeys.includes('org') ? p.org : '',
+        tit: this.selectedKeys.includes('title') ? p.title : '',
+        mob: this.selectedKeys.includes('phoneMobile') ? p.phoneMobile : '',
+        wau: this.selectedKeys.includes('whatsappUser') ? p.whatsappUser : '',
+        wrk: this.selectedKeys.includes('phoneWork') ? p.phoneWork : '',
+        emw: this.selectedKeys.includes('emailWork') ? p.emailWork : '',
+        emp: this.selectedKeys.includes('emailPersonal') ? p.emailPersonal : '',
+        web: this.selectedKeys.includes('website') ? p.website : '',
+        lin: this.selectedKeys.includes('linkedIn') ? p.linkedIn : '',
+        ins: this.selectedKeys.includes('instagram') ? p.instagram : '',
+        tik: this.selectedKeys.includes('tiktok') ? p.tiktok : '',
+        git: this.selectedKeys.includes('github') ? p.github : '',
+        adr: this.selectedKeys.includes('address') ? p.address : '',
+        bio: this.selectedKeys.includes('bio') ? p.bio : '',
+        cf: selectedCustom,
+        t: Date.now()
+      };
+
+      const checksum = Security.generateChecksum(shareData);
+      shareData.cs = checksum;
+      return shareData;
+    },
+
+    downloadVCard: function() {
+      const p = ProfilesModule.getActiveProfile();
+      const vcard = VCardGenerator.buildVCardString(p, this.selectedKeys);
+      const filename = `${p.firstName || 'Contacto'}_${p.lastName || 'ATSIT'}`;
+      VCardGenerator.downloadVCardFile(filename, vcard);
+    },
+
+    copyShareLink: function() {
+      const shareData = this.getShareDataObject();
+      const encoded = DataCodec.encodePayload(shareData);
+      const baseUrl = this.getShareBaseUrl();
+      const link = `${baseUrl}#card=${encoded}`;
+
+      navigator.clipboard.writeText(link).then(() => {
+        alert('🔗 Enlace copiado al portapapeles.');
+      }).catch(() => {
+        prompt('Copia tu enlace aquí:', link);
+      });
+    },
+
+    shareViaWhatsApp: function() {
+      const p = ProfilesModule.getActiveProfile();
+      const shareData = this.getShareDataObject();
+      const encoded = DataCodec.encodePayload(shareData);
+      const baseUrl = this.getShareBaseUrl();
+      const link = `${baseUrl}#card=${encoded}`;
+      const name = `${p.firstName || ''} ${p.lastName || ''}`.trim() || 'Contacto';
+      const org = p.org ? ` (${p.org})` : '';
+      const msg = encodeURIComponent(`👋 Estimado(a), le comparto la tarjeta de contacto ejecutiva de ${name}${org}:\n\n${link}\n\n(Acceso a canales directos y guardado en libreta de contactos en un clic).`);
+      window.open(`https://api.whatsapp.com/send?text=${msg}`, '_blank');
+    },
+
+    refresh: function() {
+      this.renderCheckboxes();
+      this.generateQR();
+    }
+  };
+
+  // ----------------------------------------------------
+  // 7. SMART ROLODEX (Directorio de Contactos Guardados)
+  // ----------------------------------------------------
+  const DirectoryModule = {
+    contacts: [],
+
+    init: function() {
+      const saved = localStorage.getItem(StorageKeys.CONTACTS) || localStorage.getItem('smartcard_contacts_v1');
+      if (saved) {
+        try { this.contacts = JSON.parse(saved); } catch (e) { this.contacts = []; }
+      }
+      if (!this.contacts || this.contacts.length === 0) {
+        // Sample starter contact
+        this.contacts = [
+          {
+            id: 'cont_1',
+            firstName: 'ATSIT',
+            lastName: 'Soporte',
+            org: 'ATSIT',
+            title: 'Mesa de Ayuda & Consultoría',
+            phoneMobile: '+56 9 1234 5678',
+            whatsappUser: '@atsit_cl',
+            emailWork: 'contacto@atsit.cl',
+            website: 'https://atsit.cl',
+            linkedIn: 'atsit',
+            instagram: '@atsit_cl',
+            tiktok: '@atsit_tech',
+            address: 'Santiago, Chile',
+            bio: 'Canal oficial de soporte y servicios tecnológicos.'
+          }
+        ];
+        this.saveAll();
+      }
+      this.renderContacts(this.contacts);
+    },
+
+    saveAll: function() {
+      localStorage.setItem(StorageKeys.CONTACTS, JSON.stringify(this.contacts));
+    },
+
+    addContact: function(contactObj) {
+      if (!contactObj.id) contactObj.id = 'cont_' + Date.now();
+      this.contacts.unshift(contactObj);
+      this.saveAll();
+      this.renderContacts(this.contacts);
+    },
+
+    deleteContact: function(id) {
+      if (confirm('¿Eliminar este contacto de tu libreta?')) {
+        this.contacts = this.contacts.filter(c => c.id !== id);
+        this.saveAll();
+        this.renderContacts(this.contacts);
+      }
+    },
+
+    filterContacts: function(term) {
+      const cleanTerm = (term || '').toLowerCase().trim();
+      if (!cleanTerm) {
+        this.renderContacts(this.contacts);
+        return;
+      }
+      const filtered = this.contacts.filter(c => {
+        const full = `${c.firstName || ''} ${c.lastName || ''} ${c.org || ''} ${c.title || ''} ${c.bio || ''}`.toLowerCase();
+        return full.includes(cleanTerm);
+      });
+      this.renderContacts(filtered);
+    },
+
+    renderContacts: function(list) {
+      const container = document.getElementById('contactsContainer');
+      document.getElementById('contactsCountLabel').textContent = `${list.length} contacto${list.length === 1 ? '' : 's'}`;
+      container.innerHTML = '';
+
+      if (list.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state glass-card">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><circle cx="12" cy="12" r="10"></circle><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+            <p>No se encontraron contactos</p>
+          </div>
+        `;
+        return;
+      }
+
+      list.forEach(c => {
+        const card = document.createElement('div');
+        card.className = 'bento-contact-card';
+
+        // Action Buttons Row
+        let actionsHtml = '';
+        if (c.phoneMobile || c.phoneWork) {
+          const tel = c.phoneMobile || c.phoneWork;
+          actionsHtml += `
+            <a href="tel:${Security.sanitizeText(tel)}" class="bento-action-btn call-btn">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+              <span>Llamar</span>
+            </a>
+          `;
+        }
+
+        // WhatsApp Action (Username or Phone)
+        const waSource = c.whatsappUser || c.phoneMobile || c.phoneWork;
+        if (waSource) {
+          const waUrl = Security.getWhatsAppUrl(waSource);
+          actionsHtml += `
+            <a href="${waUrl}" target="_blank" class="bento-action-btn wa-btn">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+              <span>WhatsApp</span>
+            </a>
+          `;
+        }
+
+        if (c.emailWork || c.emailPersonal) {
+          const em = c.emailWork || c.emailPersonal;
+          actionsHtml += `
+            <a href="mailto:${Security.sanitizeText(em)}" class="bento-action-btn mail-btn">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
+              <span>Email</span>
+            </a>
+          `;
+        }
+
+        if (c.linkedIn) {
+          const lUrl = c.linkedIn.startsWith('http') ? c.linkedIn : `https://linkedin.com/in/${c.linkedIn}`;
+          actionsHtml += `
+            <a href="${Security.sanitizeUrl(lUrl, 'https')}" target="_blank" class="bento-action-btn link-btn">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect width="4" height="12" x="2" y="9"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+              <span>LinkedIn</span>
+            </a>
+          `;
+        }
+
+        if (c.tiktok) {
+          const tUrl = Security.getTikTokUrl(c.tiktok);
+          actionsHtml += `
+            <a href="${tUrl}" target="_blank" class="bento-action-btn" style="color: #ec4899;">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"></path></svg>
+              <span>TikTok</span>
+            </a>
+          `;
+        }
+
+        card.innerHTML = `
+          <div class="bento-header">
+            <div class="bento-avatar">
+              ${c.avatarData ? `<img src="${c.avatarData}" alt="avatar"/>` : ((c.firstName ? c.firstName[0] : 'U') + (c.lastName ? c.lastName[0] : ''))}
+            </div>
+            <div class="bento-details">
+              <div class="bento-name">${Security.sanitizeText(c.firstName)} ${Security.sanitizeText(c.lastName || '')}</div>
+              <div class="bento-org">${Security.sanitizeText(c.org || '')}</div>
+              <div class="bento-title">${Security.sanitizeText(c.title || '')}</div>
+            </div>
+            <button class="btn btn-secondary btn-sm" style="padding: 6px 8px;" onclick="DirectoryModule.deleteContact('${c.id}')" title="Eliminar">🗑️</button>
+          </div>
+
+          <div class="bento-actions-row">
+            ${actionsHtml}
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    },
+
+    openAddModal: function() {
+      const name = prompt('Nombre completo del nuevo contacto:');
+      if (!name) return;
+      const wa = prompt('WhatsApp (@usuario o número, ej. @juan o 912345678):');
+      const phone = prompt('Teléfono móvil o fijo (ej. 912345678):');
+      const email = prompt('Correo electrónico:');
+      const org = prompt('Empresa / Cargo:');
+      const tik = prompt('TikTok (Usuario @, ej. @usuario):');
+
+      this.addContact({
+        firstName: name,
+        lastName: '',
+        whatsappUser: (wa && !wa.startsWith('@') && /\d/.test(wa)) ? PhoneFormatter.format(wa) : (wa || ''),
+        phoneMobile: phone ? PhoneFormatter.format(phone) : '',
+        emailWork: email || '',
+        org: org || '',
+        title: '',
+        website: '',
+        linkedIn: '',
+        instagram: '',
+        tiktok: tik || '',
+        github: '',
+        address: '',
+        bio: ''
+      });
+      alert('✅ Contacto añadido a tu Directorio.');
+    }
+  };
+
+  // ----------------------------------------------------
+  // 8. VOICE ACTION ENGINE (100% Local NLP in Spanish)
+  // ----------------------------------------------------
+  const VoiceEngine = {
+    recognition: null,
+    isListening: false,
+
+    init: function() {
+      const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRec) {
+        console.warn('Web Speech API no disponible en este navegador.');
+        return;
+      }
+      this.recognition = new SpeechRec();
+      this.recognition.lang = 'es-CL';
+      this.recognition.continuous = false;
+      this.recognition.interimResults = false;
+
+      this.recognition.onstart = () => {
+        this.isListening = true;
+        document.getElementById('voiceModal').classList.add('active');
+        document.getElementById('voiceTranscript').textContent = 'Escuchando...';
+      };
+
+      this.recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        document.getElementById('voiceTranscript').textContent = `"${transcript}"`;
+        this.processCommand(transcript);
+      };
+
+      this.recognition.onerror = (event) => {
+        console.warn('Voice error:', event.error);
+        document.getElementById('voiceTranscript').textContent = 'No se reconoció el comando.';
+        setTimeout(() => this.stopListening(), 1800);
+      };
+
+      this.recognition.onend = () => {
+        this.isListening = false;
+      };
+    },
+
+    startListening: function() {
+      if (!this.recognition) {
+        alert('El reconocimiento de voz requiere Chrome, Edge o Safari.');
+        return;
+      }
+      try {
+        this.recognition.start();
+      } catch (e) {
+        console.warn(e);
+      }
+    },
+
+    stopListening: function() {
+      if (this.recognition && this.isListening) {
+        this.recognition.stop();
+      }
+      document.getElementById('voiceModal').classList.remove('active');
+    },
+
+    speakFeedback: function(text) {
+      const settings = SettingsModule.getSettings();
+      if (!settings.voiceFeedback) return;
+      if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'es-LA';
+        window.speechSynthesis.speak(utterance);
+      }
+    },
+
+    processCommand: function(rawCommand) {
+      const text = rawCommand.toLowerCase().trim();
+      console.log('🎤 Voice Process:', text);
+
+      // 1. Preset de Compartir Tarjeta / Generar QR específico por voz
+      if (text.includes('trabajo') || text.includes('laboral') || text.includes('profesional')) {
+        if (text.includes('compartir') || text.includes('tarjeta') || text.includes('qr') || text.includes('mostrar') || text.includes('perfil')) {
+          this.speakFeedback('Generando QR de Trabajo');
+          AppNav.switchTab('qr');
+          QRModule.applyPreset('work');
+          setTimeout(() => this.stopListening(), 800);
+          return;
+        }
+      }
+
+      if (text.includes('personal') || text.includes('amigos')) {
+        if (text.includes('compartir') || text.includes('tarjeta') || text.includes('qr') || text.includes('mostrar') || text.includes('perfil')) {
+          this.speakFeedback('Generando QR Personal');
+          AppNav.switchTab('qr');
+          QRModule.applyPreset('personal');
+          setTimeout(() => this.stopListening(), 800);
+          return;
+        }
+      }
+
+      if (text.includes('todo') || text.includes('completa') || text.includes('completo')) {
+        if (text.includes('compartir') || text.includes('tarjeta') || text.includes('qr') || text.includes('mostrar')) {
+          this.speakFeedback('Generando QR con todos tus datos');
+          AppNav.switchTab('qr');
+          QRModule.applyPreset('all');
+          setTimeout(() => this.stopListening(), 800);
+          return;
+        }
+      }
+
+      if (text.includes('rápido') || text.includes('rapido') || text.includes('express') || text.includes('solo whatsapp')) {
+        this.speakFeedback('Generando QR Rápido');
+        AppNav.switchTab('qr');
+        QRModule.applyPreset('quick');
+        setTimeout(() => this.stopListening(), 800);
+        return;
+      }
+
+      // 2. Llamar a [Contacto]
+      if (text.includes('llamar') || text.includes('llama a') || text.includes('llámale')) {
+        const name = text.replace(/.*(?:llamar a|llama a|llámale a|llamar)\s+/i, '').trim();
+        this.executeCall(name);
+        return;
+      }
+
+      // 3. WhatsApp a [Contacto]
+      if (text.includes('whatsapp') || text.includes('mensaje a') || text.includes('wasap') || text.includes('escribir a')) {
+        const name = text.replace(/.*(?:whatsapp a|wasap a|mensaje a|escribir a|whatsapp)\s+/i, '').trim();
+        this.executeWhatsApp(name);
+        return;
+      }
+
+      // 4. LinkedIn de [Contacto]
+      if (text.includes('linkedin')) {
+        const name = text.replace(/.*(?:linkedin de|linkedin a|linkedin)\s+/i, '').trim();
+        this.executeLinkedIn(name);
+        return;
+      }
+
+      // 4.b TikTok de [Contacto]
+      if (text.includes('tiktok')) {
+        const name = text.replace(/.*(?:tiktok de|tiktok a|tiktok)\s+/i, '').trim();
+        this.executeTikTok(name);
+        return;
+      }
+
+      // 5. Correo / Email a [Contacto]
+      if (text.includes('correo') || text.includes('email') || text.includes('mail')) {
+        const name = text.replace(/.*(?:correo a|email a|mail a)\s+/i, '').trim();
+        this.executeEmail(name);
+        return;
+      }
+
+      // 6. Mostrar QR general
+      if (text.includes('mi qr') || text.includes('código qr') || text.includes('tarjeta') || text.includes('compartir')) {
+        this.speakFeedback('Mostrando tu código QR');
+        AppNav.switchTab('qr');
+        setTimeout(() => this.stopListening(), 800);
+        return;
+      }
+
+      // 7. Buscar [Término]
+      if (text.includes('buscar') || text.includes('busca')) {
+        const term = text.replace(/.*(?:buscar|busca)\s+/i, '').trim();
+        this.speakFeedback(`Buscando ${term}`);
+        AppNav.switchTab('directory');
+        document.getElementById('directorySearchInput').value = term;
+        DirectoryModule.filterContacts(term);
+        setTimeout(() => this.stopListening(), 800);
+        return;
+      }
+
+      // Default: Buscar en directorio con la frase completa
+      this.speakFeedback(`Buscando ${text}`);
+      AppNav.switchTab('directory');
+      document.getElementById('directorySearchInput').value = text;
+      DirectoryModule.filterContacts(text);
+      setTimeout(() => this.stopListening(), 800);
+    },
+
+    findMatchingContact: function(name) {
+      if (!name) return null;
+      const clean = name.toLowerCase().trim();
+      return DirectoryModule.contacts.find(c => {
+        const full = `${c.firstName || ''} ${c.lastName || ''}`.toLowerCase();
+        return full.includes(clean) || (c.org && c.org.toLowerCase().includes(clean));
+      });
+    },
+
+    executeCall: function(name) {
+      const contact = this.findMatchingContact(name);
+      if (contact && (contact.phoneMobile || contact.phoneWork)) {
+        const phone = contact.phoneMobile || contact.phoneWork;
+        this.speakFeedback(`Llamando a ${contact.firstName}`);
+        setTimeout(() => {
+          this.stopListening();
+          window.location.href = `tel:${phone}`;
+        }, 1000);
+      } else {
+        this.speakFeedback(`No encontré el teléfono de ${name}`);
+        setTimeout(() => this.stopListening(), 1500);
+      }
+    },
+
+    executeWhatsApp: function(name) {
+      const contact = this.findMatchingContact(name);
+      const waSource = contact ? (contact.whatsappUser || contact.phoneMobile || contact.phoneWork) : null;
+      if (contact && waSource) {
+        const waUrl = Security.getWhatsAppUrl(waSource);
+        this.speakFeedback(`Abriendo WhatsApp de ${contact.firstName}`);
+        setTimeout(() => {
+          this.stopListening();
+          window.open(waUrl, '_blank');
+        }, 1000);
+      } else {
+        this.speakFeedback(`No encontré el contacto ${name}`);
+        setTimeout(() => this.stopListening(), 1500);
+      }
+    },
+
+    executeLinkedIn: function(name) {
+      const contact = this.findMatchingContact(name);
+      if (contact && contact.linkedIn) {
+        const lUrl = contact.linkedIn.startsWith('http') ? contact.linkedIn : `https://linkedin.com/in/${contact.linkedIn}`;
+        this.speakFeedback(`Abriendo LinkedIn de ${contact.firstName}`);
+        setTimeout(() => {
+          this.stopListening();
+          window.open(Security.sanitizeUrl(lUrl, 'https'), '_blank');
+        }, 1000);
+      } else {
+        this.speakFeedback(`No encontré LinkedIn para ${name}`);
+        setTimeout(() => this.stopListening(), 1500);
+      }
+    },
+
+    executeTikTok: function(name) {
+      const contact = this.findMatchingContact(name);
+      if (contact && contact.tiktok) {
+        const tUrl = Security.getTikTokUrl(contact.tiktok);
+        this.speakFeedback(`Abriendo TikTok de ${contact.firstName}`);
+        setTimeout(() => {
+          this.stopListening();
+          window.open(tUrl, '_blank');
+        }, 1000);
+      } else {
+        this.speakFeedback(`No encontré TikTok para ${name}`);
+        setTimeout(() => this.stopListening(), 1500);
+      }
+    },
+
+    executeEmail: function(name) {
+      const contact = this.findMatchingContact(name);
+      if (contact && (contact.emailWork || contact.emailPersonal)) {
+        const mail = contact.emailWork || contact.emailPersonal;
+        this.speakFeedback(`Escribiendo correo a ${contact.firstName}`);
+        setTimeout(() => {
+          this.stopListening();
+          window.location.href = `mailto:${mail}`;
+        }, 1000);
+      } else {
+        this.speakFeedback(`No encontré correo para ${name}`);
+        setTimeout(() => this.stopListening(), 1500);
+      }
+    }
+  };
+
+  // ----------------------------------------------------
+  // 9. RECIPIENT PUBLIC CARD MANAGER (Auto-Replicante)
+  // ----------------------------------------------------
+  const RecipientManager = {
+    receivedData: null,
+
+    checkHashPayload: function() {
+      const hash = window.location.hash;
+      if (!hash || !hash.includes('card=')) return false;
+
+      const encoded = hash.split('card=')[1];
+      const rawData = DataCodec.decodePayload(encoded);
+      if (!rawData) return false;
+
+      const validated = Security.validatePayloadSchema(rawData);
+      if (!validated) return false;
+
+      // Verify integrity checksum
+      if (rawData.cs && !Security.verifyChecksum(validated, rawData.cs)) {
+        console.warn('⚠️ Alerta de Seguridad: El checksum de integridad no coincide.');
+      }
+
+      this.receivedData = validated;
+      this.renderRecipientView(validated);
+      return true;
+    },
+
+    renderRecipientView: function(d) {
+      // Hide all standard views, show recipient view
+      document.querySelectorAll('.view-panel').forEach(v => v.classList.remove('active'));
+      document.querySelector('.bottom-nav').style.display = 'none';
+      const recView = document.getElementById('recipientView');
+      recView.classList.add('active');
+
+      document.getElementById('recName').textContent = `${Security.sanitizeText(d.fn)} ${Security.sanitizeText(d.ln)}`.trim();
+      document.getElementById('recOrg').textContent = Security.sanitizeText(d.org || '');
+      document.getElementById('recTitle').textContent = Security.sanitizeText(d.tit || '');
+      document.getElementById('recBio').textContent = Security.sanitizeText(d.bio || '');
+
+      const avatarEl = document.getElementById('recAvatar');
+      avatarEl.innerHTML = (d.fn ? d.fn[0] : 'U') + (d.ln ? d.ln[0] : '');
+
+      // Render Action Buttons
+      const actionsGrid = document.getElementById('recActionsGrid');
+      actionsGrid.innerHTML = '';
+
+      if (d.mob || d.wrk) {
+        const phone = d.mob || d.wrk;
+        actionsGrid.innerHTML += `
+          <a href="tel:${Security.sanitizeText(phone)}" class="bento-action-btn call-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            <span>Llamar</span>
+          </a>
+        `;
+      }
+
+      const waVal = d.wau || d.mob || d.wrk;
+      if (waVal) {
+        const waUrl = Security.getWhatsAppUrl(waVal);
+        actionsGrid.innerHTML += `
+          <a href="${waUrl}" target="_blank" class="bento-action-btn wa-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+            <span>WhatsApp</span>
+          </a>
+        `;
+      }
+
+      if (d.emw || d.emp) {
+        const em = d.emw || d.emp;
+        actionsGrid.innerHTML += `
+          <a href="mailto:${Security.sanitizeText(em)}" class="bento-action-btn mail-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
+            <span>Email</span>
+          </a>
+        `;
+      }
+
+      if (d.lin) {
+        const lUrl = d.lin.startsWith('http') ? d.lin : `https://linkedin.com/in/${d.lin}`;
+        actionsGrid.innerHTML += `
+          <a href="${Security.sanitizeUrl(lUrl, 'https')}" target="_blank" class="bento-action-btn link-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect width="4" height="12" x="2" y="9"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+            <span>LinkedIn</span>
+          </a>
+        `;
+      }
+
+      if (d.tik) {
+        const tUrl = Security.getTikTokUrl(d.tik);
+        actionsGrid.innerHTML += `
+          <a href="${tUrl}" target="_blank" class="bento-action-btn" style="color: #ec4899;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"></path></svg>
+            <span>TikTok</span>
+          </a>
+        `;
+      }
+
+      if (d.web) {
+        actionsGrid.innerHTML += `
+          <a href="${Security.sanitizeUrl(d.web, 'https')}" target="_blank" class="bento-action-btn" style="color: var(--accent);">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" x2="22" y1="12" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+            <span>Web</span>
+          </a>
+        `;
+      }
+    },
+
+    downloadVCard: function() {
+      if (!this.receivedData) return;
+      const d = this.receivedData;
+      const dummyProfile = {
+        firstName: d.fn,
+        lastName: d.ln,
+        org: d.org,
+        title: d.tit,
+        phoneMobile: d.mob,
+        whatsappUser: d.wau,
+        phoneWork: d.wrk,
+        emailWork: d.emw,
+        emailPersonal: d.emp,
+        website: d.web,
+        linkedIn: d.lin,
+        instagram: d.ins,
+        tiktok: d.tik,
+        github: d.git,
+        address: d.adr,
+        bio: d.bio
+      };
+      const vcard = VCardGenerator.buildVCardString(dummyProfile);
+      VCardGenerator.downloadVCardFile(`${d.fn || 'Contacto'}_${d.ln || ''}`, vcard);
+    },
+
+    saveToAppDirectory: function() {
+      if (!this.receivedData) return;
+      const d = this.receivedData;
+      DirectoryModule.addContact({
+        firstName: d.fn || 'Contacto',
+        lastName: d.ln || '',
+        org: d.org || '',
+        title: d.tit || '',
+        phoneMobile: d.mob || '',
+        whatsappUser: d.wau || '',
+        phoneWork: d.wrk || '',
+        emailWork: d.emw || '',
+        emailPersonal: d.emp || '',
+        website: d.web || '',
+        linkedIn: d.lin || '',
+        instagram: d.ins || '',
+        tiktok: d.tik || '',
+        github: d.git || '',
+        address: d.adr || '',
+        bio: d.bio || ''
+      });
+      alert('✅ Contacto guardado en tu Libreta SmartCard.');
+    },
+
+    startNewApp: function() {
+      window.location.hash = '';
+      window.location.reload();
+    }
+  };
+
+  // ----------------------------------------------------
+  // 10. SETTINGS & APP NAVIGATION
+  // ----------------------------------------------------
+  const SettingsModule = {
+    settings: {
+      autoListen: false,
+      voiceFeedback: true
+    },
+
+    init: function() {
+      const saved = localStorage.getItem(StorageKeys.SETTINGS);
+      if (saved) {
+        try { this.settings = Object.assign(this.settings, JSON.parse(saved)); } catch (e) {}
+      }
+      this.updateUI();
+      if (this.settings.autoListen) {
+        setTimeout(() => VoiceEngine.startListening(), 600);
+      }
+    },
+
+    getSettings: function() {
+      return this.settings;
+    },
+
+    save: function() {
+      localStorage.setItem(StorageKeys.SETTINGS, JSON.stringify(this.settings));
+      this.updateUI();
+    },
+
+    toggleAutoListen: function() {
+      this.settings.autoListen = !this.settings.autoListen;
+      this.save();
+    },
+
+    toggleVoiceFeedback: function() {
+      this.settings.voiceFeedback = !this.settings.voiceFeedback;
+      this.save();
+    },
+
+    updateUI: function() {
+      document.getElementById('settingAutoListenCheck').parentElement.classList.toggle('checked', this.settings.autoListen);
+      document.getElementById('settingVoiceFeedbackCheck').parentElement.classList.toggle('checked', this.settings.voiceFeedback);
+    },
+
+    exportBackup: function() {
+      const backup = {
+        version: 1,
+        date: new Date().toISOString(),
+        profiles: ProfilesModule.profiles,
+        contacts: DirectoryModule.contacts,
+        settings: this.settings
+      };
+      const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `SmartCard_Backup_${new Date().toISOString().slice(0, 10)}.json`;
+      link.click();
+      URL.revokeObjectURL(url);
+    },
+
+    importBackup: function(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const data = JSON.parse(e.target.result);
+          if (data.profiles && Array.isArray(data.profiles)) {
+            ProfilesModule.profiles = data.profiles;
+            ProfilesModule.activeProfileId = data.profiles[0].id;
+            ProfilesModule.saveAll();
+          }
+          if (data.contacts && Array.isArray(data.contacts)) {
+            DirectoryModule.contacts = data.contacts;
+            DirectoryModule.saveAll();
+          }
+          if (data.settings) {
+            this.settings = data.settings;
+            this.save();
+          }
+          alert('✅ Respaldo restaurado con éxito.');
+          window.location.reload();
+        } catch (err) {
+          alert('❌ Error al importar archivo JSON.');
+        }
+      };
+      reader.readAsText(file);
+    }
+  };
+
+  const AppNav = {
+    switchTab: function(tabName) {
+      document.querySelectorAll('.view-panel').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+      if (tabName === 'qr') {
+        document.getElementById('viewQR').classList.add('active');
+        document.querySelectorAll('.nav-item')[0].classList.add('active');
+      } else if (tabName === 'directory') {
+        document.getElementById('viewDirectory').classList.add('active');
+        document.querySelectorAll('.nav-item')[1].classList.add('active');
+      } else if (tabName === 'profiles') {
+        document.getElementById('viewProfiles').classList.add('active');
+        document.querySelectorAll('.nav-item')[2].classList.add('active');
+      } else if (tabName === 'settings') {
+        document.getElementById('viewSettings').classList.add('active');
+        document.querySelectorAll('.nav-item')[3].classList.add('active');
+      }
+    },
+
+    updateHeader: function() {
+      const p = ProfilesModule.getActiveProfile();
+      if (!p) return;
+      const pillAv = document.getElementById('pillAvatar');
+      if (p.avatarData) {
+        pillAv.innerHTML = `<img src="${p.avatarData}" alt="avatar" />`;
+      } else {
+        pillAv.textContent = (p.firstName ? p.firstName[0] : 'U') + (p.lastName ? p.lastName[0] : '');
+      }
+      document.getElementById('pillName').textContent = `${p.firstName || ''} ${p.lastName || ''}`.trim() || 'Mi Perfil';
+      const org = p.org || '';
+      const title = p.title || '';
+      document.getElementById('pillRole').textContent = org && title ? `${org} • ${title}` : (org || title || 'Empresa / Profesión');
+    }
+  };
+
+  // ----------------------------------------------------
+  // INITIALIZATION ON DOM READY & PWA SERVICE WORKER
+  // ----------------------------------------------------
+  window.addEventListener('DOMContentLoaded', () => {
+    // 1. Check if opened via shared hash URL
+    const isRecipient = RecipientManager.checkHashPayload();
+
+    // 2. Initialize all modules
+    ProfilesModule.init();
+    QRModule.init();
+    DirectoryModule.init();
+    VoiceEngine.init();
+    SettingsModule.init();
+    AppNav.updateHeader();
+
+    // 3. Register Service Worker for 100% Offline PWA functionality
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js').then((reg) => {
+        console.log('✅ SmartCard PWA ServiceWorker registrado:', reg.scope);
+      }).catch((err) => {
+        console.log('ℹ️ ServiceWorker local info:', err);
+      });
+    }
+  });
+
+  // Listen for hash changes
+  window.addEventListener('hashchange', () => {
+    if (!RecipientManager.checkHashPayload()) {
+      document.getElementById('recipientView').classList.remove('active');
+      document.querySelector('.bottom-nav').style.display = 'flex';
+      AppNav.switchTab('qr');
+    }
+  });
+  </script>
+</body>
+</html>

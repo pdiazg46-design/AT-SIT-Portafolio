@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="ventoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="50%" stop-color="#0284c7"/>
+      <stop offset="100%" stop-color="#818cf8"/>
+    </linearGradient>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0b1329"/>
+      <stop offset="100%" stop-color="#040711"/>
+    </linearGradient>
+    <filter id="ventoGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="16" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- Card Body -->
+  <rect width="512" height="512" rx="115" fill="url(#bgGradient)" stroke="#38bdf8" stroke-width="8" stroke-opacity="0.3"/>
+
+  <!-- Futuristic Matrix Pattern -->
+  <g opacity="0.18" fill="#38bdf8">
+    <circle cx="96" cy="96" r="10"/>
+    <circle cx="160" cy="96" r="10"/>
+    <circle cx="224" cy="96" r="10"/>
+    <circle cx="288" cy="96" r="10"/>
+    <circle cx="352" cy="96" r="10"/>
+    <circle cx="416" cy="96" r="10"/>
+    
+    <circle cx="96" cy="416" r="10"/>
+    <circle cx="160" cy="416" r="10"/>
+    <circle cx="224" cy="416" r="10"/>
+    <circle cx="288" cy="416" r="10"/>
+    <circle cx="352" cy="416" r="10"/>
+    <circle cx="416" cy="416" r="10"/>
+  </g>
+
+  <!-- Stylized Dynamic 'V' Blade / Wind Emblem -->
+  <path d="M120 140 L256 390 L392 140 L318 140 L256 265 L194 140 Z" fill="url(#ventoGradient)" filter="url(#ventoGlow)"/>
+
+  <!-- Inner Dynamic Speed Streaks -->
+  <path d="M210 160 L256 248 L302 160 Z" fill="#ffffff" opacity="0.85"/>
+  <circle cx="256" cy="330" r="14" fill="#38bdf8"/>
+</svg>
