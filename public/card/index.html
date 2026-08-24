@@ -1093,11 +1093,11 @@
 
         <!-- QR Format Mode Switcher -->
         <div style="display: flex; gap: 4px; width: 100%; background: rgba(11, 15, 25, 0.6); padding: 3px; border-radius: 12px; border: 1px solid var(--border-subtle); margin-top: 4px;">
-          <button type="button" class="btn btn-sm qr-mode-btn active" data-mode="vcard" onclick="QRModule.setQRMode('vcard')" style="flex: 1; padding: 6px 8px; font-size: 11px;">
-            📇 Agenda Móvil (vCard)
-          </button>
-          <button type="button" class="btn btn-sm qr-mode-btn" data-mode="web" onclick="QRModule.setQRMode('web')" style="flex: 1; padding: 6px 8px; font-size: 11px;">
+          <button type="button" class="btn btn-sm qr-mode-btn active" data-mode="web" onclick="QRModule.setQRMode('web')" style="flex: 1; padding: 6px 8px; font-size: 11px;">
             🌐 Tarjeta Web App
+          </button>
+          <button type="button" class="btn btn-sm qr-mode-btn" data-mode="vcard" onclick="QRModule.setQRMode('vcard')" style="flex: 1; padding: 6px 8px; font-size: 11px;">
+            📇 Agenda Móvil (vCard)
           </button>
         </div>
 
@@ -2588,7 +2588,7 @@
   // 6. QR GENERATION & MODULAR SHARING MODULE
   // ----------------------------------------------------
   const QRModule = {
-    qrMode: 'vcard', // 'vcard' (default clean) | 'web'
+    qrMode: 'web', // 'web' (default interactive app) | 'vcard'
     selectedKeys: [],
     avatarImageObj: null,
 
@@ -2599,10 +2599,10 @@
       });
       const hint = document.getElementById('qrModeHint');
       if (hint) {
-        if (mode === 'vcard') {
-          hint.innerHTML = '📱 <b>Modo Agenda Directa (Limpio):</b> Tu cámara de Samsung/iPhone reconocerá el contacto al instante para guardarlo en la libreta nativa.';
+        if (mode === 'web') {
+          hint.innerHTML = '🌐 <b>Modo Tarjeta Web (Oficial ATSIT):</b> Al escanear con la cámara, abre inmediatamente tu tarjeta ejecutiva en la web con todos tus canales directos y opción de guardado.';
         } else {
-          hint.innerHTML = '🌐 <b>Modo Tarjeta Web:</b> Abre la app web interactiva en el navegador del teléfono vía Wi-Fi local.';
+          hint.innerHTML = '📱 <b>Modo Agenda Directa (vCard):</b> Tu cámara de Samsung/iPhone reconocerá el contacto al instante para guardarlo en la libreta nativa.';
         }
       }
       this.generateQR();
@@ -2626,6 +2626,7 @@
     ],
 
     init: function() {
+      this.setQRMode('web');
       this.applyPreset('quick');
     },
 
