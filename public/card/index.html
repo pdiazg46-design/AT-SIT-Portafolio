@@ -1273,15 +1273,6 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label">Foto de Perfil / Logo (Para el centro del QR)</label>
-            <input type="file" id="inputAvatarFile" class="form-input" accept="image/*" onchange="ProfilesModule.handleAvatarUpload(event)" />
-            <div style="display: flex; align-items: center; gap: 10px; margin-top: 6px;">
-              <div id="previewAvatarImg" class="pill-avatar" style="width: 40px; height: 40px; font-size: 16px;"></div>
-              <button type="button" class="btn btn-secondary btn-sm" onclick="ProfilesModule.removeAvatar()">Quitar Foto</button>
-            </div>
-          </div>
-
-          <div class="form-group">
             <label class="form-label">Nota Bio / Resumen</label>
             <textarea id="inputBio" class="form-textarea" placeholder="Breve descripción o especialidad"></textarea>
           </div>
@@ -1917,35 +1908,7 @@
           }
         }
 
-        // Draw Central Avatar overlay if provided
-        if (options.avatarImg) {
-          const centerSize = Math.floor(size * 0.22);
-          const centerPos = (size - centerSize) / 2;
-          const radius = centerSize / 2;
-
-          // Clear a circular safe quiet zone
-          ctx.save();
-          ctx.beginPath();
-          ctx.arc(size / 2, size / 2, radius + 4, 0, Math.PI * 2);
-          ctx.fillStyle = '#ffffff';
-          ctx.fill();
-
-          // Border glow on avatar
-          ctx.beginPath();
-          ctx.arc(size / 2, size / 2, radius, 0, Math.PI * 2);
-          ctx.clip();
-          ctx.drawImage(options.avatarImg, centerPos, centerPos, centerSize, centerSize);
-          ctx.restore();
-
-          // Draw border ring
-          ctx.beginPath();
-          ctx.arc(size / 2, size / 2, radius + 1, 0, Math.PI * 2);
-          ctx.lineWidth = 3;
-          ctx.strokeStyle = '#0284c7';
-          ctx.stroke();
-        }
-
-        return { moduleCount, textLength: text.length };
+        return { moduleCount: moduleCount, version: qr.typeNumber };
       }
     };
   })();
@@ -2439,13 +2402,6 @@
       document.getElementById('inputBio').value = p.bio || '';
       
       this.renderCustomFields();
-
-      const prevAvatar = document.getElementById('previewAvatarImg');
-      if (p.avatarData) {
-        prevAvatar.innerHTML = `<img src="${p.avatarData}" alt="Avatar" />`;
-      } else {
-        prevAvatar.innerHTML = (p.firstName ? p.firstName[0] : 'U') + (p.lastName ? p.lastName[0] : '');
-      }
     },
 
     saveActiveProfile: function() {
@@ -2730,44 +2686,21 @@
         qrPayloadText = `${baseUrl}#card=${encoded}`;
       }
 
-      // Load avatar image for canvas overlay
-      if (p.avatarData) {
-        const img = new Image();
-        img.onload = () => {
-          this.avatarImageObj = img;
-          this.renderCanvas(canvas, qrPayloadText, img);
-        };
-        img.src = p.avatarData;
-      } else {
-        this.avatarImageObj = null;
-        this.renderCanvas(canvas, qrPayloadText, null);
-      }
+      this.renderCanvas(canvas, qrPayloadText);
     },
 
-    renderCanvas: function(canvas, text, avatarImg) {
-      // Dynamic Density Optimization:
-      // If payload is large (>110 chars, e.g. preset "Todo"), switch to Level L (7% error correction)
-      // and omit central avatar overlay so modules are 50% larger, bolder and 100% readable.
-      const isLargePayload = text.length > 110;
-      const effectiveEcLevel = isLargePayload ? 1 : (avatarImg ? 3 : 0); // 1 = Level L (Large blocks), 3 = Level Q, 0 = Level M
-      const effectiveAvatar = isLargePayload ? null : avatarImg;
-
+    renderCanvas: function(canvas, text) {
+      // Pure High-Contrast QR: Level L for massive modules and instant 0.05s scanning
       const result = QREngine.drawOnCanvas(canvas, text, {
-        errorCorrectLevel: effectiveEcLevel,
-        avatarImg: effectiveAvatar,
+        errorCorrectLevel: 1, // Level L
         darkColor: '#000000',
         margin: 14
       });
 
       // Update readability indicator
       const badge = document.getElementById('readabilityBadge');
-      if (result.moduleCount <= 45) {
-        badge.className = 'readability-meter';
-        badge.innerHTML = '● Lectura Instantánea (0.1s)';
-      } else {
-        badge.className = 'readability-meter';
-        badge.innerHTML = '● Optimizado (Nivel L Dinámico)';
-      }
+      badge.className = 'readability-meter';
+      badge.innerHTML = '● Lectura Instantánea (0.05s)';
     },
 
     getShareDataObject: function() {
@@ -3570,11 +3503,7 @@
       const p = ProfilesModule.getActiveProfile();
       if (!p) return;
       const pillAv = document.getElementById('pillAvatar');
-      if (p.avatarData) {
-        pillAv.innerHTML = `<img src="${p.avatarData}" alt="avatar" />`;
-      } else {
-        pillAv.textContent = (p.firstName ? p.firstName[0] : 'U') + (p.lastName ? p.lastName[0] : '');
-      }
+      pillAv.textContent = (p.firstName ? p.firstName[0] : 'P') + (p.lastName ? p.lastName[0] : 'D');
       document.getElementById('pillName').textContent = `${p.firstName || ''} ${p.lastName || ''}`.trim() || 'Mi Perfil';
       const org = p.org || '';
       const title = p.title || '';
