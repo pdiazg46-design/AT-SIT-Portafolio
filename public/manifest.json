@@ -1,14 +1,16 @@
 {
-  "id": "/card/",
+  "id": "ventocard-atsit-pwa",
   "name": "VentoCard by ATSIT",
   "short_name": "VentoCard",
   "description": "Tarjeta de contacto digital 100% soberana, autónoma y ultra rápida con QR inteligente y vCard 3.0",
-  "start_url": "/card/",
+  "start_url": "/card/index.html",
   "scope": "/card/",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui", "window-controls-overlay"],
   "background_color": "#070b14",
   "theme_color": "#070b14",
   "orientation": "portrait",
+  "prefer_related_applications": false,
   "categories": ["business", "productivity", "utilities"],
   "icons": [
     {
