@@ -1,11 +1,13 @@
-const CACHE_NAME = 'smartcard-v1';
+const CACHE_NAME = 'ventocard-v1';
 const ASSETS = [
   './',
   './index.html',
   './manifest.json',
   './icon.svg',
   './icon-192.png',
-  './icon-512.png'
+  './icon-512.png',
+  './icon-maskable-192.png',
+  './icon-maskable-512.png'
 ];
 
 // Install: Cache core assets for 100% offline availability
