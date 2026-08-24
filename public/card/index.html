@@ -67,14 +67,72 @@
       font-size: 13px;
     }
 
-    /* Container - True Mobile Dimensions */
+    /* Container - Responsive Mobile & Desktop Layout */
     .app-viewport {
       width: 100%;
-      max-width: 385px;
+      max-width: 440px;
       margin: 0 auto;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
+      transition: max-width 0.25s ease;
+    }
+
+    /* Desktop Viewport Enhancement */
+    @media (min-width: 820px) {
+      body {
+        padding: 24px 24px 60px 24px;
+      }
+      .app-viewport {
+        max-width: 1020px;
+        gap: 16px;
+      }
+      header.app-header {
+        padding: 6px 12px;
+      }
+      .brand-title {
+        font-size: 18px !important;
+      }
+      #viewQR.active {
+        display: grid !important;
+        grid-template-columns: 370px 1fr !important;
+        gap: 20px !important;
+        align-items: start !important;
+      }
+      .qr-hero-card {
+        grid-column: 1;
+        position: sticky;
+        top: 20px;
+      }
+      .qr-controls-card {
+        grid-column: 2;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 14px !important;
+      }
+      .checkbox-list {
+        display: grid !important;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)) !important;
+        gap: 8px !important;
+        max-height: none !important;
+        overflow-y: visible !important;
+      }
+      .contacts-grid-wrapper {
+        display: grid !important;
+        grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)) !important;
+        gap: 12px !important;
+      }
+      .profiles-bento-layout {
+        display: grid !important;
+        grid-template-columns: 340px 1fr !important;
+        gap: 20px !important;
+        align-items: start !important;
+      }
+      nav.bottom-nav {
+        max-width: 480px !important;
+        bottom: 16px !important;
+        padding: 6px 14px !important;
+      }
     }
 
     /* Header */
@@ -953,19 +1011,7 @@
     <!-- ========================================== -->
     <div id="viewQR" class="view-panel active">
       
-      <!-- Profile Header Pill -->
-      <div class="profile-pill-header">
-        <div id="pillAvatar" class="pill-avatar">TU</div>
-        <div class="pill-info">
-          <div id="pillName" class="pill-name">Mi Perfil</div>
-          <div id="pillRole" class="pill-role">Empresa / Profesión</div>
-        </div>
-        <button class="btn btn-secondary btn-sm" onclick="AppNav.switchTab('profiles')">
-          Cambiar
-        </button>
-      </div>
-
-      <!-- QR Hero Canvas -->
+      <!-- LEFT COLUMN (On Desktop) / PRIMARY CARD: QR & FAST ACTIONS -->
       <div class="glass-card qr-hero-card">
         <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
           <h2 class="section-title" style="margin-bottom: 0;">
@@ -979,63 +1025,83 @@
 
         <!-- QR Format Mode Switcher -->
         <div style="display: flex; gap: 4px; width: 100%; background: rgba(11, 15, 25, 0.6); padding: 3px; border-radius: 12px; border: 1px solid var(--border-subtle); margin-top: 4px;">
-          <button type="button" class="btn btn-sm qr-mode-btn active" data-mode="vcard" onclick="QRModule.setQRMode('vcard')" style="flex: 1; padding: 5px 6px; font-size: 11px;">
+          <button type="button" class="btn btn-sm qr-mode-btn active" data-mode="vcard" onclick="QRModule.setQRMode('vcard')" style="flex: 1; padding: 6px 8px; font-size: 11px;">
             📇 Agenda Móvil (vCard)
           </button>
-          <button type="button" class="btn btn-sm qr-mode-btn" data-mode="web" onclick="QRModule.setQRMode('web')" style="flex: 1; padding: 5px 6px; font-size: 11px;">
+          <button type="button" class="btn btn-sm qr-mode-btn" data-mode="web" onclick="QRModule.setQRMode('web')" style="flex: 1; padding: 6px 8px; font-size: 11px;">
             🌐 Tarjeta Web App
           </button>
         </div>
 
         <!-- Canvas with Central Avatar -->
-        <div class="qr-canvas-container" style="background: #ffffff; padding: 10px; border-radius: 20px; box-shadow: 0 8px 30px rgba(0,0,0,0.5);">
-          <canvas id="qrCanvas" width="240" height="240" style="width: 190px; height: 190px; display: block;"></canvas>
+        <div class="qr-canvas-container" style="background: #ffffff; padding: 12px; border-radius: 20px; box-shadow: 0 8px 30px rgba(0,0,0,0.5);">
+          <canvas id="qrCanvas" width="240" height="240" style="width: 200px; height: 200px; display: block;"></canvas>
         </div>
 
         <p id="qrModeHint" style="font-size: 11.5px; color: var(--text-muted); line-height: 1.4;">
           📱 <b>Modo Agenda Directa (Limpio):</b> Tu cámara de Samsung reconocerá el contacto al instante para guardarlo en la libreta nativa.
         </p>
 
-        <!-- Presets Selector -->
-        <div style="width: 100%; text-align: left;">
-          <div class="form-label" style="margin-bottom: 6px;">
-            <span>Campos a Compartir en este QR:</span>
-            <span id="fieldsCount" style="color: var(--accent);">0 seleccionados</span>
+        <!-- Streamlined Action Buttons (No Redundancy) -->
+        <div style="display: flex; flex-direction: column; gap: 8px; width: 100%; margin-top: 6px;">
+          <!-- Primary WhatsApp Share Button -->
+          <button class="btn btn-block" style="background: linear-gradient(135deg, #22c55e, #16a34a); color: #ffffff; font-weight: 800; font-size: 13.5px; padding: 12px 16px; box-shadow: 0 4px 16px rgba(34, 197, 94, 0.4); display: flex; align-items: center; justify-content: center; gap: 8px;" onclick="QRModule.shareViaWhatsApp()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+            <span>Compartir por WhatsApp</span>
+          </button>
+
+          <!-- 2 Compact Quick Actions -->
+          <div style="display: flex; gap: 8px; width: 100%;">
+            <button class="btn btn-secondary" style="flex: 1; padding: 8px 10px; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 6px;" onclick="QRModule.copyShareLink()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg>
+              <span>Copiar Enlace</span>
+            </button>
+            <button class="btn btn-secondary" style="flex: 1; padding: 8px 10px; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 6px;" onclick="QRModule.downloadVCard()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" x2="12" y1="15" y2="3"></line></svg>
+              <span>Guardar .vcf</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN (On Desktop) / SECONDARY CARD: PROFILE & SHARING FIELDS -->
+      <div class="qr-controls-card">
+        <!-- Profile Header Pill -->
+        <div class="profile-pill-header">
+          <div id="pillAvatar" class="pill-avatar">TU</div>
+          <div class="pill-info">
+            <div id="pillName" class="pill-name">Mi Perfil</div>
+            <div id="pillRole" class="pill-role">Empresa / Profesión</div>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="AppNav.switchTab('profiles')">
+            Editar Perfil
+          </button>
+        </div>
+
+        <!-- Presets & Modular Fields Selector Card -->
+        <div class="glass-card" style="text-align: left;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <div class="form-label" style="margin-bottom: 0;">
+              <span>Campos a Compartir en el QR:</span>
+            </div>
+            <span id="fieldsCount" style="color: var(--accent); font-weight: 700; font-size: 12px;">0 seleccionados</span>
           </div>
 
-          <div class="presets-row">
+          <!-- Presets Row -->
+          <div class="presets-row" style="margin-bottom: 12px;">
             <button class="preset-chip active" onclick="QRModule.applyPreset('quick')">⚡ Rápido</button>
             <button class="preset-chip" onclick="QRModule.applyPreset('work')">💼 Trabajo</button>
             <button class="preset-chip" onclick="QRModule.applyPreset('personal')">👤 Personal</button>
             <button class="preset-chip" onclick="QRModule.applyPreset('all')">🌟 Todo</button>
           </div>
 
-          <!-- Modular Checkbox List -->
+          <!-- Modular Checkbox List (No tight scrollbox, clean & responsive) -->
           <div id="qrCheckboxList" class="checkbox-list">
             <!-- Dynamically populated from active profile -->
           </div>
         </div>
-
-        <!-- Action Buttons -->
-        <div style="display: flex; flex-direction: column; gap: 6px; width: 100%; margin-top: 8px;">
-          <!-- Direct WhatsApp Sharing Button -->
-          <button class="btn btn-block" style="background: linear-gradient(135deg, #22c55e, #16a34a); color: #ffffff; font-weight: 800; box-shadow: 0 4px 14px rgba(34, 197, 94, 0.4);" onclick="QRModule.shareViaWhatsApp()">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
-            Compartir por WhatsApp
-          </button>
-
-          <div style="display: flex; gap: 6px; width: 100%;">
-            <button class="btn btn-primary" style="flex: 1;" onclick="QRModule.downloadVCard()">
-              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" x2="12" y1="15" y2="3"></line></svg>
-              Bajar .vcf
-            </button>
-            <button class="btn btn-secondary" style="flex: 1;" onclick="QRModule.copyShareLink()">
-              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg>
-              Copiar Link
-            </button>
-          </div>
-        </div>
       </div>
+
     </div>
 
     <!-- ========================================== -->

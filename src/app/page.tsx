@@ -85,7 +85,7 @@ export default function Home() {
                         </Link>
                     </motion.div>
 
-                    <div className="hidden md:flex items-center gap-10">
+                    <div className="hidden md:flex items-center gap-7">
                         {["Proyectos", "Descargas", "Servicios", "Habilidades", "Contacto"].map((item) => (
                             <a
                                 key={item}
@@ -95,7 +95,15 @@ export default function Home() {
                                 {item}
                             </a>
                         ))}
-                        <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="bg-indigo-600 hover:bg-indigo-700 text-white px-7 py-2.5 rounded-full text-sm font-bold shadow-xl shadow-indigo-600/20 transition-all active:scale-95">
+                        <Link
+                            href="/card/"
+                            target="_blank"
+                            className="inline-flex items-center gap-2 bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-600 hover:from-sky-600 hover:to-indigo-700 text-white px-5 py-2.5 rounded-full text-xs font-black shadow-xl shadow-sky-500/25 transition-all transform hover:scale-105 active:scale-95 border border-sky-400/40"
+                        >
+                            <Smartphone size={14} className="text-white shrink-0" />
+                            <span>⚡ Ir a VentoCard</span>
+                        </Link>
+                        <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-full text-xs font-bold shadow-xl shadow-indigo-600/20 transition-all active:scale-95">
                             Hablemos
                         </a>
                     </div>
