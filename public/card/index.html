@@ -3936,16 +3936,46 @@
   const PWAInstallManager = {
     deferredPrompt: null,
 
+    isInstalled: function() {
+      return (
+        window.matchMedia('(display-mode: standalone)').matches ||
+        window.matchMedia('(display-mode: minimal-ui)').matches ||
+        window.matchMedia('(display-mode: fullscreen)').matches ||
+        window.navigator.standalone === true ||
+        document.referrer.startsWith('android-app://')
+      );
+    },
+
     init: function() {
+      this.updateVisibility();
+
       window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         this.deferredPrompt = e;
+        this.updateVisibility();
       });
 
       window.addEventListener('appinstalled', () => {
         this.deferredPrompt = null;
         console.log('✅ VentoCard instalada exitosamente como WebAPK');
+        this.updateVisibility();
       });
+
+      try {
+        window.matchMedia('(display-mode: standalone)').addEventListener('change', () => {
+          this.updateVisibility();
+        });
+      } catch (e) {}
+    },
+
+    updateVisibility: function() {
+      const card = document.getElementById('pwaInstallCard');
+      if (!card) return;
+      if (this.isInstalled()) {
+        card.style.display = 'none';
+      } else {
+        card.style.display = 'block';
+      }
     },
 
     triggerInstall: async function() {
@@ -3954,6 +3984,7 @@
         const { outcome } = await this.deferredPrompt.userChoice;
         if (outcome === 'accepted') {
           this.deferredPrompt = null;
+          this.updateVisibility();
         }
       } else {
         UIModal.alert('Instalar App Oficial', 'Para instalar VentoCard en tu pantalla:\n\n1. Toca el menú de 3 puntos (⋮) de tu navegador arriba a la derecha.\n2. Elige "Instalar aplicación" o "Agregar a inicio".\n3. Pulsa "Instalar".', '📲');
