@@ -985,9 +985,83 @@
       gap: 16px;
       box-shadow: 0 20px 50px rgba(0,0,0,0.8);
     }
+
+    /* Premium Glass Bento Modal System */
+    .custom-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(3, 7, 18, 0.85);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      z-index: 100000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      animation: modalFadeIn 0.2s ease-out;
+    }
+    .custom-modal-box {
+      background: linear-gradient(145deg, rgba(15, 23, 42, 0.96), rgba(7, 11, 20, 0.98)) !important;
+      border: 1.5px solid rgba(56, 189, 248, 0.35) !important;
+      border-radius: 24px !important;
+      padding: 28px 22px 22px 22px !important;
+      max-width: 360px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), 0 0 35px rgba(56, 189, 248, 0.18) !important;
+      animation: modalPopIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .custom-modal-icon {
+      font-size: 44px;
+      margin-bottom: 12px;
+      filter: drop-shadow(0 4px 14px rgba(56, 189, 248, 0.4));
+      line-height: 1;
+    }
+    .custom-modal-title {
+      font-size: 17.5px;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 8px;
+    }
+    .custom-modal-message {
+      font-size: 13.5px;
+      color: #94a3b8;
+      line-height: 1.55;
+      margin-bottom: 22px;
+      white-space: pre-line;
+    }
+    .custom-modal-actions {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+    }
+    @keyframes modalPopIn {
+      0% { transform: scale(0.88); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes modalFadeIn {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
   </style>
 </head>
 <body>
+
+  <!-- Premium Glass Bento Modal Overlay -->
+  <div id="customModalOverlay" class="custom-modal-overlay" style="display: none;">
+    <div class="custom-modal-box">
+      <div id="modalIcon" class="custom-modal-icon">✅</div>
+      <h3 id="modalTitle" class="custom-modal-title">Título</h3>
+      <p id="modalMessage" class="custom-modal-message">Mensaje...</p>
+      <div id="modalActions" class="custom-modal-actions">
+        <button id="modalBtnCancel" type="button" class="btn btn-secondary" style="flex: 1; padding: 10px 14px; font-size: 13.5px; font-weight: 700; display: none;">Cancelar</button>
+        <button id="modalBtnConfirm" type="button" class="btn btn-primary" style="flex: 1; padding: 10px 14px; font-size: 13.5px; font-weight: 800;">Aceptar</button>
+      </div>
+    </div>
+  </div>
 
   <!-- Floating Voice Engine Modal -->
   <div id="voiceModal" class="voice-modal-backdrop">
@@ -1483,6 +1557,86 @@
    * SMARTCARD SOVEREIGN CORE ENGINE
    * 100% Client-Side, Zero External Dependencies, Offline-First
    */
+
+  // ----------------------------------------------------
+  // 0. PREMIUM UI MODAL & TOAST DIALOG MANAGER
+  // ----------------------------------------------------
+  const UIModal = {
+    callbackConfirm: null,
+    callbackCancel: null,
+
+    alert: function(title, message, icon = '✅', buttonText = 'Entendido') {
+      return new Promise((resolve) => {
+        const overlay = document.getElementById('customModalOverlay');
+        if (!overlay) {
+          window.alert(`${title}\n\n${message}`);
+          resolve(true);
+          return;
+        }
+        document.getElementById('modalIcon').textContent = icon;
+        document.getElementById('modalTitle').textContent = title;
+        document.getElementById('modalMessage').textContent = message;
+        
+        const btnCancel = document.getElementById('modalBtnCancel');
+        const btnConfirm = document.getElementById('modalBtnConfirm');
+        btnCancel.style.display = 'none';
+        btnConfirm.textContent = buttonText;
+
+        this.callbackConfirm = () => {
+          overlay.style.display = 'none';
+          resolve(true);
+        };
+
+        btnConfirm.onclick = () => {
+          if (this.callbackConfirm) this.callbackConfirm();
+        };
+
+        overlay.style.display = 'flex';
+      });
+    },
+
+    confirm: function(title, message, icon = '❓', confirmText = 'Confirmar', cancelText = 'Cancelar') {
+      return new Promise((resolve) => {
+        const overlay = document.getElementById('customModalOverlay');
+        if (!overlay) {
+          const res = window.confirm(`${title}\n\n${message}`);
+          resolve(res);
+          return;
+        }
+        document.getElementById('modalIcon').textContent = icon;
+        document.getElementById('modalTitle').textContent = title;
+        document.getElementById('modalMessage').textContent = message;
+        
+        const btnCancel = document.getElementById('modalBtnCancel');
+        const btnConfirm = document.getElementById('modalBtnConfirm');
+        btnCancel.style.display = 'block';
+        btnCancel.textContent = cancelText;
+        btnConfirm.textContent = confirmText;
+
+        this.callbackConfirm = () => {
+          overlay.style.display = 'none';
+          resolve(true);
+        };
+        this.callbackCancel = () => {
+          overlay.style.display = 'none';
+          resolve(false);
+        };
+
+        btnConfirm.onclick = () => {
+          if (this.callbackConfirm) this.callbackConfirm();
+        };
+        btnCancel.onclick = () => {
+          if (this.callbackCancel) this.callbackCancel();
+        };
+
+        overlay.style.display = 'flex';
+      });
+    },
+
+    toast: function(message, duration = 3500) {
+      UpdateManager.showToast(message);
+    }
+  };
 
   // ----------------------------------------------------
   // 1. INLINE HIGH-PRECISION QR CODE ENGINE (Pure JS)
@@ -2512,7 +2666,7 @@
       this.renderProfilesList();
       QRModule.refresh();
       AppNav.updateHeader();
-      alert('✅ Tu perfil ha sido guardado correctamente.');
+      UIModal.alert('Perfil Guardado', 'Tu perfil profesional se ha guardado exitosamente.', '💾');
     },
 
     createNewProfile: function() {
@@ -2567,12 +2721,13 @@
       this.saveActiveProfile();
     },
 
-    deleteActiveProfile: function() {
+    deleteActiveProfile: async function() {
       if (this.profiles.length <= 1) {
-        alert('Debes mantener al menos un perfil activo.');
+        UIModal.alert('Acción no permitida', 'Debes mantener al menos un perfil activo.', '⚠️');
         return;
       }
-      if (confirm('¿Eliminar esta identidad?')) {
+      const ok = await UIModal.confirm('Eliminar Perfil', '¿Estás seguro de que deseas eliminar esta identidad?', '🗑️', 'Eliminar', 'Cancelar');
+      if (ok) {
         this.profiles = this.profiles.filter(p => p.id !== this.activeProfileId);
         this.activeProfileId = this.profiles[0].id;
         this.saveAll();
@@ -2873,14 +3028,14 @@
 
     copyShareLink: function() {
       const shareData = this.getShareDataObject();
-      const encoded = DataCodec.encodePayload(shareData);
+      const encoded = shareData ? DataCodec.encodePayload(shareData) : '';
       const baseUrl = this.getShareBaseUrl();
       const link = `${baseUrl}#card=${encoded}`;
 
       navigator.clipboard.writeText(link).then(() => {
-        alert('🔗 Enlace copiado al portapapeles.');
+        UIModal.alert('Enlace Copiado', 'El enlace de tu tarjeta se ha copiado al portapapeles listo para compartir.', '🔗');
       }).catch(() => {
-        prompt('Copia tu enlace aquí:', link);
+        UIModal.alert('Tu Enlace Digital', link, '🔗');
       });
     },
 
@@ -2940,8 +3095,9 @@
       this.renderContacts(this.contacts);
     },
 
-    deleteContact: function(id) {
-      if (confirm('¿Eliminar este contacto de tu libreta?')) {
+    deleteContact: async function(id) {
+      const ok = await UIModal.confirm('Eliminar Contacto', '¿Deseas eliminar este contacto de tu libreta?', '🗑️', 'Eliminar', 'Cancelar');
+      if (ok) {
         this.contacts = this.contacts.filter(c => c.id !== id);
         this.saveAll();
         this.renderContacts(this.contacts);
@@ -3100,7 +3256,7 @@
         address: '',
         bio: ''
       });
-      alert('✅ Contacto añadido a tu Directorio.');
+      UIModal.alert('Contacto Añadido', 'El nuevo contacto se ha guardado en tu libreta de VentoCard.', '📇');
     }
   };
 
@@ -3147,7 +3303,7 @@
 
     startListening: function() {
       if (!this.recognition) {
-        alert('El reconocimiento de voz requiere Chrome, Edge o Safari.');
+        UIModal.alert('Reconocimiento de Voz', 'El reconocimiento por voz en español requiere un navegador compatible como Chrome, Edge o Safari.', '🎙️');
         return;
       }
       try {
@@ -3550,7 +3706,7 @@
         address: d.adr || '',
         bio: d.bio || ''
       });
-      alert(`✅ ${d.fn || 'Contacto'} ${d.ln || ''} guardado en tus Contactos VentoCard.`);
+      UIModal.alert('Contacto Guardado', `${d.fn || 'Contacto'} ${d.ln || ''} se guardó exitosamente en tus Contactos de VentoCard.`, '📇');
       window.location.hash = '';
       document.getElementById('recipientView').classList.remove('active');
       document.querySelector('.bottom-nav').style.display = 'flex';
@@ -3642,10 +3798,11 @@
           if (backup.settings) {
             localStorage.setItem(StorageKeys.SETTINGS, JSON.stringify(backup.settings));
           }
-          alert('✅ Respaldo restaurado con éxito.');
-          window.location.reload();
+          UIModal.alert('Respaldo Restaurado', 'Tus contactos y perfiles se restauraron exitosamente.', '📦').then(() => {
+            window.location.reload();
+          });
         } catch (err) {
-          alert('❌ Error al importar archivo JSON.');
+          UIModal.alert('Error de Importación', 'El archivo seleccionado no contiene un formato JSON de respaldo válido.', '❌');
         }
       };
       reader.readAsText(file);
@@ -3750,17 +3907,17 @@
 
     checkForUpdateManual: function() {
       if (!navigator.onLine) {
-        alert('📡 Estás en modo offline. Conéctate a internet para buscar nuevas versiones.');
+        UIModal.alert('Modo Offline', 'Estás en modo sin conexión. Conéctate a internet para buscar nuevas actualizaciones.', '📡');
         return;
       }
       if (this.swRegistration) {
         this.swRegistration.update().then(() => {
-          alert('✅ Tu VentoCard está al día con la última versión oficial. Tus contactos y perfiles están 100% protegidos.');
+          UIModal.alert('VentoCard al Día', 'Tu aplicación está actualizada con la última versión oficial.\nTus contactos y perfiles están 100% protegidos.', '🛡️');
         }).catch(() => {
-          alert('✅ Tu VentoCard está al día.');
+          UIModal.alert('VentoCard al Día', 'Tu versión local es la más reciente.', '✅');
         });
       } else {
-        alert('✅ Versión local al día.');
+        UIModal.alert('Versión al Día', 'Tu versión local está actualizada.', '✅');
       }
     },
 
@@ -3799,7 +3956,7 @@
           this.deferredPrompt = null;
         }
       } else {
-        alert('📲 Para instalar la app oficial con icono completo:\n\n1. Toca el menú de 3 puntos (⋮) de tu navegador arriba a la derecha.\n2. Elige "Instalar aplicación" o "Agregar a la pantalla de inicio".\n3. Pulsa "Instalar".');
+        UIModal.alert('Instalar App Oficial', 'Para instalar VentoCard en tu pantalla:\n\n1. Toca el menú de 3 puntos (⋮) de tu navegador arriba a la derecha.\n2. Elige "Instalar aplicación" o "Agregar a inicio".\n3. Pulsa "Instalar".', '📲');
       }
     }
   };
