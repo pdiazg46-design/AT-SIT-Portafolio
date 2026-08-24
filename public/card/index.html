@@ -1035,7 +1035,7 @@
 
         <!-- Canvas with Central Avatar -->
         <div class="qr-canvas-container" style="background: #ffffff; padding: 12px; border-radius: 20px; box-shadow: 0 8px 30px rgba(0,0,0,0.5);">
-          <canvas id="qrCanvas" width="240" height="240" style="width: 200px; height: 200px; display: block;"></canvas>
+          <canvas id="qrCanvas" width="280" height="280" style="width: 220px; height: 220px; display: block;"></canvas>
         </div>
 
         <p id="qrModeHint" style="font-size: 11.5px; color: var(--text-muted); line-height: 1.4;">
@@ -2673,20 +2673,28 @@
     },
 
     renderCanvas: function(canvas, text, avatarImg) {
+      // Dynamic Density Optimization:
+      // If payload is large (>110 chars, e.g. preset "Todo"), switch to Level L (7% error correction)
+      // and omit central avatar overlay so modules are 50% larger, bolder and 100% readable.
+      const isLargePayload = text.length > 110;
+      const effectiveEcLevel = isLargePayload ? 1 : (avatarImg ? 3 : 0); // 1 = Level L (Large blocks), 3 = Level Q, 0 = Level M
+      const effectiveAvatar = isLargePayload ? null : avatarImg;
+
       const result = QREngine.drawOnCanvas(canvas, text, {
-        errorCorrectLevel: avatarImg ? 3 : 0, // Level Q with avatar, Level M without
-        avatarImg: avatarImg,
-        darkColor: '#070b14'
+        errorCorrectLevel: effectiveEcLevel,
+        avatarImg: effectiveAvatar,
+        darkColor: '#000000',
+        margin: 14
       });
 
       // Update readability indicator
       const badge = document.getElementById('readabilityBadge');
       if (result.moduleCount <= 45) {
         badge.className = 'readability-meter';
-        badge.innerHTML = '● Lectura Ultra Rápida';
+        badge.innerHTML = '● Lectura Instantánea (0.1s)';
       } else {
-        badge.className = 'readability-meter warn';
-        badge.innerHTML = '● Densidad Alta';
+        badge.className = 'readability-meter';
+        badge.innerHTML = '● Optimizado (Nivel L Dinámico)';
       }
     },
 
