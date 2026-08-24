@@ -1186,18 +1186,18 @@
           <div style="display: flex; gap: 10px;">
             <div class="form-group" style="flex: 1;">
               <label class="form-label">Teléfono Móvil</label>
-              <input type="tel" id="inputPhoneMobile" class="form-input" placeholder="+56 9 1234 5678" oninput="PhoneFormatter.handleInput(this)" />
+              <input type="tel" id="inputPhoneMobile" class="form-input" placeholder="+56 9 1234 5678 / +1 555..." oninput="PhoneFormatter.handleInput(this)" />
             </div>
             <div class="form-group" style="flex: 1;">
               <label class="form-label">WhatsApp (@usuario o tel)</label>
-              <input type="text" id="inputWhatsApp" class="form-input" placeholder="@usuario o +56 9..." oninput="PhoneFormatter.handleWhatsAppInput(this)" />
+              <input type="text" id="inputWhatsApp" class="form-input" placeholder="@usuario o +56 9... / +1..." oninput="PhoneFormatter.handleWhatsAppInput(this)" />
             </div>
           </div>
 
           <div style="display: flex; gap: 10px;">
             <div class="form-group" style="flex: 1;">
               <label class="form-label">Teléfono Trabajo / Fijo</label>
-              <input type="tel" id="inputPhoneWork" class="form-input" placeholder="+56 2 2345 6789" oninput="PhoneFormatter.handleInput(this)" />
+              <input type="tel" id="inputPhoneWork" class="form-input" placeholder="+56 2 2345 6789 / +34..." oninput="PhoneFormatter.handleInput(this)" />
             </div>
             <div class="form-group" style="flex: 1;">
               <label class="form-label">Email Laboral</label>
@@ -2039,25 +2039,48 @@
   };
 
   // ----------------------------------------------------
-  // 3. CHILEAN PHONE FORMATTER (+56 X XXXX XXXX)
+  // 3. UNIVERSAL INTERNATIONAL PHONE FORMATTER
   // ----------------------------------------------------
   const PhoneFormatter = {
     format: function(value) {
       if (!value) return '';
       let clean = String(value).trim();
+      
+      const hasPlus = clean.startsWith('+');
       let digits = clean.replace(/\D/g, '');
-      if (digits.startsWith('56')) {
-        digits = digits.substring(2);
+      if (!digits) return hasPlus ? '+' : '';
+
+      // If user provided a country code with +, format cleanly by country
+      if (hasPlus) {
+        if (digits.startsWith('56') && digits.length >= 3) {
+          // Chile: +56 9 XXXX XXXX
+          const d = digits.substring(2);
+          if (d.length <= 1) return `+56 ${d}`;
+          if (d.length <= 5) return `+56 ${d[0]} ${d.substring(1)}`;
+          return `+56 ${d[0]} ${d.substring(1, 5)} ${d.substring(5, 9)}`;
+        } else if (digits.startsWith('1') && digits.length >= 2) {
+          // USA / Canada: +1 XXX XXX XXXX
+          const d = digits.substring(1);
+          if (d.length <= 3) return `+1 ${d}`;
+          if (d.length <= 6) return `+1 ${d.substring(0, 3)} ${d.substring(3)}`;
+          return `+1 ${d.substring(0, 3)} ${d.substring(3, 6)} ${d.substring(6, 10)}`;
+        } else if ((digits.startsWith('34') || digits.startsWith('52') || digits.startsWith('54') || digits.startsWith('57') || digits.startsWith('51') || digits.startsWith('55') || digits.startsWith('58')) && digits.length >= 3) {
+          // Spain, Mexico, Argentina, Colombia, Peru, Brazil, Venezuela
+          const cc = digits.substring(0, 2);
+          const d = digits.substring(2);
+          if (d.length <= 3) return `+${cc} ${d}`;
+          if (d.length <= 6) return `+${cc} ${d.substring(0, 3)} ${d.substring(3)}`;
+          return `+${cc} ${d.substring(0, 3)} ${d.substring(3, 6)} ${d.substring(6, 11)}`;
+        } else {
+          // Any other international country code: group by 3/4 digits
+          return `+${digits.replace(/(\d{3})(?=\d)/g, '$1 ')}`.trim();
+        }
       }
-      digits = digits.substring(0, 9);
-      if (digits.length === 0) return '';
-      if (digits.length === 1) {
-        return `+56 ${digits}`;
-      } else if (digits.length <= 5) {
-        return `+56 ${digits[0]} ${digits.substring(1)}`;
-      } else {
-        return `+56 ${digits[0]} ${digits.substring(1, 5)} ${digits.substring(5)}`;
-      }
+
+      // If typed without +, allow free entry with clean spacing groups
+      if (digits.length <= 4) return digits;
+      if (digits.length <= 8) return `${digits.substring(0, 4)} ${digits.substring(4)}`;
+      return `${digits.substring(0, digits.length - 8)} ${digits.substring(digits.length - 8, digits.length - 4)} ${digits.substring(digits.length - 4)}`;
     },
 
     handleInput: function(inputEl) {
