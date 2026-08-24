@@ -1081,53 +1081,69 @@
       
       <!-- LEFT COLUMN (On Desktop) / PRIMARY CARD: QR & FAST ACTIONS -->
       <div class="glass-card qr-hero-card">
-        <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
-          <h2 class="section-title" style="margin-bottom: 0;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"></rect><path d="M7 7h.01"></path><path d="M17 7h.01"></path><path d="M7 17h.01"></path><path d="M17 17h.01"></path></svg>
-            Mi Código QR Dinámico
-          </h2>
-          <div id="readabilityBadge" class="readability-meter">
-            <span style="font-size: 14px;">●</span> Lectura Óptima
+        
+        <!-- Unconfigured New User Welcome State -->
+        <div id="qrEmptyStateCard" style="display: none; text-align: center; padding: 24px 14px;">
+          <div style="font-size: 48px; margin-bottom: 12px;">📇</div>
+          <h3 style="font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 8px;">Configura tu Tarjeta Digital</h3>
+          <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 20px;">
+            Aún no has configurado tu perfil. Ingresa tus datos para generar tu propio código QR interactivo y compartir tus canales con el mundo.
+          </p>
+          <button type="button" class="btn btn-primary" style="width: 100%; font-size: 14px; font-weight: 800; padding: 12px;" onclick="AppNav.switchTab('profiles')">
+            🚀 Crear Mi Perfil Ahora
+          </button>
+        </div>
+
+        <!-- Configured Active QR Sharing Console -->
+        <div id="qrActiveHeroCard">
+          <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+            <h2 class="section-title" style="margin-bottom: 0;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"></rect><path d="M7 7h.01"></path><path d="M17 7h.01"></path><path d="M7 17h.01"></path><path d="M17 17h.01"></path></svg>
+              Mi Código QR Dinámico
+            </h2>
+            <div id="readabilityBadge" class="readability-meter">
+              <span style="font-size: 14px;">●</span> Lectura Óptima
+            </div>
           </div>
-        </div>
 
-        <!-- QR Format Mode Switcher -->
-        <div style="display: flex; gap: 4px; width: 100%; background: rgba(11, 15, 25, 0.6); padding: 3px; border-radius: 12px; border: 1px solid var(--border-subtle); margin-top: 4px;">
-          <button type="button" class="btn btn-sm qr-mode-btn active" data-mode="web" onclick="QRModule.setQRMode('web')" style="flex: 1; padding: 6px 8px; font-size: 11px;">
-            🌐 Tarjeta Web App
-          </button>
-          <button type="button" class="btn btn-sm qr-mode-btn" data-mode="vcard" onclick="QRModule.setQRMode('vcard')" style="flex: 1; padding: 6px 8px; font-size: 11px;">
-            📇 Agenda Móvil (vCard)
-          </button>
-        </div>
-
-        <!-- Canvas with Central Avatar -->
-        <div class="qr-canvas-container" style="background: #ffffff; padding: 12px; border-radius: 20px; box-shadow: 0 8px 30px rgba(0,0,0,0.5);">
-          <canvas id="qrCanvas" width="280" height="280" style="width: 220px; height: 220px; display: block;"></canvas>
-        </div>
-
-        <p id="qrModeHint" style="font-size: 11.5px; color: var(--text-muted); line-height: 1.4;">
-          📱 <b>Modo Agenda Directa (Limpio):</b> Tu cámara de Samsung reconocerá el contacto al instante para guardarlo en la libreta nativa.
-        </p>
-
-        <!-- Streamlined Action Buttons (No Redundancy) -->
-        <div style="display: flex; flex-direction: column; gap: 8px; width: 100%; margin-top: 6px;">
-          <!-- Primary WhatsApp Share Button -->
-          <button class="btn btn-block" style="background: linear-gradient(135deg, #22c55e, #16a34a); color: #ffffff; font-weight: 800; font-size: 13.5px; padding: 12px 16px; box-shadow: 0 4px 16px rgba(34, 197, 94, 0.4); display: flex; align-items: center; justify-content: center; gap: 8px;" onclick="QRModule.shareViaWhatsApp()">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
-            <span>Compartir por WhatsApp</span>
-          </button>
-
-          <!-- 2 Compact Quick Actions -->
-          <div style="display: flex; gap: 8px; width: 100%;">
-            <button class="btn btn-secondary" style="flex: 1; padding: 8px 10px; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 6px;" onclick="QRModule.copyShareLink()">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg>
-              <span>Copiar Enlace</span>
+          <!-- QR Format Mode Switcher -->
+          <div style="display: flex; gap: 4px; width: 100%; background: rgba(11, 15, 25, 0.6); padding: 3px; border-radius: 12px; border: 1px solid var(--border-subtle); margin-top: 4px;">
+            <button type="button" class="btn btn-sm qr-mode-btn active" data-mode="web" onclick="QRModule.setQRMode('web')" style="flex: 1; padding: 6px 8px; font-size: 11px;">
+              🌐 Tarjeta Web App
             </button>
-            <button class="btn btn-secondary" style="flex: 1; padding: 8px 10px; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 6px;" onclick="QRModule.downloadVCard()">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" x2="12" y1="15" y2="3"></line></svg>
-              <span>Guardar .vcf</span>
+            <button type="button" class="btn btn-sm qr-mode-btn" data-mode="vcard" onclick="QRModule.setQRMode('vcard')" style="flex: 1; padding: 6px 8px; font-size: 11px;">
+              📇 Agenda Móvil (vCard)
             </button>
+          </div>
+
+          <!-- Canvas with Central Avatar -->
+          <div class="qr-canvas-container" style="background: #ffffff; padding: 12px; border-radius: 20px; box-shadow: 0 8px 30px rgba(0,0,0,0.5); margin-top: 10px;">
+            <canvas id="qrCanvas" width="280" height="280" style="width: 220px; height: 220px; display: block;"></canvas>
+          </div>
+
+          <p id="qrModeHint" style="font-size: 11.5px; color: var(--text-muted); line-height: 1.4; margin-top: 8px;">
+            🌐 <b>Modo Tarjeta Web (Oficial ATSIT):</b> Al escanear con la cámara, abre inmediatamente tu tarjeta ejecutiva en la web con todos tus canales directos.
+          </p>
+
+          <!-- Streamlined Action Buttons (No Redundancy) -->
+          <div style="display: flex; flex-direction: column; gap: 8px; width: 100%; margin-top: 6px;">
+            <!-- Primary WhatsApp Share Button -->
+            <button class="btn btn-block" style="background: linear-gradient(135deg, #22c55e, #16a34a); color: #ffffff; font-weight: 800; font-size: 13.5px; padding: 12px 16px; box-shadow: 0 4px 16px rgba(34, 197, 94, 0.4); display: flex; align-items: center; justify-content: center; gap: 8px;" onclick="QRModule.shareViaWhatsApp()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+              <span>Compartir por WhatsApp</span>
+            </button>
+
+            <!-- 2 Compact Quick Actions -->
+            <div style="display: flex; gap: 8px; width: 100%;">
+              <button class="btn btn-secondary" style="flex: 1; padding: 8px 10px; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 6px;" onclick="QRModule.copyShareLink()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg>
+                <span>Copiar Enlace</span>
+              </button>
+              <button class="btn btn-secondary" style="flex: 1; padding: 8px 10px; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 6px;" onclick="QRModule.downloadVCard()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" x2="12" y1="15" y2="3"></line></svg>
+                <span>Guardar .vcf</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -1136,7 +1152,7 @@
       <div class="qr-controls-card">
         <!-- Profile Header Pill -->
         <div class="profile-pill-header">
-          <div id="pillAvatar" class="pill-avatar">TU</div>
+          <div id="pillAvatar" class="pill-avatar">VC</div>
           <div class="pill-info">
             <div id="pillName" class="pill-name">Mi Perfil</div>
             <div id="pillRole" class="pill-role">Empresa / Profesión</div>
@@ -2280,69 +2296,32 @@
       if (saved) {
         try { this.profiles = JSON.parse(saved); } catch (e) { this.profiles = []; }
       }
-      const OFFICIAL_PATRICIO_PROFILE = {
-        id: 'prof_atsit_master',
-        profileTag: 'ATSIT Trabajo',
-        firstName: 'Patricio',
-        lastName: 'Díaz',
-        org: 'ATSIT',
-        title: 'Director Ejecutivo / Consultor TI / Fundador',
-        phoneMobile: '+56 9 9335 1620',
-        whatsappUser: '@PatoDiazg',
-        phoneWork: '+56 9 9335 1620',
-        emailWork: 'pdiaz@atsit.cl',
-        emailPersonal: '',
-        website: 'https://atsit.cl',
-        linkedIn: 'https://www.linkedin.com/in/patriciod1/',
-        instagram: '@pdiazg37',
-        tiktok: '@pato.diaz84',
-        github: '',
-        address: 'Santiago, Chile',
-        bio: 'Especialista en arquitectura de software de alta eficiencia, ciberseguridad e inteligencia artificial empresarial.',
-        avatarData: '',
-        customFields: []
-      };
-
-      if (!this.profiles || this.profiles.length === 0) {
-        this.profiles = [OFFICIAL_PATRICIO_PROFILE];
-        this.activeProfileId = OFFICIAL_PATRICIO_PROFILE.id;
-        this.saveAll();
-      } else {
-        // Auto-migrate legacy mock profile and remove personal email / github
-        const main = this.profiles[0];
-        if (main) {
-          if (main.phoneMobile === '+56 9 1234 5678' || main.whatsappUser === '@atsit_cl' || main.emailPersonal || main.github) {
-            main.phoneMobile = '+56 9 9335 1620';
-            main.whatsappUser = '@PatoDiazg';
-            main.title = 'Director Ejecutivo / Consultor TI / Fundador';
-            main.emailWork = 'pdiaz@atsit.cl';
-            main.emailPersonal = '';
-            main.github = '';
-            main.linkedIn = 'https://www.linkedin.com/in/patriciod1/';
-            main.instagram = '@pdiazg37';
-            main.tiktok = '@pato.diaz84';
-            main.website = 'https://atsit.cl';
-            this.saveAll();
-          }
-        }
-        this.activeProfileId = localStorage.getItem(StorageKeys.ACTIVE_PROFILE_ID) || this.profiles[0].id;
-      }
+      if (!this.profiles) this.profiles = [];
+      this.activeProfileId = localStorage.getItem(StorageKeys.ACTIVE_PROFILE_ID) || (this.profiles.length > 0 ? this.profiles[0].id : null);
       this.renderProfilesList();
       this.populateFormWithActive();
     },
 
     getActiveProfile: function() {
-      return this.profiles.find(p => p.id === this.activeProfileId) || this.profiles[0];
+      if (!this.profiles || this.profiles.length === 0) return null;
+      return this.profiles.find(p => p.id === this.activeProfileId) || this.profiles[0] || null;
     },
 
     saveAll: function() {
       localStorage.setItem(StorageKeys.PROFILES, JSON.stringify(this.profiles));
-      localStorage.setItem(StorageKeys.ACTIVE_PROFILE_ID, this.activeProfileId);
+      if (this.activeProfileId) {
+        localStorage.setItem(StorageKeys.ACTIVE_PROFILE_ID, this.activeProfileId);
+      }
     },
 
     renderProfilesList: function() {
       const listEl = document.getElementById('profilesList');
+      if (!listEl) return;
       listEl.innerHTML = '';
+      if (!this.profiles || this.profiles.length === 0) {
+        listEl.innerHTML = '<div style="font-size: 12.5px; color: var(--text-muted); padding: 8px 10px; text-align: center;">Sin perfiles creados aún. Llena el formulario abajo para crear tu tarjeta.</div>';
+        return;
+      }
       this.profiles.forEach(p => {
         const item = document.createElement('div');
         item.className = `checkbox-item ${p.id === this.activeProfileId ? 'checked' : ''}`;
@@ -2359,7 +2338,7 @@
             <span class="checkbox-icon">💼</span>
             <div>
               <div class="checkbox-text">${Security.sanitizeText(p.profileTag || 'Perfil')}</div>
-              <div class="checkbox-sub">${Security.sanitizeText(p.firstName)} ${Security.sanitizeText(p.lastName)} • ${Security.sanitizeText(p.org || '')}</div>
+              <div class="checkbox-sub">${Security.sanitizeText(p.firstName || 'Sin Nombre')} ${Security.sanitizeText(p.lastName || '')} • ${Security.sanitizeText(p.org || 'Empresa')}</div>
             </div>
           </div>
           <div class="custom-checkbox"></div>
@@ -2374,7 +2353,7 @@
       if (!container) return;
       container.innerHTML = '';
 
-      if (!p.customFields || p.customFields.length === 0) {
+      if (!p || !p.customFields || p.customFields.length === 0) {
         container.innerHTML = '<div style="font-size: 11px; color: var(--text-dim); text-align: center; padding: 4px;">Sin campos extra creados</div>';
         return;
       }
@@ -2400,7 +2379,11 @@
     addCustomFieldPrompt: function() {
       const label = prompt('Nombre de la nueva red social o dato (ej: Threads, Telegram, Discord, RUT, Calendly, Spotify):');
       if (!label || !label.trim()) return;
-      const p = this.getActiveProfile();
+      let p = this.getActiveProfile();
+      if (!p) {
+        this.createNewProfile();
+        p = this.getActiveProfile();
+      }
       if (!p.customFields) p.customFields = [];
       const newField = {
         id: 'cf_' + Date.now(),
@@ -2415,7 +2398,7 @@
 
     updateCustomFieldLabel: function(id, newLabel) {
       const p = this.getActiveProfile();
-      if (!p.customFields) return;
+      if (!p || !p.customFields) return;
       const cf = p.customFields.find(f => f.id === id);
       if (cf && newLabel) {
         cf.label = newLabel.trim();
@@ -2426,7 +2409,7 @@
 
     updateCustomFieldValue: function(id, newVal) {
       const p = this.getActiveProfile();
-      if (!p.customFields) return;
+      if (!p || !p.customFields) return;
       const cf = p.customFields.find(f => f.id === id);
       if (cf) {
         cf.value = newVal.trim();
@@ -2437,7 +2420,7 @@
 
     removeCustomField: function(id) {
       const p = this.getActiveProfile();
-      if (!p.customFields) return;
+      if (!p || !p.customFields) return;
       p.customFields = p.customFields.filter(f => f.id !== id);
       this.saveAll();
       this.renderCustomFields();
@@ -2446,31 +2429,57 @@
 
     populateFormWithActive: function() {
       const p = this.getActiveProfile();
-      if (!p) return;
-      document.getElementById('inputProfileTag').value = p.profileTag || '';
-      document.getElementById('inputFirstName').value = p.firstName || '';
-      document.getElementById('inputLastName').value = p.lastName || '';
-      document.getElementById('inputOrg').value = p.org || '';
-      document.getElementById('inputTitle').value = p.title || '';
-      document.getElementById('inputPhoneMobile').value = p.phoneMobile || '';
-      document.getElementById('inputWhatsApp').value = p.whatsappUser || '';
-      document.getElementById('inputPhoneWork').value = p.phoneWork || '';
-      document.getElementById('inputEmailWork').value = p.emailWork || '';
-      document.getElementById('inputEmailPersonal').value = p.emailPersonal || '';
-      document.getElementById('inputWebsite').value = p.website || '';
-      document.getElementById('inputLinkedIn').value = p.linkedIn || '';
-      document.getElementById('inputInstagram').value = p.instagram || '';
-      document.getElementById('inputTikTok').value = p.tiktok || '';
-      document.getElementById('inputGitHub').value = p.github || '';
-      document.getElementById('inputAddress').value = p.address || '';
-      document.getElementById('inputBio').value = p.bio || '';
+      document.getElementById('inputProfileTag').value = p ? (p.profileTag || 'Mi Perfil') : 'Mi Perfil';
+      document.getElementById('inputFirstName').value = p ? (p.firstName || '') : '';
+      document.getElementById('inputLastName').value = p ? (p.lastName || '') : '';
+      document.getElementById('inputOrg').value = p ? (p.org || '') : '';
+      document.getElementById('inputTitle').value = p ? (p.title || '') : '';
+      document.getElementById('inputPhoneMobile').value = p ? (p.phoneMobile || '') : '';
+      document.getElementById('inputWhatsApp').value = p ? (p.whatsappUser || '') : '';
+      document.getElementById('inputPhoneWork').value = p ? (p.phoneWork || '') : '';
+      document.getElementById('inputEmailWork').value = p ? (p.emailWork || '') : '';
+      document.getElementById('inputEmailPersonal').value = p ? (p.emailPersonal || '') : '';
+      document.getElementById('inputWebsite').value = p ? (p.website || '') : '';
+      document.getElementById('inputLinkedIn').value = p ? (p.linkedIn || '') : '';
+      document.getElementById('inputInstagram').value = p ? (p.instagram || '') : '';
+      document.getElementById('inputTikTok').value = p ? (p.tiktok || '') : '';
+      document.getElementById('inputGitHub').value = p ? (p.github || '') : '';
+      document.getElementById('inputAddress').value = p ? (p.address || '') : '';
+      document.getElementById('inputBio').value = p ? (p.bio || '') : '';
       
       this.renderCustomFields();
     },
 
     saveActiveProfile: function() {
-      const p = this.getActiveProfile();
-      p.profileTag = document.getElementById('inputProfileTag').value.trim();
+      let p = this.getActiveProfile();
+      const isNew = !p;
+      if (!p) {
+        p = {
+          id: 'prof_' + Date.now(),
+          profileTag: document.getElementById('inputProfileTag').value.trim() || 'Mi Perfil',
+          firstName: '',
+          lastName: '',
+          org: '',
+          title: '',
+          phoneMobile: '',
+          whatsappUser: '',
+          phoneWork: '',
+          emailWork: '',
+          emailPersonal: '',
+          website: '',
+          linkedIn: '',
+          instagram: '',
+          tiktok: '',
+          github: '',
+          address: '',
+          bio: '',
+          avatarData: '',
+          customFields: []
+        };
+        this.profiles.push(p);
+        this.activeProfileId = p.id;
+      }
+      p.profileTag = document.getElementById('inputProfileTag').value.trim() || 'Mi Perfil';
       p.firstName = document.getElementById('inputFirstName').value.trim();
       p.lastName = document.getElementById('inputLastName').value.trim();
       p.org = document.getElementById('inputOrg').value.trim();
@@ -2492,14 +2501,14 @@
       this.renderProfilesList();
       QRModule.refresh();
       AppNav.updateHeader();
-      alert('✅ Perfil guardado correctamente.');
+      alert('✅ Tu perfil ha sido guardado correctamente.');
     },
 
     createNewProfile: function() {
       const newP = {
         id: 'prof_' + Date.now(),
-        profileTag: 'Nueva Identidad',
-        firstName: 'Nombre',
+        profileTag: 'Nuevo Perfil',
+        firstName: '',
         lastName: '',
         org: '',
         title: '',
@@ -2525,6 +2534,26 @@
       this.populateFormWithActive();
       QRModule.refresh();
       AppNav.updateHeader();
+    },
+
+    loadAtsitTemplate: function() {
+      document.getElementById('inputProfileTag').value = 'ATSIT Trabajo';
+      document.getElementById('inputFirstName').value = 'Patricio';
+      document.getElementById('inputLastName').value = 'Díaz';
+      document.getElementById('inputOrg').value = 'ATSIT';
+      document.getElementById('inputTitle').value = 'Director Ejecutivo / Consultor TI / Fundador';
+      document.getElementById('inputPhoneMobile').value = '+56 9 9335 1620';
+      document.getElementById('inputWhatsApp').value = '@PatoDiazg';
+      document.getElementById('inputPhoneWork').value = '+56 9 9335 1620';
+      document.getElementById('inputEmailWork').value = 'pdiaz@atsit.cl';
+      document.getElementById('inputEmailPersonal').value = '';
+      document.getElementById('inputWebsite').value = 'https://atsit.cl';
+      document.getElementById('inputLinkedIn').value = 'https://www.linkedin.com/in/patriciod1/';
+      document.getElementById('inputInstagram').value = '@pdiazg37';
+      document.getElementById('inputTikTok').value = '@pato.diaz84';
+      document.getElementById('inputAddress').value = 'Santiago, Chile';
+      document.getElementById('inputBio').value = 'Especialista en arquitectura de software de alta eficiencia, ciberseguridad e inteligencia artificial empresarial.';
+      this.saveActiveProfile();
     },
 
     deleteActiveProfile: function() {
@@ -2672,7 +2701,14 @@
     renderCheckboxes: function() {
       const p = ProfilesModule.getActiveProfile();
       const container = document.getElementById('qrCheckboxList');
+      if (!container) return;
       container.innerHTML = '';
+
+      if (!p || !p.firstName) {
+        container.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 18px 8px; font-size: 13px;">Sin datos configurados aún. Ve a la pestaña Perfiles para crear tu tarjeta.</div>';
+        document.getElementById('fieldsCount').textContent = '0 seleccionados';
+        return;
+      }
 
       let count = 0;
       this.allAvailableFields.forEach(f => {
@@ -2737,7 +2773,19 @@
     generateQR: function() {
       const p = ProfilesModule.getActiveProfile();
       const canvas = document.getElementById('qrCanvas');
-      if (!p || !canvas) return;
+      const emptyCard = document.getElementById('qrEmptyStateCard');
+      const activeCard = document.getElementById('qrActiveHeroCard');
+
+      if (!p || !p.firstName) {
+        if (emptyCard) emptyCard.style.display = 'block';
+        if (activeCard) activeCard.style.display = 'none';
+        return;
+      }
+
+      if (emptyCard) emptyCard.style.display = 'none';
+      if (activeCard) activeCard.style.display = 'block';
+
+      if (!canvas) return;
 
       let qrPayloadText = '';
       if (this.qrMode === 'vcard') {
@@ -2746,7 +2794,7 @@
       } else {
         // Interactive Web URL (Official ATSIT Domain)
         const shareData = this.getShareDataObject();
-        const encoded = DataCodec.encodePayload(shareData);
+        const encoded = shareData ? DataCodec.encodePayload(shareData) : '';
         const baseUrl = this.getShareBaseUrl();
         qrPayloadText = `${baseUrl}#card=${encoded}`;
       }
@@ -2854,40 +2902,7 @@
       if (saved) {
         try { this.contacts = JSON.parse(saved); } catch (e) { this.contacts = []; }
       }
-
-      const OFFICIAL_ATSIT_CONTACT = {
-        id: 'cont_patricio_atsit',
-        firstName: 'Patricio',
-        lastName: 'Díaz',
-        org: 'ATSIT',
-        title: 'Director Ejecutivo / Consultor TI / Fundador',
-        phoneMobile: '+56 9 9335 1620',
-        whatsappUser: '@PatoDiazg',
-        phoneWork: '+56 9 9335 1620',
-        emailWork: 'pdiaz@atsit.cl',
-        website: 'https://atsit.cl',
-        linkedIn: 'https://www.linkedin.com/in/patriciod1/',
-        instagram: '@pdiazg37',
-        tiktok: '@pato.diaz84',
-        address: 'Santiago, Chile',
-        bio: 'Especialista en arquitectura de software de alta eficiencia, ciberseguridad e inteligencia artificial empresarial.'
-      };
-
-      if (!this.contacts || this.contacts.length === 0) {
-        this.contacts = [OFFICIAL_ATSIT_CONTACT];
-        this.saveAll();
-      } else {
-        // Auto-migrate legacy mock contact (e.g. ATSIT Soporte with 1234 5678)
-        let modified = false;
-        this.contacts = this.contacts.map(c => {
-          if (c.phoneMobile === '+56 9 1234 5678' || c.whatsappUser === '@atsit_cl' || (c.firstName === 'ATSIT' && c.lastName === 'Soporte')) {
-            modified = true;
-            return Object.assign({}, OFFICIAL_ATSIT_CONTACT);
-          }
-          return c;
-        });
-        if (modified) this.saveAll();
-      }
+      if (!this.contacts) this.contacts = [];
       this.renderContacts(this.contacts);
     },
 
@@ -3416,6 +3431,17 @@
         `;
       }
 
+      if (d.ins) {
+        const iHandle = d.ins.replace('@', '').trim();
+        const iUrl = d.ins.startsWith('http') ? d.ins : `https://instagram.com/${iHandle}`;
+        actionsGrid.innerHTML += `
+          <a href="${Security.sanitizeUrl(iUrl, 'https')}" target="_blank" class="bento-action-btn" style="color: #e1306c;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"></line></svg>
+            <span>Instagram</span>
+          </a>
+        `;
+      }
+
       if (d.tik) {
         const tUrl = Security.getTikTokUrl(d.tik);
         actionsGrid.innerHTML += `
@@ -3606,9 +3632,14 @@
 
     updateHeader: function() {
       const p = ProfilesModule.getActiveProfile();
-      if (!p) return;
       const pillAv = document.getElementById('pillAvatar');
-      pillAv.textContent = (p.firstName ? p.firstName[0] : 'P') + (p.lastName ? p.lastName[0] : 'D');
+      if (!p || !p.firstName) {
+        if (pillAv) pillAv.textContent = 'VC';
+        document.getElementById('pillName').textContent = 'Mi Tarjeta VentoCard';
+        document.getElementById('pillRole').textContent = 'Toca en Perfiles para configurar';
+        return;
+      }
+      if (pillAv) pillAv.textContent = (p.firstName ? p.firstName[0] : 'P') + (p.lastName ? p.lastName[0] : 'D');
       document.getElementById('pillName').textContent = `${p.firstName || ''} ${p.lastName || ''}`.trim() || 'Mi Perfil';
       const org = p.org || '';
       const title = p.title || '';
