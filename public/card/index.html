@@ -1607,6 +1607,11 @@
   </nav>
 
   <!-- ========================================== -->
+  <!-- HIGH-PERFORMANCE JSQR ENGINE (Offline PWA) -->
+  <!-- ========================================== -->
+  <script src="./jsqr.min.js"></script>
+
+  <!-- ========================================== -->
   <!-- JAVASCRIPT: MOTOR COMPLETO LOCAL           -->
   <!-- ========================================== -->
   <script>
@@ -3323,7 +3328,6 @@
   const QRScannerModule = {
     stream: null,
     scanInterval: null,
-    detector: null,
 
     openScanner: async function() {
       const modal = document.getElementById('qrScannerModal');
@@ -3332,29 +3336,21 @@
       statusText.textContent = 'Iniciando cámara...';
       modal.style.display = 'flex';
 
-      if ('BarcodeDetector' in window) {
-        try {
-          this.detector = new BarcodeDetector({ formats: ['qr_code'] });
-        } catch (e) {
-          this.detector = null;
-        }
-      }
-
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: { ideal: 'environment' } },
+          video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } },
           audio: false
         });
         this.stream = stream;
         video.srcObject = stream;
-        video.setAttribute('playsinline', true);
+        video.setAttribute('playsinline', 'true');
         await video.play();
 
-        statusText.textContent = 'Apunta la cámara al código QR.';
+        statusText.textContent = 'Apunta la cámara al código QR de la tarjeta.';
         this.startScanning();
       } catch (err) {
         console.warn('Error al abrir cámara:', err);
-        statusText.textContent = 'No se pudo acceder a la cámara. Puedes subir una foto con el código QR.';
+        statusText.textContent = 'No se pudo acceder a la cámara. Puedes subir una foto o captura del código QR.';
       }
     },
 
@@ -3374,33 +3370,30 @@
     startScanning: function() {
       const video = document.getElementById('qrScannerVideo');
       const canvas = document.getElementById('qrScannerCanvas');
-      const ctx = canvas.getContext('2d');
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
 
-      this.scanInterval = setInterval(async () => {
+      this.scanInterval = setInterval(() => {
         if (!video || video.readyState !== video.HAVE_ENOUGH_DATA) return;
 
-        if (this.detector) {
-          try {
-            const barcodes = await this.detector.detect(video);
-            if (barcodes && barcodes.length > 0) {
-              const qrText = barcodes[0].rawValue;
-              this.processScannedResult(qrText);
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        try {
+          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          if (window.jsQR) {
+            const code = window.jsQR(imageData.data, imageData.width, imageData.height, {
+              inversionAttempts: 'dontInvert'
+            });
+            if (code && code.data && code.data.trim()) {
+              this.processScannedResult(code.data.trim());
+              return;
             }
-          } catch (e) {}
-        } else {
-          canvas.width = video.videoWidth;
-          canvas.height = video.videoHeight;
-          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-          if ('BarcodeDetector' in window && this.detector) {
-            try {
-              const barcodes = await this.detector.detect(canvas);
-              if (barcodes && barcodes.length > 0) {
-                this.processScannedResult(barcodes[0].rawValue);
-              }
-            } catch (e) {}
           }
+        } catch (e) {
+          console.warn('Frame scan error:', e);
         }
-      }, 250);
+      }, 120);
     },
 
     processScannedResult: function(qrText) {
@@ -3503,28 +3496,41 @@
       }
     },
 
-    handleImageFile: async function(event) {
+    handleImageFile: function(event) {
       const file = event.target.files[0];
       if (!file) return;
 
       const statusText = document.getElementById('qrScannerStatus');
       statusText.textContent = 'Analizando imagen...';
 
-      if ('BarcodeDetector' in window) {
-        try {
-          const detector = new BarcodeDetector({ formats: ['qr_code'] });
-          const imgBitmap = await createImageBitmap(file);
-          const barcodes = await detector.detect(imgBitmap);
-          if (barcodes && barcodes.length > 0) {
-            this.processScannedResult(barcodes[0].rawValue);
-            return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.getElementById('qrScannerCanvas');
+          const ctx = canvas.getContext('2d', { willReadFrequently: true });
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.drawImage(img, 0, 0, img.width, img.height);
+          try {
+            const imageData = ctx.getImageData(0, 0, img.width, img.height);
+            if (window.jsQR) {
+              const code = window.jsQR(imageData.data, imageData.width, imageData.height, {
+                inversionAttempts: 'attemptBoth'
+              });
+              if (code && code.data && code.data.trim()) {
+                this.processScannedResult(code.data.trim());
+                return;
+              }
+            }
+          } catch (err) {
+            console.warn(err);
           }
-        } catch (e) {
-          console.warn(e);
-        }
-      }
-
-      UIModal.alert('Lectura de QR', 'No se pudo detectar un código QR en la imagen seleccionada.', '⚠️');
+          UIModal.alert('Lectura de QR', 'No se pudo detectar un código QR en la imagen seleccionada. Asegúrate de que la foto esté nítida.', '⚠️');
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
     }
   };
 
