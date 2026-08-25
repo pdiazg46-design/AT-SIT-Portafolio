@@ -17,6 +17,12 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="VentoCard" />
+  <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png" />
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+
   <!-- OpenGraph & Social Preview for WhatsApp, LinkedIn, Telegram & iMessage -->
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="VentoCard by ATSIT" />
@@ -3956,18 +3962,27 @@
   };
 
   // ----------------------------------------------------
-  // 12. NATIVE PWA INSTALL MANAGER (WebAPK Samsung)
+  // 12. NATIVE PWA INSTALL MANAGER (Cross-Platform iOS / Android / Desktop)
   // ----------------------------------------------------
   const PWAInstallManager = {
     deferredPrompt: null,
 
     isInstalled: function() {
-      return (
+      const isStandaloneMode = (
         window.matchMedia('(display-mode: standalone)').matches ||
         window.matchMedia('(display-mode: minimal-ui)').matches ||
-        window.matchMedia('(display-mode: fullscreen)').matches ||
-        window.navigator.standalone === true ||
-        document.referrer.startsWith('android-app://')
+        window.matchMedia('(display-mode: fullscreen)').matches
+      );
+      const isIOSStandalone = window.navigator.standalone === true;
+      const isAndroidWebAPK = document.referrer && document.referrer.startsWith('android-app://');
+      
+      return Boolean(isStandaloneMode || isIOSStandalone || isAndroidWebAPK);
+    },
+
+    isIOS: function() {
+      return (
+        /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
       );
     },
 
@@ -3982,7 +3997,7 @@
 
       window.addEventListener('appinstalled', () => {
         this.deferredPrompt = null;
-        console.log('✅ VentoCard instalada exitosamente como WebAPK');
+        console.log('✅ VentoCard instalada exitosamente');
         this.updateVisibility();
       });
 
@@ -4011,8 +4026,21 @@
           this.deferredPrompt = null;
           this.updateVisibility();
         }
+        return;
+      }
+
+      if (this.isIOS()) {
+        UIModal.alert(
+          'Instalar en iPhone / iPad',
+          'Para agregar VentoCard a tu pantalla en Safari:\n\n1. Toca el botón Compartir ⎋ (el cuadro con la flecha arriba) en la barra inferior de Safari.\n\n2. Desliza hacia abajo y toca "Agregar al inicio" (o "Añadir a pantalla de inicio" ➕).\n\n3. Toca "Agregar" arriba a la derecha.\n\n¡Listo! Tendrás el icono oficial de ATSIT en tu pantalla.',
+          '📲'
+        );
       } else {
-        UIModal.alert('Instalar App Oficial', 'Para instalar VentoCard en tu pantalla:\n\n1. Toca el menú de 3 puntos (⋮) de tu navegador arriba a la derecha.\n2. Elige "Instalar aplicación" o "Agregar a inicio".\n3. Pulsa "Instalar".', '📲');
+        UIModal.alert(
+          'Instalar App Oficial',
+          'Para instalar VentoCard en tu pantalla:\n\n1. Toca el menú de 3 puntos (⋮) de tu navegador arriba a la derecha.\n2. Elige "Instalar aplicación" o "Agregar a la pantalla de inicio".\n3. Pulsa "Instalar".',
+          '📲'
+        );
       }
     }
   };
