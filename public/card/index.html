@@ -1047,10 +1047,10 @@
     @keyframes modalPopIn {
       0% { transform: scale(0.88); opacity: 0; }
       100% { transform: scale(1); opacity: 1; }
-    }
-    @keyframes modalFadeIn {
-      0% { opacity: 0; }
-      100% { opacity: 1; }
+    @keyframes scannerLaser {
+      0% { top: 6%; opacity: 0.2; }
+      50% { top: 92%; opacity: 1; }
+      100% { top: 6%; opacity: 0.2; }
     }
   </style>
 </head>
@@ -1065,6 +1065,42 @@
       <div id="modalActions" class="custom-modal-actions">
         <button id="modalBtnCancel" type="button" class="btn btn-secondary" style="flex: 1; padding: 10px 14px; font-size: 13.5px; font-weight: 700; display: none;">Cancelar</button>
         <button id="modalBtnConfirm" type="button" class="btn btn-primary" style="flex: 1; padding: 10px 14px; font-size: 13.5px; font-weight: 800;">Aceptar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Real-Time Camera QR Scanner Modal -->
+  <div id="qrScannerModal" class="custom-modal-overlay" style="display: none;">
+    <div class="custom-modal-box" style="max-width: 380px; padding: 20px 18px !important;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <h3 style="font-size: 15.5px; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 6px;">
+          <span>📷</span> Escanear VentoCard
+        </h3>
+        <button type="button" class="btn btn-secondary btn-sm" style="padding: 4px 10px; font-size: 12px;" onclick="QRScannerModule.closeScanner()">✕</button>
+      </div>
+
+      <div style="position: relative; width: 100%; height: 250px; background: #000; border-radius: 16px; overflow: hidden; border: 2px solid var(--accent); display: flex; align-items: center; justify-content: center;">
+        <video id="qrScannerVideo" playsinline autoplay muted style="width: 100%; height: 100%; object-fit: cover;"></video>
+        <canvas id="qrScannerCanvas" style="display: none;"></canvas>
+        
+        <!-- Viewfinder Overlay Box & Laser -->
+        <div style="position: absolute; width: 180px; height: 180px; border: 2px solid rgba(56, 189, 248, 0.9); border-radius: 14px; box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.55); pointer-events: none;">
+          <div style="position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: #38bdf8; box-shadow: 0 0 10px #38bdf8; animation: scannerLaser 1.8s infinite ease-in-out;"></div>
+        </div>
+      </div>
+
+      <p id="qrScannerStatus" style="font-size: 12px; color: #94a3b8; margin: 10px 0 14px 0; text-align: center;">
+        Apunta la cámara al código QR de la tarjeta para guardarla en tu libreta.
+      </p>
+
+      <div style="display: flex; gap: 8px;">
+        <label class="btn btn-secondary btn-sm" style="flex: 1; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px;">
+          📁 Cargar Foto
+          <input type="file" accept="image/*" style="display: none;" onchange="QRScannerModule.handleImageFile(event)" />
+        </label>
+        <button type="button" class="btn btn-secondary btn-sm" style="flex: 1; font-size: 12px;" onclick="QRScannerModule.closeScanner()">
+          Cancelar
+        </button>
       </div>
     </div>
   </div>
@@ -1297,7 +1333,12 @@
 
         <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
           <span id="contactsCountLabel" style="font-size: 12px; color: var(--text-muted); font-weight: 600;">0 contactos</span>
-          <button class="btn btn-secondary btn-sm" onclick="DirectoryModule.openAddModal()">+ Agregar Manual</button>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-primary btn-sm" style="font-weight: 700; display: flex; align-items: center; gap: 4px;" onclick="QRScannerModule.openScanner()">
+              <span>📷</span> Escanear QR
+            </button>
+            <button class="btn btn-secondary btn-sm" onclick="DirectoryModule.openAddModal()">+ Manual</button>
+          </div>
         </div>
       </div>
 
@@ -3273,6 +3314,217 @@
         bio: ''
       });
       UIModal.alert('Contacto Añadido', 'El nuevo contacto se ha guardado en tu libreta de VentoCard.', '📇');
+    }
+  };
+
+  // ----------------------------------------------------
+  // 7.5 REAL-TIME IN-APP QR SCANNER MODULE (Camera & Image)
+  // ----------------------------------------------------
+  const QRScannerModule = {
+    stream: null,
+    scanInterval: null,
+    detector: null,
+
+    openScanner: async function() {
+      const modal = document.getElementById('qrScannerModal');
+      const video = document.getElementById('qrScannerVideo');
+      const statusText = document.getElementById('qrScannerStatus');
+      statusText.textContent = 'Iniciando cámara...';
+      modal.style.display = 'flex';
+
+      if ('BarcodeDetector' in window) {
+        try {
+          this.detector = new BarcodeDetector({ formats: ['qr_code'] });
+        } catch (e) {
+          this.detector = null;
+        }
+      }
+
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: { ideal: 'environment' } },
+          audio: false
+        });
+        this.stream = stream;
+        video.srcObject = stream;
+        video.setAttribute('playsinline', true);
+        await video.play();
+
+        statusText.textContent = 'Apunta la cámara al código QR.';
+        this.startScanning();
+      } catch (err) {
+        console.warn('Error al abrir cámara:', err);
+        statusText.textContent = 'No se pudo acceder a la cámara. Puedes subir una foto con el código QR.';
+      }
+    },
+
+    closeScanner: function() {
+      if (this.scanInterval) {
+        clearInterval(this.scanInterval);
+        this.scanInterval = null;
+      }
+      if (this.stream) {
+        this.stream.getTracks().forEach(track => track.stop());
+        this.stream = null;
+      }
+      const modal = document.getElementById('qrScannerModal');
+      if (modal) modal.style.display = 'none';
+    },
+
+    startScanning: function() {
+      const video = document.getElementById('qrScannerVideo');
+      const canvas = document.getElementById('qrScannerCanvas');
+      const ctx = canvas.getContext('2d');
+
+      this.scanInterval = setInterval(async () => {
+        if (!video || video.readyState !== video.HAVE_ENOUGH_DATA) return;
+
+        if (this.detector) {
+          try {
+            const barcodes = await this.detector.detect(video);
+            if (barcodes && barcodes.length > 0) {
+              const qrText = barcodes[0].rawValue;
+              this.processScannedResult(qrText);
+            }
+          } catch (e) {}
+        } else {
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+          if ('BarcodeDetector' in window && this.detector) {
+            try {
+              const barcodes = await this.detector.detect(canvas);
+              if (barcodes && barcodes.length > 0) {
+                this.processScannedResult(barcodes[0].rawValue);
+              }
+            } catch (e) {}
+          }
+        }
+      }, 250);
+    },
+
+    processScannedResult: function(qrText) {
+      if (!qrText) return;
+      this.closeScanner();
+
+      // 1. If it's a VentoCard #card= URL
+      if (qrText.includes('card=')) {
+        const encoded = qrText.split('card=')[1].split('&')[0];
+        const rawData = DataCodec.decodePayload(encoded);
+        if (rawData) {
+          const validated = Security.validatePayloadSchema(rawData);
+          if (validated) {
+            DirectoryModule.addContact({
+              firstName: validated.fn || 'Contacto',
+              lastName: validated.ln || '',
+              org: validated.org || '',
+              title: validated.tit || '',
+              phoneMobile: validated.mob || '',
+              whatsappUser: validated.wau || '',
+              phoneWork: validated.wrk || '',
+              emailWork: validated.emw || '',
+              emailPersonal: validated.emp || '',
+              website: validated.web || '',
+              linkedIn: validated.lin || '',
+              instagram: validated.ins || '',
+              tiktok: validated.tik || '',
+              github: validated.git || '',
+              address: validated.adr || '',
+              bio: validated.bio || ''
+            });
+
+            UIModal.alert(
+              '¡Contacto Escaneado con Éxito!',
+              `Se ha guardado a ${validated.fn || 'Contacto'} ${validated.ln || ''} (${validated.org || 'ATSIT'}) en tu libreta de VentoCard.`,
+              '📇'
+            );
+            AppNav.switchTab('directory');
+            return;
+          }
+        }
+      }
+
+      // 2. If it's a clean official URL or ATSIT URL
+      if (qrText.includes('atsit.cl/card') && !qrText.includes('card=')) {
+        const d = RecipientManager.getOfficialCardData();
+        DirectoryModule.addContact({
+          firstName: d.fn,
+          lastName: d.ln,
+          org: d.org,
+          title: d.tit,
+          phoneMobile: d.mob,
+          whatsappUser: d.wau,
+          phoneWork: d.wrk,
+          emailWork: d.emw,
+          website: d.web,
+          linkedIn: d.lin,
+          instagram: d.ins,
+          tiktok: d.tik,
+          bio: d.bio
+        });
+
+        UIModal.alert('¡Contacto Escaneado!', `Se guardó la tarjeta oficial de ${d.fn} ${d.ln} (${d.org}) en tu libreta VentoCard.`, '📇');
+        AppNav.switchTab('directory');
+        return;
+      }
+
+      // 3. If it's a direct vCard 3.0 string
+      if (qrText.includes('BEGIN:VCARD')) {
+        const lines = qrText.split('\n');
+        let fn = 'Contacto';
+        let org = '';
+        let tel = '';
+        let email = '';
+        lines.forEach(l => {
+          if (l.startsWith('FN:')) fn = l.replace('FN:', '').trim();
+          if (l.startsWith('ORG:')) org = l.replace('ORG:', '').trim();
+          if (l.startsWith('TEL')) tel = l.split(':')[1] || '';
+          if (l.startsWith('EMAIL')) email = l.split(':')[1] || '';
+        });
+
+        DirectoryModule.addContact({
+          firstName: fn,
+          lastName: '',
+          org: org,
+          phoneMobile: PhoneFormatter.format(tel),
+          emailWork: email
+        });
+
+        UIModal.alert('¡Contacto Guardado!', `Se guardó a ${fn} en tu libreta VentoCard.`, '📇');
+        AppNav.switchTab('directory');
+        return;
+      }
+
+      // 4. Default URL or text
+      if (qrText.startsWith('http')) {
+        window.location.href = qrText;
+      } else {
+        UIModal.alert('Código QR Leído', qrText, 'ℹ️');
+      }
+    },
+
+    handleImageFile: async function(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const statusText = document.getElementById('qrScannerStatus');
+      statusText.textContent = 'Analizando imagen...';
+
+      if ('BarcodeDetector' in window) {
+        try {
+          const detector = new BarcodeDetector({ formats: ['qr_code'] });
+          const imgBitmap = await createImageBitmap(file);
+          const barcodes = await detector.detect(imgBitmap);
+          if (barcodes && barcodes.length > 0) {
+            this.processScannedResult(barcodes[0].rawValue);
+            return;
+          }
+        } catch (e) {
+          console.warn(e);
+        }
+      }
+
+      UIModal.alert('Lectura de QR', 'No se pudo detectar un código QR en la imagen seleccionada.', '⚠️');
     }
   };
 
