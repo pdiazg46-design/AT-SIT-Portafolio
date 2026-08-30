@@ -1159,11 +1159,17 @@
     </header>
 
     <!-- ========================================== -->
-    <!-- VIEW 1: RECIPIENT PUBLIC CARD (If hash payload) -->
+    <!-- VIEW 1: RECIPIENT PUBLIC CARD (Onboarding)  -->
     <!-- ========================================== -->
     <div id="recipientView" class="recipient-view-wrapper">
       <div class="glass-card" style="text-align: center; display: flex; flex-direction: column; align-items: center; gap: 14px;">
-        <div id="recAvatar" class="pill-avatar" style="width: 80px; height: 80px; font-size: 32px; margin-top: 6px;"></div>
+        
+        <!-- LiveSync Auto-Saved Badge -->
+        <div style="background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.4); color: #4ade80; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; display: inline-flex; align-items: center; gap: 5px;">
+          <span style="font-size: 8px;">●</span> Contacto #1 Guardado en tu VentoCard
+        </div>
+
+        <div id="recAvatar" class="pill-avatar" style="width: 80px; height: 80px; font-size: 32px; margin-top: 2px;"></div>
         <div>
           <h2 id="recName" style="font-size: 22px; font-weight: 800;">Nombre Completo</h2>
           <p id="recOrg" style="font-size: 14px; color: var(--accent); font-weight: 600;"></p>
@@ -1172,32 +1178,20 @@
         <p id="recBio" style="font-size: 13px; color: var(--text-muted); max-width: 360px; line-height: 1.4;"></p>
 
         <!-- Recipient Action Bento Buttons -->
-        <div id="recActionsGrid" class="bento-actions-row" style="width: 100%; grid-template-columns: repeat(3, 1fr); margin-top: 8px;">
+        <div id="recActionsGrid" class="bento-actions-row" style="width: 100%; grid-template-columns: repeat(3, 1fr); margin-top: 4px;">
           <!-- Dynamically populated buttons -->
         </div>
 
+        <!-- Action Card for New Users -->
         <div style="display: flex; flex-direction: column; gap: 10px; width: 100%; margin-top: 10px;">
-          <button class="btn btn-primary btn-block" onclick="RecipientManager.downloadVCard()">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" x2="12" y1="15" y2="3"></line></svg>
-            Guardar en Mi Agenda Móvil
+          <button class="btn btn-primary btn-block" style="font-size: 14px; font-weight: 800; padding: 12px;" onclick="PWAInstallManager.triggerInstall()">
+            📲 Instalar App Oficial en tu Pantalla
           </button>
           
-          <button class="btn btn-secondary btn-block" onclick="RecipientManager.saveToAppDirectory()">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
-            Guardar en Mi Libreta VentoCard
+          <button class="btn btn-secondary btn-block" style="font-size: 13.5px; font-weight: 700; padding: 11px;" onclick="RecipientManager.startNewApp()">
+            🚀 Crear Mi Propia Tarjeta Digital
           </button>
         </div>
-      </div>
-
-      <!-- Viral Invitation Card -->
-      <div class="viral-banner">
-        <h3 style="font-size: 15px; font-weight: 800; color: #fff;">¿Quieres crear tu propia VentoCard?</h3>
-        <p style="font-size: 12px; color: var(--text-muted); max-width: 320px;">
-          100% gratuita, privada, sin servidores y con códigos QR visuales interactivos.
-        </p>
-        <button class="btn btn-accent btn-sm" onclick="RecipientManager.startNewApp()">
-          ✨ Crear Mi Propia VentoCard Gratis
-        </button>
       </div>
     </div>
 
@@ -1223,54 +1217,31 @@
 
         <!-- Configured Active QR Sharing Console -->
         <div id="qrActiveHeroCard">
-          <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+          <div style="display: flex; justify-content: space-between; width: 100%; align-items: center; margin-bottom: 8px;">
             <h2 class="section-title" style="margin-bottom: 0;">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"></rect><path d="M7 7h.01"></path><path d="M17 7h.01"></path><path d="M7 17h.01"></path><path d="M17 17h.01"></path></svg>
-              Mi Código QR Dinámico
+              Mi Tarjeta Digital
             </h2>
             <div id="readabilityBadge" class="readability-meter">
-              <span style="font-size: 14px;">●</span> Lectura Óptima
+              <span style="font-size: 14px;">●</span> Lectura Instantánea
             </div>
           </div>
 
-          <!-- QR Format Mode Switcher -->
-          <div style="display: flex; gap: 4px; width: 100%; background: rgba(11, 15, 25, 0.6); padding: 3px; border-radius: 12px; border: 1px solid var(--border-subtle); margin-top: 4px;">
-            <button type="button" class="btn btn-sm qr-mode-btn active" data-mode="web" onclick="QRModule.setQRMode('web')" style="flex: 1; padding: 6px 8px; font-size: 11px;">
-              🌐 Tarjeta Web App
-            </button>
-            <button type="button" class="btn btn-sm qr-mode-btn" data-mode="vcard" onclick="QRModule.setQRMode('vcard')" style="flex: 1; padding: 6px 8px; font-size: 11px;">
-              📇 Agenda Móvil (vCard)
-            </button>
+          <!-- Canvas with Central QR -->
+          <div class="qr-canvas-container" style="background: #ffffff; padding: 14px; border-radius: 20px; box-shadow: 0 8px 30px rgba(0,0,0,0.5); margin: 6px auto;">
+            <canvas id="qrCanvas" width="280" height="280" style="width: 240px; height: 240px; display: block;"></canvas>
           </div>
 
-          <!-- Canvas with Central Avatar -->
-          <div class="qr-canvas-container" style="background: #ffffff; padding: 12px; border-radius: 20px; box-shadow: 0 8px 30px rgba(0,0,0,0.5); margin-top: 10px;">
-            <canvas id="qrCanvas" width="280" height="280" style="width: 220px; height: 220px; display: block;"></canvas>
-          </div>
-
-          <p id="qrModeHint" style="font-size: 11.5px; color: var(--text-muted); line-height: 1.4; margin-top: 8px;">
-            🌐 <b>Modo Tarjeta Web (Oficial ATSIT):</b> Al escanear con la cámara, abre inmediatamente tu tarjeta ejecutiva en la web con todos tus canales directos.
+          <p style="font-size: 12px; color: var(--text-muted); line-height: 1.4; margin: 10px 0 8px 0; text-align: center;">
+            Muestra este código para compartir tus canales y registrarte automáticamente como <b>Contacto #1</b> en la app de la otra persona.
           </p>
 
-          <!-- Streamlined Action Buttons (No Redundancy) -->
-          <div style="display: flex; flex-direction: column; gap: 8px; width: 100%; margin-top: 6px;">
-            <!-- Primary WhatsApp Share Button -->
-            <button class="btn btn-block" style="background: linear-gradient(135deg, #22c55e, #16a34a); color: #ffffff; font-weight: 800; font-size: 13.5px; padding: 12px 16px; box-shadow: 0 4px 16px rgba(34, 197, 94, 0.4); display: flex; align-items: center; justify-content: center; gap: 8px;" onclick="QRModule.shareViaWhatsApp()">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+          <!-- Primary WhatsApp Share Button as Sole Protagonist -->
+          <div style="width: 100%; margin-top: 4px;">
+            <button class="btn btn-block" style="background: linear-gradient(135deg, #22c55e, #16a34a); color: #ffffff; font-weight: 800; font-size: 14px; padding: 13px 18px; box-shadow: 0 4px 18px rgba(34, 197, 94, 0.4); display: flex; align-items: center; justify-content: center; gap: 10px;" onclick="QRModule.shareViaWhatsApp()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
               <span>Compartir por WhatsApp</span>
             </button>
-
-            <!-- 2 Compact Quick Actions -->
-            <div style="display: flex; gap: 8px; width: 100%;">
-              <button class="btn btn-secondary" style="flex: 1; padding: 8px 10px; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 6px;" onclick="QRModule.copyShareLink()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg>
-                <span>Copiar Enlace</span>
-              </button>
-              <button class="btn btn-secondary" style="flex: 1; padding: 8px 10px; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 6px;" onclick="QRModule.downloadVCard()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" x2="12" y1="15" y2="3"></line></svg>
-                <span>Guardar .vcf</span>
-              </button>
-            </div>
           </div>
         </div>
       </div>
@@ -2728,7 +2699,10 @@
       this.renderProfilesList();
       QRModule.refresh();
       AppNav.updateHeader();
-      UIModal.alert('Perfil Guardado', 'Tu perfil profesional se ha guardado exitosamente.', '💾');
+      if (typeof LiveSyncModule !== 'undefined') {
+        LiveSyncModule.publishProfile(p);
+      }
+      UIModal.alert('Perfil Guardado', 'Tu perfil profesional se ha guardado exitosamente y sincronizado en vivo.', '💾');
     },
 
     createNewProfile: function() {
@@ -3281,8 +3255,12 @@
               <div class="bento-name">${Security.sanitizeText(c.firstName)} ${Security.sanitizeText(c.lastName || '')}</div>
               <div class="bento-org">${Security.sanitizeText(c.org || '')}</div>
               <div class="bento-title">${Security.sanitizeText(c.title || '')}</div>
+              ${c.privateNotes ? `<div style="font-size: 11px; color: var(--accent); margin-top: 3px; font-weight: 500;">📝 ${Security.sanitizeText(c.privateNotes)}</div>` : ''}
             </div>
-            <button class="btn btn-secondary btn-sm" style="padding: 6px 8px;" onclick="DirectoryModule.deleteContact('${c.id}')" title="Eliminar">🗑️</button>
+            <div style="display: flex; gap: 4px; align-items: center;">
+              <button class="btn btn-secondary btn-sm" style="padding: 6px 8px;" onclick="DirectoryModule.editContactNotes('${c.id}')" title="Notas Privadas">📝</button>
+              <button class="btn btn-secondary btn-sm" style="padding: 6px 8px;" onclick="DirectoryModule.deleteContact('${c.id}')" title="Eliminar">🗑️</button>
+            </div>
           </div>
 
           <div class="bento-actions-row">
@@ -3291,6 +3269,19 @@
         `;
         container.appendChild(card);
       });
+    },
+
+    editContactNotes: function(id) {
+      const contact = this.contacts.find(c => c.id === id);
+      if (!contact) return;
+      const currentNote = contact.privateNotes || '';
+      const newNote = prompt(`Notas Privadas para ${contact.firstName} (Solo visibles en tu teléfono):`, currentNote);
+      if (newNote !== null) {
+        contact.privateNotes = newNote.trim();
+        this.saveAll();
+        this.renderContacts(this.contacts);
+        UIModal.alert('Nota Guardada', `Tus notas privadas para ${contact.firstName} han sido guardadas.`, '📝');
+      }
     },
 
     openAddModal: function() {
@@ -3912,8 +3903,6 @@
             <span>Instagram</span>
           </a>
         `;
-      }
-
       if (d.tik) {
         const tUrl = Security.getTikTokUrl(d.tik);
         actionsGrid.innerHTML += `
@@ -3932,6 +3921,27 @@
           </a>
         `;
       }
+
+      // Auto-save as Contact #1 in local directory immediately
+      DirectoryModule.addContact({
+        cardId: d.fn && d.fn.toLowerCase() === 'patricio' ? 'atsit_patricio_diaz' : 'official',
+        firstName: d.fn || 'Contacto',
+        lastName: d.ln || '',
+        org: d.org || '',
+        title: d.tit || '',
+        phoneMobile: d.mob || '',
+        whatsappUser: d.wau || '',
+        phoneWork: d.wrk || '',
+        emailWork: d.emw || '',
+        emailPersonal: d.emp || '',
+        website: d.web || '',
+        linkedIn: d.lin || '',
+        instagram: d.ins || '',
+        tiktok: d.tik || '',
+        github: d.git || '',
+        address: d.adr || '',
+        bio: d.bio || ''
+      });
     },
 
     downloadVCard: function() {
@@ -3963,6 +3973,7 @@
       if (!this.receivedData) return;
       const d = this.receivedData;
       DirectoryModule.addContact({
+        cardId: d.fn && d.fn.toLowerCase() === 'patricio' ? 'atsit_patricio_diaz' : 'official',
         firstName: d.fn || 'Contacto',
         lastName: d.ln || '',
         org: d.org || '',
@@ -3992,11 +4003,101 @@
       document.getElementById('recipientView').classList.remove('active');
       document.querySelector('.bottom-nav').style.display = 'flex';
       AppNav.switchTab('profiles');
+      UIModal.alert(
+        'Bienvenido a VentoCard',
+        'Tu primer contacto ya está guardado en tu libreta.\n\nAhora completa tu perfil profesional aquí para generar tu propio código QR y compartir tu tarjeta.',
+        '🚀',
+        'Comenzar'
+      );
     }
   };
 
   // ----------------------------------------------------
-  // 10. SETTINGS & APP NAVIGATION
+  // 10. LIVESYNC SOBERANO EN LA NUBE (ATSIT Cloud Sync)
+  // ----------------------------------------------------
+  const LiveSyncModule = {
+    syncEndpoint: '/api/card/sync',
+
+    publishProfile: async function(profile) {
+      if (!profile || !profile.firstName) return;
+      const cardId = (profile.firstName && profile.firstName.toLowerCase() === 'patricio') ? 'atsit_patricio_diaz' : (profile.id || 'prof_default');
+      const payload = {
+        fn: profile.firstName,
+        ln: profile.lastName,
+        org: profile.org,
+        tit: profile.title,
+        mob: profile.phoneMobile,
+        wau: profile.whatsappUser,
+        wrk: profile.phoneWork,
+        emw: profile.emailWork,
+        emp: profile.emailPersonal,
+        web: profile.website,
+        lin: profile.linkedIn,
+        ins: profile.instagram,
+        tik: profile.tiktok,
+        adr: profile.address,
+        bio: profile.bio
+      };
+
+      try {
+        await fetch(this.syncEndpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ cardId, payload, status: 'active' })
+        });
+        console.log('✅ LiveSync: Ficha publicada en la nube exitosamente.');
+      } catch (err) {
+        console.warn('ℹ️ LiveSync local cache activo:', err);
+      }
+    },
+
+    syncContacts: async function() {
+      if (!DirectoryModule.contacts || DirectoryModule.contacts.length === 0) return;
+      if (!navigator.onLine) return;
+
+      let updatedCount = 0;
+      for (let contact of DirectoryModule.contacts) {
+        const cardId = (contact.firstName && contact.firstName.toLowerCase() === 'patricio') ? 'atsit_patricio_diaz' : contact.cardId;
+        if (!cardId) continue;
+
+        try {
+          const resp = await fetch(`${this.syncEndpoint}?id=${cardId}`);
+          if (resp.ok) {
+            const data = await resp.json();
+            if (data && data.success && data.payload) {
+              const p = data.payload;
+              if (contact.phoneMobile !== p.mob || contact.title !== p.tit || contact.emailWork !== p.emw || contact.org !== p.org) {
+                contact.firstName = p.fn || contact.firstName;
+                contact.lastName = p.ln || contact.lastName;
+                contact.org = p.org || contact.org;
+                contact.title = p.tit || contact.title;
+                contact.phoneMobile = p.mob || contact.phoneMobile;
+                contact.whatsappUser = p.wau || contact.whatsappUser;
+                contact.phoneWork = p.wrk || contact.phoneWork;
+                contact.emailWork = p.emw || contact.emailWork;
+                contact.website = p.web || contact.website;
+                contact.linkedIn = p.lin || contact.linkedIn;
+                contact.instagram = p.ins || contact.instagram;
+                contact.tiktok = p.tik || contact.tiktok;
+                contact.bio = p.bio || contact.bio;
+                contact.lastSyncedAt = Date.now();
+                updatedCount++;
+              }
+            }
+          }
+        } catch (e) {}
+      }
+
+      if (updatedCount > 0) {
+        DirectoryModule.saveAll();
+        DirectoryModule.renderContacts(DirectoryModule.contacts);
+        UIModal.toast('✨ Contactos actualizados automáticamente en vivo');
+      }
+    }
+  };
+
+  // ----------------------------------------------------
+  // 11. SETTINGS & APP NAVIGATION
   // ----------------------------------------------------
   const SettingsModule = {
     settings: {
