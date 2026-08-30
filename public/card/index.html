@@ -1047,6 +1047,7 @@
     @keyframes modalPopIn {
       0% { transform: scale(0.88); opacity: 0; }
       100% { transform: scale(1); opacity: 1; }
+    }
     @keyframes scannerLaser {
       0% { top: 6%; opacity: 0.2; }
       50% { top: 92%; opacity: 1; }
@@ -2494,7 +2495,10 @@
       if (saved) {
         try { this.profiles = JSON.parse(saved); } catch (e) { this.profiles = []; }
       }
-      if (!this.profiles) this.profiles = [];
+      if (!this.profiles || this.profiles.length === 0) {
+        this.profiles = [];
+        this.loadAtsitTemplate();
+      }
       this.activeProfileId = localStorage.getItem(StorageKeys.ACTIVE_PROFILE_ID) || (this.profiles.length > 0 ? this.profiles[0].id : null);
       this.renderProfilesList();
       this.populateFormWithActive();
@@ -2858,23 +2862,23 @@
 
     init: function() {
       this.setQRMode('web');
-      this.applyPreset('quick');
+      this.applyPreset('all');
     },
 
     applyPreset: function(presetName) {
       const p = ProfilesModule.getActiveProfile();
-      const availableWithValue = this.allAvailableFields.filter(f => Boolean(p[f.key]));
+      const availableWithValue = p ? this.allAvailableFields.filter(f => Boolean(p[f.key])) : [];
 
       if (presetName === 'all') {
         this.selectedKeys = availableWithValue.map(f => f.key);
-        if (p.customFields) {
+        if (p && p.customFields) {
           p.customFields.filter(cf => Boolean(cf.value)).forEach(cf => this.selectedKeys.push('custom_' + cf.id));
         }
       } else if (presetName === 'work') {
         this.selectedKeys = availableWithValue.filter(f => f.group.includes('work')).map(f => f.key);
       } else if (presetName === 'personal') {
         this.selectedKeys = availableWithValue.filter(f => f.group.includes('personal')).map(f => f.key);
-        if (p.customFields) {
+        if (p && p.customFields) {
           p.customFields.filter(cf => Boolean(cf.value)).forEach(cf => this.selectedKeys.push('custom_' + cf.id));
         }
       } else if (presetName === 'quick') {
@@ -2908,8 +2912,14 @@
 
       if (!p || !p.firstName) {
         container.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 18px 8px; font-size: 13px;">Sin datos configurados aún. Ve a la pestaña Perfiles para crear tu tarjeta.</div>';
-        document.getElementById('fieldsCount').textContent = '0 seleccionados';
+        const fc = document.getElementById('fieldsCount');
+        if (fc) fc.textContent = '0 seleccionados';
         return;
+      }
+
+      const availableWithValue = this.allAvailableFields.filter(f => Boolean(p[f.key]));
+      if (this.selectedKeys.length === 0 && availableWithValue.length > 0) {
+        this.selectedKeys = availableWithValue.map(f => f.key);
       }
 
       let count = 0;
