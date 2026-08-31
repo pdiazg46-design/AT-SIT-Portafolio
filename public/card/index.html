@@ -1293,14 +1293,20 @@
       <div class="glass-card qr-hero-card">
         
         <!-- Unconfigured New User Welcome State -->
-        <div id="qrEmptyStateCard" style="display: none; text-align: center; padding: 24px 14px;">
-          <div style="font-size: 48px; margin-bottom: 12px;">📇</div>
-          <h3 style="font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 8px;">Configura tu Tarjeta Digital</h3>
-          <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 20px;">
-            Aún no has configurado tu perfil. Ingresa tus datos para generar tu propio código QR interactivo y compartir tus canales con el mundo.
+        <div id="qrEmptyStateCard" style="display: none; text-align: center; padding: 28px 18px;">
+          <div style="font-size: 52px; margin-bottom: 10px; filter: drop-shadow(0 4px 18px rgba(56, 189, 248, 0.4));">📇</div>
+          <h3 style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 8px;">Bienvenido a VentoCard</h3>
+          
+          <div id="welcomeSenderBadge" style="display: none; background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.4); color: #4ade80; font-size: 12.5px; font-weight: 700; padding: 6px 14px; border-radius: 20px; margin: 0 auto 16px auto; width: fit-content; align-items: center; gap: 6px;">
+            <span>✅</span> <span id="welcomeSenderText">Contacto guardado en tu libreta</span>
+          </div>
+
+          <p style="font-size: 13.5px; color: var(--text-muted); line-height: 1.55; margin-bottom: 22px;">
+            El contacto de quien te compartió este enlace ya está guardado en tu pestaña de <strong>Contactos</strong>.<br><br>
+            Configura tu propia tarjeta para generar tu código QR interactivo y compartir tus datos profesionales.
           </p>
-          <button type="button" class="btn btn-primary" style="width: 100%; font-size: 14px; font-weight: 800; padding: 12px;" onclick="AppNav.switchTab('profiles')">
-            🚀 Crear Mi Perfil Ahora
+          <button type="button" class="btn btn-primary btn-block" style="font-size: 14.5px; font-weight: 800; padding: 13px;" onclick="AppNav.switchTab('profiles')">
+            🚀 Configurar Mi Tarjeta Digital
           </button>
         </div>
 
@@ -3211,6 +3217,18 @@
       if (!p || !p.firstName) {
         if (emptyCard) emptyCard.style.display = 'block';
         if (activeCard) activeCard.style.display = 'none';
+
+        const sender = sessionStorage.getItem('ventocard_welcome_sender');
+        const badge = document.getElementById('welcomeSenderBadge');
+        const badgeText = document.getElementById('welcomeSenderText');
+        if (badge && badgeText) {
+          if (sender) {
+            badge.style.display = 'inline-flex';
+            badgeText.textContent = `Contacto de ${sender} guardado en tu libreta`;
+          } else {
+            badge.style.display = 'none';
+          }
+        }
         return;
       }
 
@@ -4147,13 +4165,55 @@
       const validated = Security.validatePayloadSchema(rawData);
       if (!validated) return false;
 
-      // Verify integrity checksum
-      if (rawData.cs && !Security.verifyChecksum(validated, rawData.cs)) {
-        console.warn('⚠️ Alerta de Seguridad: El checksum de integridad no coincide.');
+      // 1. Automatically save sender as Contact #1 in local directory
+      DirectoryModule.addContact({
+        cardId: validated.fn && validated.fn.toLowerCase() === 'patricio' ? 'atsit_patricio_diaz' : ('card_' + (validated.t || Date.now())),
+        firstName: validated.fn || 'Contacto',
+        lastName: validated.ln || '',
+        org: validated.org || '',
+        title: validated.tit || '',
+        phoneMobile: validated.mob || '',
+        whatsappUser: validated.wau || '',
+        phoneWork: validated.wrk || '',
+        emailWork: validated.emw || '',
+        emailPersonal: validated.emp || '',
+        website: validated.web || '',
+        linkedIn: validated.lin || '',
+        instagram: validated.ins || '',
+        tiktok: validated.tik || '',
+        github: validated.git || '',
+        address: validated.adr || '',
+        bio: validated.bio || ''
+      });
+
+      const senderName = `${validated.fn || ''} ${validated.ln || ''}`.trim() || 'Contacto';
+      const senderOrg = validated.org ? `(${validated.org})` : '';
+      sessionStorage.setItem('ventocard_welcome_sender', `${senderName} ${senderOrg}`.trim());
+
+      // 2. Clean the URL hash seamlessly without page reload
+      try {
+        history.replaceState(null, '', window.location.pathname + window.location.search);
+      } catch (e) {
+        window.location.hash = '';
       }
 
-      this.receivedData = validated;
-      this.renderRecipientView(validated);
+      // 3. Position user in 'Mi QR' with standard app navigation
+      document.querySelectorAll('.view-panel').forEach(v => v.classList.remove('active'));
+      const recView = document.getElementById('recipientView');
+      if (recView) recView.classList.remove('active');
+      const bottomNav = document.querySelector('.bottom-nav');
+      if (bottomNav) bottomNav.style.display = 'flex';
+
+      AppNav.switchTab('qr');
+      QRModule.refresh();
+
+      // 4. Proactively offer to install PWA on device
+      if (!PWAInstallManager.isInstalled()) {
+        setTimeout(() => {
+          PWAInstallManager.triggerInstall();
+        }, 600);
+      }
+
       return true;
     },
 
