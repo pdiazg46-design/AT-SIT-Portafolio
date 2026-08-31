@@ -3408,17 +3408,24 @@
     },
 
     renderCanvas: function(canvas, text) {
-      // Pure High-Contrast QR: Level L for massive modules and instant 0.05s scanning
-      const result = QREngine.drawOnCanvas(canvas, text, {
-        errorCorrectLevel: 1, // Level L
-        darkColor: '#000000',
-        margin: 14
-      });
+      if (!canvas || !text) return;
+      try {
+        // Pure High-Contrast QR: Level L for massive modules and instant 0.05s scanning
+        const result = QREngine.drawOnCanvas(canvas, text, {
+          errorCorrectLevel: 1, // Level L
+          darkColor: '#000000',
+          margin: 12
+        });
 
-      // Update readability indicator
-      const badge = document.getElementById('readabilityBadge');
-      badge.className = 'readability-meter';
-      badge.innerHTML = '● Lectura Instantánea (0.05s)';
+        // Update readability indicator safely
+        const badge = document.getElementById('readabilityBadge');
+        if (badge) {
+          badge.className = 'readability-meter';
+          badge.innerHTML = '● Lectura Instantánea (0.05s)';
+        }
+      } catch (err) {
+        console.error('QR Render Error:', err);
+      }
     },
 
     getShareDataObject: function() {
@@ -5516,10 +5523,16 @@
     },
 
     startPairingSession: function() {
-      if (this.pairSessionId && this.pollInterval) return;
+      if (!this.pairSessionId) {
+        this.pairSessionId = 'pair_' + Math.random().toString(36).substring(2, 10) + Date.now().toString(36);
+      }
 
-      this.pairSessionId = 'pair_' + Math.random().toString(36).substring(2, 10) + Date.now().toString(36);
-      const linkUrl = `${window.location.origin}${window.location.pathname}#pair=${this.pairSessionId}`;
+      let base = window.location.href.split('#')[0];
+      if (base.startsWith('file://') || base.includes('localhost') || base.includes('127.0.0.1')) {
+        base = 'https://atsit.cl/card/';
+      }
+      const cleanBase = base.split('?')[0].replace(/\/+$/, '');
+      const linkUrl = `${cleanBase}/#pair=${this.pairSessionId}`;
 
       // Render QR on desktopPairCanvas
       const canvas = document.getElementById('desktopPairCanvas');
@@ -5528,8 +5541,9 @@
       }
 
       // Start Polling /api/card/sync
-      if (this.pollInterval) clearInterval(this.pollInterval);
-      this.pollInterval = setInterval(() => this.checkPairingStatus(), 1800);
+      if (!this.pollInterval) {
+        this.pollInterval = setInterval(() => this.checkPairingStatus(), 1800);
+      }
     },
 
     checkPairingStatus: async function() {
