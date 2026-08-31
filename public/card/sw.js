@@ -1,4 +1,4 @@
-const APP_VERSION = '1.7.0';
+const APP_VERSION = '1.7.5';
 const CACHE_NAME = `ventocard-v${APP_VERSION}`;
 const ASSETS = [
   './',
