@@ -3504,6 +3504,7 @@
       }
 
       const shareData = {
+        cid: (p.firstName && p.firstName.toLowerCase() === 'patricio') ? 'atsit_patricio_diaz' : ('card_' + (p.phoneMobile || p.emailWork || p.id).replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()),
         fn: p.firstName || '',
         ln: p.lastName || '',
         org: this.selectedKeys.includes('org') ? p.org : '',
@@ -4455,7 +4456,7 @@
 
       // 1. Automatically save sender in local directory
       DirectoryModule.addContact({
-        cardId: validated.fn && validated.fn.toLowerCase() === 'patricio' ? 'atsit_patricio_diaz' : ('card_' + (validated.t || Date.now())),
+        cardId: validated.cid || validated.cardId || (validated.fn && validated.fn.toLowerCase() === 'patricio' ? 'atsit_patricio_diaz' : ('card_' + (validated.mob || validated.emw || validated.t || Date.now()).replace(/[^a-zA-Z0-9]/g, '_').toLowerCase())),
         firstName: validated.fn || 'Contacto',
         lastName: validated.ln || '',
         org: validated.org || '',
@@ -4777,12 +4778,14 @@
   // ----------------------------------------------------
   // 10. LIVESYNC SOBERANO EN LA NUBE (ATSIT Cloud Sync)
   // ----------------------------------------------------
+  // 10. DYNAMIC CARD AUTO-UPDATE ENGINE (Recipient LiveSync)
+  // ----------------------------------------------------
   const LiveSyncModule = {
-    syncEndpoint: '/api/card/sync',
+    syncEndpoint: 'https://www.atsit.cl/api/card/sync',
 
     publishProfile: async function(profile) {
       if (!profile || !profile.firstName) return;
-      const cardId = (profile.firstName && profile.firstName.toLowerCase() === 'patricio') ? 'atsit_patricio_diaz' : (profile.id || 'prof_default');
+      const cardId = (profile.firstName && profile.firstName.toLowerCase() === 'patricio') ? 'atsit_patricio_diaz' : (profile.cardId || ('card_' + (profile.phoneMobile || profile.emailWork || profile.id).replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()));
       const payload = {
         fn: profile.firstName,
         ln: profile.lastName,
@@ -4798,7 +4801,8 @@
         ins: profile.instagram,
         tik: profile.tiktok,
         adr: profile.address,
-        bio: profile.bio
+        bio: profile.bio,
+        updatedAt: Date.now()
       };
 
       try {
@@ -4823,12 +4827,12 @@
         if (!cardId) continue;
 
         try {
-          const resp = await fetch(`${this.syncEndpoint}?id=${cardId}`);
+          const resp = await fetch(`${this.syncEndpoint}?id=${encodeURIComponent(cardId)}`, { cache: 'no-store' });
           if (resp.ok) {
             const data = await resp.json();
             if (data && data.success && data.payload) {
               const p = data.payload;
-              if (contact.phoneMobile !== p.mob || contact.title !== p.tit || contact.emailWork !== p.emw || contact.org !== p.org) {
+              if (contact.phoneMobile !== p.mob || contact.title !== p.tit || contact.emailWork !== p.emw || contact.org !== p.org || contact.phoneWork !== p.wrk) {
                 contact.firstName = p.fn || contact.firstName;
                 contact.lastName = p.ln || contact.lastName;
                 contact.org = p.org || contact.org;
@@ -5547,6 +5551,9 @@
       } else if (tabName === 'directory') {
         document.getElementById('viewDirectory').classList.add('active');
         document.querySelectorAll('.nav-item')[1].classList.add('active');
+        if (typeof LiveSyncModule !== 'undefined') {
+          LiveSyncModule.syncContacts();
+        }
       } else if (tabName === 'profiles') {
         document.getElementById('viewProfiles').classList.add('active');
         document.querySelectorAll('.nav-item')[2].classList.add('active');
