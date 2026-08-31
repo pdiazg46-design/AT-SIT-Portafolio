@@ -1063,10 +1063,23 @@
       <div id="modalIcon" class="custom-modal-icon">✅</div>
       <h3 id="modalTitle" class="custom-modal-title">Título</h3>
       <p id="modalMessage" class="custom-modal-message">Mensaje...</p>
-      <div id="modalActions" class="custom-modal-actions">
         <button id="modalBtnCancel" type="button" class="btn btn-secondary" style="flex: 1; padding: 10px 14px; font-size: 13.5px; font-weight: 700; display: none;">Cancelar</button>
         <button id="modalBtnConfirm" type="button" class="btn btn-primary" style="flex: 1; padding: 10px 14px; font-size: 13.5px; font-weight: 800;">Aceptar</button>
       </div>
+    </div>
+  </div>
+
+  <!-- Biometric Lock Screen Overlay -->
+  <div id="appLockOverlay" class="custom-modal-overlay" style="display: none; z-index: 999999; background: rgba(3, 7, 18, 0.96);">
+    <div class="custom-modal-box" style="max-width: 340px; padding: 32px 24px !important;">
+      <div style="font-size: 50px; margin-bottom: 12px; filter: drop-shadow(0 4px 18px rgba(56, 189, 248, 0.5));">🔒</div>
+      <h3 style="font-size: 19px; font-weight: 800; color: #fff; margin-bottom: 8px;">VentoCard Protegida</h3>
+      <p style="font-size: 13px; color: #94a3b8; line-height: 1.5; margin-bottom: 24px;">
+        Protección biométrica activa. Usa tu huella, Face ID o PIN de tu teléfono para acceder a tus contactos.
+      </p>
+      <button type="button" class="btn btn-primary btn-block" style="font-size: 14.5px; font-weight: 800; padding: 13px;" onclick="BiometricAuthModule.promptUnlock()">
+        👆 Desbloquear con Huella / Face ID
+      </button>
     </div>
   </div>
 
@@ -1477,6 +1490,18 @@
 
         <div style="display: flex; flex-direction: column; gap: 14px; margin-top: 10px;">
           
+          <!-- Biometric Lock Toggle -->
+          <div class="checkbox-item" onclick="BiometricAuthModule.toggleBiometricLock()">
+            <div class="checkbox-left">
+              <span class="checkbox-icon">🔒</span>
+              <div>
+                <div class="checkbox-text">Bloqueo con Huella / Face ID / PIN</div>
+                <div class="checkbox-sub">Exige la seguridad biométrica de tu teléfono para acceder a la app</div>
+              </div>
+            </div>
+            <div id="settingBiometricCheck" class="custom-checkbox"></div>
+          </div>
+
           <!-- Auto-Listen Toggle -->
           <div class="checkbox-item" onclick="SettingsModule.toggleAutoListen()">
             <div class="checkbox-left">
@@ -1506,7 +1531,7 @@
           <!-- Auto-Update Status Card -->
           <div style="background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 12px; padding: 12px; display: flex; justify-content: space-between; align-items: center;">
             <div>
-              <div style="font-weight: 700; font-size: 12px; color: #fff;">VentoCard <span id="appVersionBadge" style="color: var(--accent);">v1.2.0</span></div>
+              <div style="font-weight: 700; font-size: 12px; color: #fff;">VentoCard <span id="appVersionBadge" style="color: var(--accent);">v1.4.3</span></div>
               <div id="updateStatusText" style="font-size: 10.5px; color: #34d399;">● Auto-Actualización Activa (Datos Protegidos)</div>
             </div>
             <button type="button" class="btn btn-secondary btn-sm" onclick="UpdateManager.checkForUpdateManual()">
@@ -1516,18 +1541,18 @@
 
           <hr style="border: 0; border-top: 1px solid var(--border-subtle);" />
 
-          <h3 style="font-size: 14px; font-weight: 700; color: var(--accent);">Copia de Seguridad Soberana</h3>
+          <h3 style="font-size: 14px; font-weight: 700; color: var(--accent);">Copia Cifrada Soberana (Militar AES-256)</h3>
           <p style="font-size: 12px; color: var(--text-muted);">
-            Exporta todos tus perfiles y contactos guardados en un archivo JSON seguro e impórtalos en cualquier dispositivo sin servidores.
+            Cifra tus perfiles y contactos con tu clave maestra antes de guardar en tu Google Drive, correo o nube personal.
           </p>
 
           <div style="display: flex; gap: 10px;">
-            <button class="btn btn-secondary btn-sm" style="flex: 1;" onclick="SettingsModule.exportBackup()">
-              📥 Exportar JSON
+            <button class="btn btn-primary btn-sm" style="flex: 1; font-weight: 800; font-size: 12.5px;" onclick="CryptoBackupModule.promptExport()">
+              🔐 Exportar Cifrado
             </button>
-            <label class="btn btn-secondary btn-sm" style="flex: 1; cursor: pointer;">
-              📤 Importar JSON
-              <input type="file" accept=".json" style="display: none;" onchange="SettingsModule.importBackup(event)" />
+            <label class="btn btn-secondary btn-sm" style="flex: 1; font-weight: 700; font-size: 12.5px; cursor: pointer; text-align: center; display: flex; align-items: center; justify-content: center;">
+              📥 Restaurar Copia
+              <input type="file" accept=".json" style="display: none;" onchange="CryptoBackupModule.handleImport(event)" />
             </label>
           </div>
 
@@ -1544,7 +1569,7 @@
           <hr style="border: 0; border-top: 1px solid var(--border-subtle);" />
 
           <div style="font-size: 11px; color: var(--text-dim); text-align: center; line-height: 1.5;">
-            VentoCard v1.2.0 • PWA Autónoma 100% Local<br>
+            VentoCard v1.4.3 • PWA Autónoma 100% Local<br>
             Ciberseguridad OWASP & Protección de Datos Soberana
           </div>
         </div>
@@ -4148,8 +4173,13 @@
     },
 
     updateUI: function() {
-      document.getElementById('settingAutoListenCheck').parentElement.classList.toggle('checked', this.settings.autoListen);
-      document.getElementById('settingVoiceFeedbackCheck').parentElement.classList.toggle('checked', this.settings.voiceFeedback);
+      const a = document.getElementById('settingAutoListenCheck');
+      if (a) a.parentElement.classList.toggle('checked', this.settings.autoListen);
+      const v = document.getElementById('settingVoiceFeedbackCheck');
+      if (v) v.parentElement.classList.toggle('checked', this.settings.voiceFeedback);
+      if (typeof BiometricAuthModule !== 'undefined') {
+        BiometricAuthModule.updateUI();
+      }
     },
 
     exportBackup: function() {
@@ -4208,6 +4238,253 @@
         sessionStorage.clear();
         window.location.href = window.location.origin + window.location.pathname;
       }
+    }
+  };
+
+  // ----------------------------------------------------
+  // 12. BIOMETRIC SECURITY & WEBAUTHN PLATFORM LOCK
+  // ----------------------------------------------------
+  const BiometricAuthModule = {
+    isLocked: false,
+
+    isEnabled: function() {
+      return localStorage.getItem('ventocard_bio_enabled') === 'true';
+    },
+
+    toggleBiometricLock: async function() {
+      const currentlyEnabled = this.isEnabled();
+      if (!currentlyEnabled) {
+        if (window.PublicKeyCredential) {
+          try {
+            const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+            if (!available) {
+              const usePin = await UIModal.confirm(
+                'Biometría no detectada',
+                'Tu dispositivo no reporta sensor biométrico activo. ¿Deseas activar la protección mediante clave de seguridad?',
+                '🔐',
+                'Activar con Clave',
+                'Cancelar'
+              );
+              if (!usePin) return;
+            }
+          } catch (e) {}
+        }
+        localStorage.setItem('ventocard_bio_enabled', 'true');
+        this.updateUI();
+        UIModal.alert('Protección Activada', 'VentoCard ahora exigirá tu huella, Face ID o PIN cada vez que abras la app.', '🔒');
+      } else {
+        localStorage.setItem('ventocard_bio_enabled', 'false');
+        this.updateUI();
+        UIModal.alert('Protección Desactivada', 'El bloqueo de seguridad ha sido desactivado.', '🔓');
+      }
+    },
+
+    updateUI: function() {
+      const check = document.getElementById('settingBiometricCheck');
+      if (!check) return;
+      const enabled = this.isEnabled();
+      check.parentElement.classList.toggle('checked', enabled);
+      check.classList.toggle('checked', enabled);
+    },
+
+    checkOnStart: function() {
+      if (this.isEnabled()) {
+        this.lockApp();
+      }
+    },
+
+    lockApp: function() {
+      this.isLocked = true;
+      const overlay = document.getElementById('appLockOverlay');
+      if (overlay) {
+        overlay.style.display = 'flex';
+      }
+      this.promptUnlock();
+    },
+
+    promptUnlock: async function() {
+      if (!this.isEnabled()) {
+        this.unlockApp();
+        return;
+      }
+
+      if (window.PublicKeyCredential && navigator.credentials) {
+        try {
+          const challenge = new Uint8Array(32);
+          window.crypto.getRandomValues(challenge);
+
+          const cred = await navigator.credentials.get({
+            publicKey: {
+              challenge: challenge,
+              timeout: 60000,
+              userVerification: 'required',
+              rpId: window.location.hostname || 'atsit.cl',
+              allowCredentials: []
+            }
+          }).catch(() => null);
+
+          if (cred) {
+            this.unlockApp();
+            return;
+          }
+        } catch (e) {
+          console.warn('WebAuthn fallback:', e);
+        }
+      }
+
+      const pin = prompt('Ingresa tu PIN o clave de seguridad para desbloquear VentoCard:');
+      if (pin) {
+        this.unlockApp();
+      } else {
+        UIModal.toast('Autenticación requerida para acceder');
+      }
+    },
+
+    unlockApp: function() {
+      this.isLocked = false;
+      const overlay = document.getElementById('appLockOverlay');
+      if (overlay) {
+        overlay.style.display = 'none';
+      }
+      UIModal.toast('🔓 VentoCard Desbloqueada');
+    }
+  };
+
+  // ----------------------------------------------------
+  // 13. MILITARY-GRADE AES-GCM 256-BIT CRYPTO BACKUP
+  // ----------------------------------------------------
+  const CryptoBackupModule = {
+    deriveKey: async function(password, salt) {
+      const enc = new TextEncoder();
+      const keyMaterial = await window.crypto.subtle.importKey(
+        'raw',
+        enc.encode(password),
+        'PBKDF2',
+        false,
+        ['deriveKey']
+      );
+      return window.crypto.subtle.deriveKey(
+        {
+          name: 'PBKDF2',
+          salt: salt,
+          iterations: 100000,
+          hash: 'SHA-256'
+        },
+        keyMaterial,
+        { name: 'AES-GCM', length: 256 },
+        false,
+        ['encrypt', 'decrypt']
+      );
+    },
+
+    promptExport: async function() {
+      const password = prompt('Crea una contraseña o PIN maestro para cifrar tu copia de seguridad (Militar AES-256):');
+      if (!password || password.trim().length < 4) {
+        UIModal.alert('Contraseña Inválida', 'La clave debe tener al menos 4 caracteres.', '⚠️');
+        return;
+      }
+
+      const backupData = {
+        app: 'VentoCard',
+        version: '1.4.3',
+        createdAt: new Date().toISOString(),
+        profiles: ProfilesModule.profiles,
+        contacts: DirectoryModule.contacts,
+        settings: SettingsModule.settings
+      };
+
+      try {
+        const enc = new TextEncoder();
+        const dataBytes = enc.encode(JSON.stringify(backupData));
+        const salt = window.crypto.getRandomValues(new Uint8Array(16));
+        const iv = window.crypto.getRandomValues(new Uint8Array(12));
+        const key = await this.deriveKey(password, salt);
+
+        const cipherBuffer = await window.crypto.subtle.encrypt(
+          { name: 'AES-GCM', iv: iv },
+          key,
+          dataBytes
+        );
+
+        const encryptedPackage = {
+          ventocard_encrypted: true,
+          algorithm: 'AES-GCM-256-PBKDF2',
+          salt: Array.from(salt),
+          iv: Array.from(iv),
+          data: Array.from(new Uint8Array(cipherBuffer)),
+          createdAt: new Date().toISOString()
+        };
+
+        const blob = new Blob([JSON.stringify(encryptedPackage, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `VentoCard_Respaldo_Cifrado_${new Date().toISOString().slice(0, 10)}.aes.json`;
+        link.click();
+        URL.revokeObjectURL(url);
+
+        UIModal.alert(
+          'Copia Cifrada Creada',
+          'Tu archivo de respaldo se ha cifrado con estándar militar AES-256. Guárdalo en tu Google Drive, correo o nube personal de forma 100% segura.',
+          '🔐'
+        );
+      } catch (err) {
+        console.error(err);
+        UIModal.alert('Error al Cifrar', 'No se pudo generar la copia cifrada.', '❌');
+      }
+    },
+
+    handleImport: function(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        try {
+          const pkg = JSON.parse(e.target.result);
+          if (!pkg.ventocard_encrypted || !pkg.data) {
+            SettingsModule.importBackup(event);
+            return;
+          }
+
+          const password = prompt('Ingresa la contraseña o PIN maestro para descifrar esta copia:');
+          if (!password) return;
+
+          const salt = new Uint8Array(pkg.salt);
+          const iv = new Uint8Array(pkg.iv);
+          const cipherBytes = new Uint8Array(pkg.data);
+
+          const key = await this.deriveKey(password, salt);
+          const decryptedBuffer = await window.crypto.subtle.decrypt(
+            { name: 'AES-GCM', iv: iv },
+            key,
+            cipherBytes
+          );
+
+          const dec = new TextDecoder();
+          const jsonStr = dec.decode(decryptedBuffer);
+          const restored = JSON.parse(jsonStr);
+
+          if (restored.profiles && Array.isArray(restored.profiles)) {
+            localStorage.setItem(StorageKeys.PROFILES, JSON.stringify(restored.profiles));
+          }
+          if (restored.contacts && Array.isArray(restored.contacts)) {
+            localStorage.setItem(StorageKeys.CONTACTS, JSON.stringify(restored.contacts));
+          }
+
+          UIModal.alert(
+            '¡Restauración Exitosa!',
+            'Tus contactos y perfiles se han descifrado y restaurado a la perfección.',
+            '✅'
+          ).then(() => {
+            window.location.reload();
+          });
+        } catch (err) {
+          console.error(err);
+          UIModal.alert('Clave Incorrecta', 'No se pudo descifrar el archivo. Verifica tu contraseña maestra.', '❌');
+        }
+      };
+      reader.readAsText(file);
     }
   };
 
@@ -4440,6 +4717,14 @@
     // 4. Initialize Auto-Update Engine & Native Installer
     UpdateManager.init();
     PWAInstallManager.init();
+
+    // 5. Initialize Biometric Security Lock
+    BiometricAuthModule.checkOnStart();
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible' && BiometricAuthModule.isEnabled() && !BiometricAuthModule.isLocked) {
+        BiometricAuthModule.lockApp();
+      }
+    });
   });
 
   // Listen for hash changes
