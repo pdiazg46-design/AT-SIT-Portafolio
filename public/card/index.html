@@ -1770,7 +1770,7 @@
           <!-- Auto-Update Status Card -->
           <div style="background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 12px; padding: 12px; display: flex; justify-content: space-between; align-items: center;">
             <div>
-              <div style="font-weight: 700; font-size: 12px; color: #fff;">VentoCard <span id="appVersionBadge" style="color: var(--accent);">v1.8.5</span></div>
+              <div style="font-weight: 700; font-size: 12px; color: #fff;">VentoCard <span id="appVersionBadge" style="color: var(--accent);">v1.9.0</span></div>
               <div id="updateStatusText" style="font-size: 10.5px; color: #34d399;">● Auto-Actualización Activa (Datos Protegidos)</div>
             </div>
             <button type="button" class="btn btn-secondary btn-sm" onclick="UpdateManager.checkForUpdateManual()">
@@ -1848,7 +1848,7 @@
 
       <!-- Footer Info -->
       <div class="full-width-desktop" style="font-size: 11px; color: var(--text-dim); text-align: center; line-height: 1.5; padding: 8px 0;">
-        VentoCard v1.8.5 • PWA Autónoma Soberana<br>
+        VentoCard v1.9.0 • PWA Autónoma Soberana<br>
         Ciberseguridad OWASP & Protección de Datos ATSIT
       </div>
     </div>
@@ -3597,11 +3597,15 @@
 
     addContact: function(contactObj) {
       if (!contactObj.id) contactObj.id = 'cont_' + Date.now();
+      contactObj.updatedAt = Date.now();
       // Avoid duplicate contacts with same phone or name
       this.contacts = this.contacts.filter(c => c.id !== contactObj.id && `${c.firstName}_${c.lastName}` !== `${contactObj.firstName}_${contactObj.lastName}`);
       this.contacts.unshift(contactObj);
       this.saveAll();
       this.renderContacts(this.contacts);
+      if (typeof LiveSyncEngine !== 'undefined') {
+        LiveSyncEngine.broadcastContactMutation(contactObj);
+      }
     },
 
     deleteContact: async function(id) {
@@ -3610,6 +3614,9 @@
         this.contacts = this.contacts.filter(c => c.id !== id);
         this.saveAll();
         this.renderContacts(this.contacts);
+        if (typeof LiveSyncEngine !== 'undefined') {
+          LiveSyncEngine.broadcastContactDeletion(id);
+        }
       }
     },
 
@@ -3753,7 +3760,7 @@
       const currentNote = contact.privateNotes || '';
       const newNote = await UIModal.prompt(
         `Notas Privadas: ${contact.firstName}`,
-        'Escribe notas confidenciales sobre este contacto (Solo visibles en tu teléfono):',
+        'Escribe notas confidenciales sobre este contacto:',
         currentNote,
         '📝',
         'text',
@@ -3762,9 +3769,13 @@
       );
       if (newNote !== null) {
         contact.privateNotes = newNote.trim();
+        contact.updatedAt = Date.now();
         this.saveAll();
         this.renderContacts(this.contacts);
         UIModal.toast(`📝 Nota de ${contact.firstName} guardada`);
+        if (typeof LiveSyncEngine !== 'undefined') {
+          LiveSyncEngine.broadcastContactMutation(contact);
+        }
       }
     },
 
@@ -5889,13 +5900,82 @@
       });
     },
 
+    mergeContacts: function(localList, incomingList) {
+      if (!incomingList || !Array.isArray(incomingList)) return localList || [];
+      if (!localList || !Array.isArray(localList) || localList.length === 0) return incomingList;
+
+      const map = new Map();
+
+      // Index local contacts
+      localList.forEach(loc => {
+        if (loc && loc.id) {
+          map.set(loc.id, { ...loc, updatedAt: loc.updatedAt || 0 });
+        }
+      });
+
+      // Merge incoming contacts
+      incomingList.forEach(inc => {
+        if (!inc || !inc.id) return;
+        const local = map.get(inc.id);
+        if (!local) {
+          map.set(inc.id, inc);
+        } else {
+          const localTime = local.updatedAt || 0;
+          const incTime = inc.updatedAt || 0;
+
+          if (incTime > localTime) {
+            // Incoming is newer
+            const merged = Object.assign({}, local, inc);
+            map.set(inc.id, merged);
+          } else if (localTime > incTime) {
+            // Local is newer: preserve local edits and notes!
+          } else {
+            // Equal timestamps or legacy: keep non-empty privateNotes
+            const merged = Object.assign({}, local, inc);
+            if (!inc.privateNotes && local.privateNotes) {
+              merged.privateNotes = local.privateNotes;
+            }
+            map.set(inc.id, merged);
+          }
+        }
+      });
+
+      return Array.from(map.values());
+    },
+
     handleIncomingData: function(data) {
       if (!data) return;
 
       let updated = false;
 
+      // Handle single contact mutation (Delta)
+      if (data.type === 'CONTACT_MUTATION' && data.contact) {
+        const c = data.contact;
+        const idx = DirectoryModule.contacts.findIndex(x => x.id === c.id);
+        if (idx >= 0) {
+          DirectoryModule.contacts[idx] = Object.assign(DirectoryModule.contacts[idx], c);
+        } else {
+          DirectoryModule.contacts.unshift(c);
+        }
+        localStorage.setItem(StorageKeys.CONTACTS, JSON.stringify(DirectoryModule.contacts));
+        DirectoryModule.renderContacts(DirectoryModule.contacts);
+        this.showSyncPill('⚡ Contacto actualizado en vivo');
+        return;
+      }
+
+      // Handle contact deletion
+      if (data.type === 'CONTACT_DELETION' && data.id) {
+        DirectoryModule.contacts = DirectoryModule.contacts.filter(x => x.id !== data.id);
+        localStorage.setItem(StorageKeys.CONTACTS, JSON.stringify(DirectoryModule.contacts));
+        DirectoryModule.renderContacts(DirectoryModule.contacts);
+        this.showSyncPill('🗑️ Contacto eliminado en vivo');
+        return;
+      }
+
+      // Granular Merge of Full Contacts List
       if (data.contacts && Array.isArray(data.contacts)) {
-        DirectoryModule.contacts = data.contacts;
+        const merged = this.mergeContacts(DirectoryModule.contacts, data.contacts);
+        DirectoryModule.contacts = merged;
         localStorage.setItem(StorageKeys.CONTACTS, JSON.stringify(DirectoryModule.contacts));
         DirectoryModule.renderContacts(DirectoryModule.contacts);
         updated = true;
@@ -5955,6 +6035,32 @@
       this.debounceTimer = setTimeout(() => {
         this.executeBroadcast();
       }, 350);
+    },
+
+    broadcastContactMutation: function(contact) {
+      if (this.activeConn && this.activeConn.open) {
+        this.activeConn.send({
+          type: 'CONTACT_MUTATION',
+          sourceDevice: this.getDeviceId(),
+          timestamp: Date.now(),
+          contact: contact
+        });
+        this.showSyncPill('🟢 P2P Enviado');
+      }
+      this.broadcastChange();
+    },
+
+    broadcastContactDeletion: function(contactId) {
+      if (this.activeConn && this.activeConn.open) {
+        this.activeConn.send({
+          type: 'CONTACT_DELETION',
+          sourceDevice: this.getDeviceId(),
+          timestamp: Date.now(),
+          id: contactId
+        });
+        this.showSyncPill('🗑️ P2P Enviado');
+      }
+      this.broadcastChange();
     },
 
     executeBroadcast: async function() {
