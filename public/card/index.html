@@ -1285,6 +1285,52 @@
     </header>
 
     <!-- ========================================== -->
+    <!-- VIEW 0: DESKTOP WHATSAPP-WEB LINKING SCREEN -->
+    <!-- ========================================== -->
+    <div id="desktopLinkScreen" class="glass-card" style="display: none; max-width: 680px; margin: 30px auto; padding: 32px 28px; text-align: center; border: 1.5px solid rgba(56, 189, 248, 0.4); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);">
+      <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 8px;">
+        <span style="font-size: 32px;">💻</span>
+        <h2 style="font-size: 24px; font-weight: 800; color: #fff; margin: 0;">VentoCard Web</h2>
+      </div>
+      <p style="font-size: 13.5px; color: var(--text-muted); margin-bottom: 24px;">
+        Sincroniza tus perfiles y contactos desde tu teléfono móvil en segundos.
+      </p>
+
+      <div style="display: flex; gap: 30px; align-items: center; justify-content: center; flex-wrap: wrap;">
+        <!-- QR Canvas -->
+        <div style="background: #ffffff; padding: 14px; border-radius: 20px; box-shadow: 0 8px 30px rgba(0,0,0,0.5); width: 220px; height: 220px; display: flex; align-items: center; justify-content: center;">
+          <canvas id="desktopPairCanvas" width="200" height="200" style="width: 190px; height: 190px;"></canvas>
+        </div>
+
+        <!-- Instructions Column -->
+        <div style="text-align: left; max-width: 320px; display: flex; flex-direction: column; gap: 12px;">
+          <div style="font-size: 14px; font-weight: 800; color: #fff;">Para vincular tu computador:</div>
+          <div style="display: flex; gap: 10px; font-size: 13px; color: #94a3b8; align-items: flex-start;">
+            <span style="background: rgba(56,189,248,0.2); color: var(--accent); width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; flex-shrink: 0;">1</span>
+            <span>Abre <strong>VentoCard</strong> en tu teléfono.</span>
+          </div>
+          <div style="display: flex; gap: 10px; font-size: 13px; color: #94a3b8; align-items: flex-start;">
+            <span style="background: rgba(56,189,248,0.2); color: var(--accent); width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; flex-shrink: 0;">2</span>
+            <span>Toca el botón <strong>📷 Escanear</strong> arriba.</span>
+          </div>
+          <div style="display: flex; gap: 10px; font-size: 13px; color: #94a3b8; align-items: flex-start;">
+            <span style="background: rgba(56,189,248,0.2); color: var(--accent); width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; flex-shrink: 0;">3</span>
+            <span>Apunta la cámara a este código QR.</span>
+          </div>
+
+          <div style="margin-top: 10px; display: flex; gap: 8px;">
+            <button type="button" class="btn btn-secondary btn-sm" style="font-size: 12px;" onclick="DesktopLinkManager.restoreViaPin()">
+              🔑 Usar PIN de Bóveda
+            </button>
+            <button type="button" class="btn btn-sm" style="background: transparent; color: var(--text-dim); font-size: 11.5px; border: 1px solid var(--border-subtle);" onclick="DesktopLinkManager.skipPairing()">
+              Continuar sin vincular
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
     <!-- VIEW 1: RECIPIENT PUBLIC CARD (Onboarding)  -->
     <!-- ========================================== -->
     <div id="recipientView" class="recipient-view-wrapper">
@@ -3684,6 +3730,15 @@
       if (!qrText) return;
       this.closeScanner();
 
+      // 0. If it's a Desktop Pairing QR (#pair=...)
+      if (qrText.includes('pair=')) {
+        const pairId = qrText.split('pair=')[1].split('&')[0];
+        if (pairId && typeof RecipientManager !== 'undefined') {
+          RecipientManager.handlePairingUpload(pairId);
+          return;
+        }
+      }
+
       // 1. If it's a VentoCard #card= URL
       if (qrText.includes('card=')) {
         const encoded = qrText.split('card=')[1].split('&')[0];
@@ -4197,7 +4252,18 @@
 
     checkHashPayload: function() {
       const hash = window.location.hash;
-      if (!hash || !hash.includes('card=')) return false;
+      if (!hash) return false;
+
+      // 0. Handle WhatsApp-Web-style Desktop Pairing from Phone
+      if (hash.includes('pair=')) {
+        const pairId = hash.split('pair=')[1].split('&')[0];
+        if (pairId) {
+          this.handlePairingUpload(pairId);
+          return true;
+        }
+      }
+
+      if (!hash.includes('card=')) return false;
 
       const encoded = hash.split('card=')[1];
       const rawData = DataCodec.decodePayload(encoded);
@@ -4279,6 +4345,32 @@
       const modal = document.getElementById('onboardingWelcomeModal');
       if (modal) modal.style.display = 'none';
       AppNav.switchTab('profiles');
+    },
+
+    handlePairingUpload: async function(pairId) {
+      const payload = {
+        profiles: ProfilesModule.profiles,
+        contacts: DirectoryModule.contacts,
+        settings: SettingsModule.settings
+      };
+
+      try {
+        UIModal.toast('💻 Vinculando con computador...');
+        await fetch('/api/card/sync', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            cardId: pairId,
+            payload: payload
+          })
+        });
+
+        UIModal.alert('Computador Vinculado', 'Tu sesión, perfiles y contactos se han transferido a la pantalla de tu computador exitosamente.', '💻');
+        window.location.hash = '';
+        AppNav.switchTab('qr');
+      } catch (e) {
+        UIModal.alert('Error de Vinculación', 'No se pudo conectar con el computador. Inténtalo nuevamente.', '❌');
+      }
     },
 
     renderRecipientView: function(d) {
@@ -5341,6 +5433,91 @@
   };
 
   // ----------------------------------------------------
+  // 11.5 DESKTOP WHATSAPP-WEB PAIRING MANAGER
+  // ----------------------------------------------------
+  const DesktopLinkManager = {
+    pairSessionId: null,
+    pollInterval: null,
+
+    isDesktop: function() {
+      return !/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) && window.innerWidth >= 768;
+    },
+
+    init: function() {
+      if (!this.isDesktop()) return;
+
+      const hasProfiles = ProfilesModule.profiles && ProfilesModule.profiles.length > 0 && ProfilesModule.profiles[0].firstName;
+      const skip = sessionStorage.getItem('ventocard_skip_desktop_pair');
+
+      if (!hasProfiles && !skip) {
+        this.startPairingScreen();
+      }
+    },
+
+    startPairingScreen: function() {
+      this.pairSessionId = 'pair_' + Math.random().toString(36).substring(2, 10) + Date.now().toString(36);
+      const linkUrl = `${window.location.origin}${window.location.pathname}#pair=${this.pairSessionId}`;
+
+      document.querySelectorAll('.view-panel').forEach(v => v.classList.remove('active'));
+      const screen = document.getElementById('desktopLinkScreen');
+      if (screen) screen.style.display = 'block';
+
+      // Render QR on desktopPairCanvas
+      const canvas = document.getElementById('desktopPairCanvas');
+      if (canvas && typeof QRModule !== 'undefined') {
+        QRModule.renderCanvas(canvas, linkUrl);
+      }
+
+      // Start Polling /api/card/sync
+      if (this.pollInterval) clearInterval(this.pollInterval);
+      this.pollInterval = setInterval(() => this.checkPairingStatus(), 2000);
+    },
+
+    checkPairingStatus: async function() {
+      if (!this.pairSessionId) return;
+      try {
+        const resp = await fetch(`/api/card/sync?id=${encodeURIComponent(this.pairSessionId)}`, { cache: 'no-store' });
+        if (!resp.ok) return;
+        const result = await resp.json();
+        if (result.success && result.payload && result.payload.profiles) {
+          clearInterval(this.pollInterval);
+          this.pollInterval = null;
+
+          // Save paired data
+          localStorage.setItem(StorageKeys.PROFILES, JSON.stringify(result.payload.profiles));
+          if (result.payload.contacts) {
+            localStorage.setItem(StorageKeys.CONTACTS, JSON.stringify(result.payload.contacts));
+          }
+          if (result.payload.settings) {
+            localStorage.setItem(StorageKeys.SETTINGS, JSON.stringify(result.payload.settings));
+          }
+
+          UIModal.toast('💻 ¡Computador vinculado con éxito!');
+          setTimeout(() => {
+            window.location.reload();
+          }, 600);
+        }
+      } catch (e) {}
+    },
+
+    skipPairing: function() {
+      sessionStorage.setItem('ventocard_skip_desktop_pair', 'true');
+      if (this.pollInterval) clearInterval(this.pollInterval);
+      const screen = document.getElementById('desktopLinkScreen');
+      if (screen) screen.style.display = 'none';
+      AppNav.switchTab('qr');
+    },
+
+    restoreViaPin: function() {
+      if (typeof AtsitCloudVaultModule !== 'undefined') {
+        AtsitCloudVaultModule.restoreVault().then(() => {
+          this.skipPairing();
+        });
+      }
+    }
+  };
+
+  // ----------------------------------------------------
   // 12. NATIVE PWA INSTALL MANAGER (Cross-Platform iOS / Android / Desktop)
   // ----------------------------------------------------
   const PWAInstallManager = {
@@ -5443,6 +5620,7 @@
     UpdateManager.init();
     PWAInstallManager.init();
     AtsitCloudVaultModule.init();
+    DesktopLinkManager.init();
 
     // 5. Initialize PIN Security Lock
     BiometricAuthModule.checkOnStart();
