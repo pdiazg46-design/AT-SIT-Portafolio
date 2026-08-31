@@ -687,24 +687,60 @@
       font-weight: 900;
     }
 
-    /* Density / Readability Badge */
-    .readability-meter {
+    /* Contact Category Pills & Badges */
+    .category-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 11.5px;
+      font-weight: 700;
+      white-space: nowrap;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-muted);
+      border: 1px solid var(--border-subtle);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+    .category-pill:hover {
+      background: rgba(56, 189, 248, 0.12);
+      color: #fff;
+      border-color: rgba(56, 189, 248, 0.3);
+    }
+    .category-pill.active {
+      background: linear-gradient(135deg, rgba(2, 132, 199, 0.4), rgba(56, 189, 248, 0.25));
+      color: #fff;
+      border: 1px solid var(--accent);
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+    }
+    .contact-category-badge {
       display: inline-flex;
       align-items: center;
       gap: 4px;
       font-size: 10px;
       font-weight: 700;
-      padding: 2px 8px;
-      border-radius: 10px;
-      background: rgba(16, 185, 129, 0.15);
-      color: var(--success);
-      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 2px 7px;
+      border-radius: 8px;
+      background: rgba(56, 189, 248, 0.12);
+      color: var(--accent);
+      border: 1px solid rgba(56, 189, 248, 0.25);
     }
-
-    .readability-meter.warn {
-      background: rgba(245, 158, 11, 0.15);
-      color: var(--warning);
-      border-color: rgba(245, 158, 11, 0.3);
+    .contact-category-badge.family {
+      background: rgba(236, 72, 153, 0.12);
+      color: #f472b6;
+      border-color: rgba(236, 72, 153, 0.25);
+    }
+    .contact-category-badge.friends {
+      background: rgba(168, 85, 247, 0.12);
+      color: #c084fc;
+      border-color: rgba(168, 85, 247, 0.25);
+    }
+    .contact-category-badge.starred {
+      background: rgba(234, 179, 8, 0.12);
+      color: #facc15;
+      border-color: rgba(234, 179, 8, 0.25);
     }
 
     /* Directorio / Rolodex */
@@ -1469,13 +1505,11 @@
         <!-- Configured Active QR Sharing Console -->
         <div id="qrActiveHeroCard">
           <div style="display: flex; justify-content: space-between; width: 100%; align-items: center; margin-bottom: 8px;">
-            <h2 class="section-title" style="margin-bottom: 0;">
+            <h2 class="section-title" style="margin-bottom: 0; display: flex; align-items: center; gap: 8px;">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"></rect><path d="M7 7h.01"></path><path d="M17 7h.01"></path><path d="M7 17h.01"></path><path d="M17 17h.01"></path></svg>
-              Mi Tarjeta Digital
+              <span id="activeProfileHeading">Mi Tarjeta Digital</span>
             </h2>
-            <div id="readabilityBadge" class="readability-meter">
-              <span style="font-size: 14px;">●</span> Lectura Instantánea
-            </div>
+            <span id="activeProfileTypeBadge" style="font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 12px; background: rgba(56, 189, 248, 0.15); color: var(--accent); border: 1px solid rgba(56, 189, 248, 0.3);">💼 Trabajo</span>
           </div>
 
           <!-- Canvas with Central QR -->
@@ -1562,6 +1596,11 @@
             <button class="btn btn-secondary btn-sm" onclick="DirectoryModule.openAddModal()">+ Manual</button>
           </div>
         </div>
+
+        <!-- Horizontal Category Pills Bar -->
+        <div id="categoryPillsContainer" style="display: flex; gap: 6px; overflow-x: auto; padding: 10px 0 2px 0; margin-top: 6px; border-top: 1px solid var(--border-subtle); scrollbar-width: none;">
+          <!-- Dynamically rendered category pills -->
+        </div>
       </div>
 
       <!-- Contacts Bento List -->
@@ -1597,6 +1636,19 @@
           <div class="form-group">
             <label class="form-label">Nombre del Perfil (ej: ATSIT Trabajo, Personal)</label>
             <input type="text" id="inputProfileTag" class="form-input" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Tipo de Identidad</label>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px;">
+              <button type="button" id="btnProfileTypeWork" class="btn btn-secondary btn-sm" style="font-weight: 700; padding: 8px;" onclick="ProfilesModule.setProfileType('work')">
+                💼 Trabajo (Público)
+              </button>
+              <button type="button" id="btnProfileTypePersonal" class="btn btn-secondary btn-sm" style="font-weight: 700; padding: 8px;" onclick="ProfilesModule.setProfileType('personal')">
+                👤 Personal (Privado)
+              </button>
+            </div>
+            <input type="hidden" id="inputProfileType" value="work" />
           </div>
 
           <div style="display: flex; gap: 10px;">
@@ -1770,7 +1822,7 @@
           <!-- Auto-Update Status Card -->
           <div style="background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 12px; padding: 12px; display: flex; justify-content: space-between; align-items: center;">
             <div>
-              <div style="font-weight: 700; font-size: 12px; color: #fff;">VentoCard <span id="appVersionBadge" style="color: var(--accent);">v1.9.5</span></div>
+              <div style="font-weight: 700; font-size: 12px; color: #fff;">VentoCard <span id="appVersionBadge" style="color: var(--accent);">v2.0.0</span></div>
               <div id="updateStatusText" style="font-size: 10.5px; color: #34d399;">● Auto-Actualización Activa (Datos Protegidos)</div>
             </div>
             <button type="button" class="btn btn-secondary btn-sm" onclick="UpdateManager.checkForUpdateManual()">
@@ -1848,7 +1900,7 @@
 
       <!-- Footer Info -->
       <div class="full-width-desktop" style="font-size: 11px; color: var(--text-dim); text-align: center; line-height: 1.5; padding: 8px 0;">
-        VentoCard v1.9.5 • PWA Autónoma Soberana<br>
+        VentoCard v2.0.0 • PWA Autónoma Soberana<br>
         Ciberseguridad OWASP & Protección de Datos ATSIT
       </div>
     </div>
@@ -2881,7 +2933,8 @@
     PROFILES: 'ventocard_profiles_v1',
     ACTIVE_PROFILE_ID: 'ventocard_active_profile_id',
     CONTACTS: 'ventocard_contacts_v1',
-    SETTINGS: 'ventocard_settings_v1'
+    SETTINGS: 'ventocard_settings_v1',
+    CATEGORIES: 'ventocard_categories_v1'
   };
 
   const ProfilesModule = {
@@ -2895,7 +2948,90 @@
       }
       if (!this.profiles || this.profiles.length === 0) {
         this.profiles = [];
-        this.createNewProfile();
+        const publicP = {
+          id: 'prof_public_default',
+          profileType: 'work',
+          profileTag: '💼 Mi Perfil Público (Trabajo)',
+          firstName: 'Patricio',
+          lastName: 'Díaz',
+          org: 'ATSIT',
+          title: 'Director Ejecutivo / Consultor TI',
+          phoneMobile: '+56 9 9335 1620',
+          whatsappUser: '@PatoDiazg',
+          phoneWork: '+56 9 9335 1620',
+          emailWork: 'pdiaz@atsit.cl',
+          emailPersonal: '',
+          website: 'https://atsit.cl',
+          linkedIn: 'https://www.linkedin.com/in/patriciod1/',
+          instagram: '@pdiazg37',
+          tiktok: '@pato.diaz84',
+          github: '',
+          address: 'Santiago, Chile',
+          bio: 'Especialista en arquitectura de software de alta eficiencia, ciberseguridad e inteligencia artificial empresarial.',
+          avatarData: '',
+          customFields: []
+        };
+        publicP.cardId = this.getProfileCardId(publicP);
+
+        const privateP = {
+          id: 'prof_private_default',
+          profileType: 'personal',
+          profileTag: '👤 Mi Perfil Privado (Personal)',
+          firstName: 'Patricio',
+          lastName: 'Díaz',
+          org: '',
+          title: '',
+          phoneMobile: '',
+          whatsappUser: '',
+          phoneWork: '',
+          emailWork: '',
+          emailPersonal: '',
+          website: '',
+          linkedIn: '',
+          instagram: '',
+          tiktok: '',
+          github: '',
+          address: '',
+          bio: '',
+          avatarData: '',
+          customFields: []
+        };
+        privateP.cardId = this.getProfileCardId(privateP);
+
+        this.profiles = [publicP, privateP];
+        this.activeProfileId = publicP.id;
+        this.saveAll();
+      } else {
+        const hasPersonal = this.profiles.some(p => p.profileType === 'personal' || (p.profileTag && p.profileTag.toLowerCase().includes('personal')));
+        if (!hasPersonal && this.profiles.length > 0) {
+          const mainP = this.profiles[0];
+          const privateP = {
+            id: 'prof_priv_' + Date.now(),
+            profileType: 'personal',
+            profileTag: '👤 Mi Perfil Privado (Personal)',
+            firstName: mainP.firstName || '',
+            lastName: mainP.lastName || '',
+            org: '',
+            title: '',
+            phoneMobile: '',
+            whatsappUser: '',
+            phoneWork: '',
+            emailWork: '',
+            emailPersonal: '',
+            website: '',
+            linkedIn: '',
+            instagram: '',
+            tiktok: '',
+            github: '',
+            address: '',
+            bio: '',
+            avatarData: '',
+            customFields: []
+          };
+          privateP.cardId = this.getProfileCardId(privateP);
+          this.profiles.push(privateP);
+          this.saveAll();
+        }
       }
       this.activeProfileId = localStorage.getItem(StorageKeys.ACTIVE_PROFILE_ID) || (this.profiles.length > 0 ? this.profiles[0].id : null);
       this.renderProfilesList();
@@ -2907,16 +3043,43 @@
       return this.profiles.find(p => p.id === this.activeProfileId) || this.profiles[0] || null;
     },
 
+    getProfileCardId: function(profile) {
+      if (!profile) return 'official';
+      const cleanFn = (profile.firstName || 'usuario').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, '');
+      const cleanLn = (profile.lastName || '').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, '');
+      const userTag = `${cleanFn}_${cleanLn}`.replace(/^_|_$/g, '');
+      const isPersonal = profile.profileType === 'personal' || (profile.profileTag && profile.profileTag.toLowerCase().includes('personal'));
+      const typeTag = isPersonal ? 'personal' : 'trabajo';
+      return `card_${userTag || 'sovereign'}_${typeTag}`;
+    },
+
+    setProfileType: function(type) {
+      const p = this.getActiveProfile();
+      if (p) {
+        p.profileType = type;
+        const isPersonal = type === 'personal';
+        const isWork = type === 'work';
+        
+        const btnW = document.getElementById('btnProfileTypeWork');
+        const btnP = document.getElementById('btnProfileTypePersonal');
+        const inputT = document.getElementById('inputProfileType');
+        if (inputT) inputT.value = type;
+        
+        if (btnW) btnW.className = `btn btn-sm ${isWork ? 'btn-primary' : 'btn-secondary'}`;
+        if (btnP) btnP.className = `btn btn-sm ${isPersonal ? 'btn-primary' : 'btn-secondary'}`;
+      }
+    },
+
     importAsPrimaryProfile: function(pData) {
       if (!pData.id) pData.id = 'prof_' + Date.now();
+      if (!pData.profileType) pData.profileType = 'work';
       if (!pData.profileTag) pData.profileTag = pData.org ? `${pData.org}` : 'Mi Perfil';
       if (!pData.customFields) pData.customFields = [];
 
-      // If only default unconfigured profile exists, replace it
       if (this.profiles.length === 1 && (!this.profiles[0].firstName || !this.profiles[0].firstName.trim())) {
         this.profiles = [pData];
       } else {
-        this.profiles = this.profiles.filter(p => `${p.firstName}_${p.lastName}` !== `${pData.firstName}_${pData.lastName}`);
+        this.profiles = this.profiles.filter(p => `${p.firstName}_${p.lastName}_${p.profileType}` !== `${pData.firstName}_${pData.lastName}_${pData.profileType}`);
         this.profiles.unshift(pData);
       }
       this.activeProfileId = pData.id;
@@ -2951,6 +3114,10 @@
       this.profiles.forEach(p => {
         const item = document.createElement('div');
         item.className = `checkbox-item ${p.id === this.activeProfileId ? 'checked' : ''}`;
+        const isPersonal = p.profileType === 'personal' || (p.profileTag && p.profileTag.toLowerCase().includes('personal'));
+        const icon = isPersonal ? '👤' : '💼';
+        const typeLabel = isPersonal ? 'Personal (Privado)' : 'Trabajo (Público)';
+        
         item.onclick = () => {
           this.activeProfileId = p.id;
           this.saveAll();
@@ -2961,10 +3128,10 @@
         };
         item.innerHTML = `
           <div class="checkbox-left">
-            <span class="checkbox-icon">💼</span>
+            <span class="checkbox-icon">${icon}</span>
             <div>
-              <div class="checkbox-text">${Security.sanitizeText(p.profileTag || 'Perfil')}</div>
-              <div class="checkbox-sub">${Security.sanitizeText(p.firstName || 'Sin Nombre')} ${Security.sanitizeText(p.lastName || '')} • ${Security.sanitizeText(p.org || 'Empresa')}</div>
+              <div class="checkbox-text">${Security.sanitizeText(p.profileTag || (isPersonal ? 'Personal' : 'Trabajo'))} <span style="font-size: 10px; opacity: 0.7; font-weight: normal;">• ${typeLabel}</span></div>
+              <div class="checkbox-sub">${Security.sanitizeText(p.firstName || 'Sin Nombre')} ${Security.sanitizeText(p.lastName || '')} ${p.org ? `• ${Security.sanitizeText(p.org)}` : ''}</div>
             </div>
           </div>
           <div class="custom-checkbox"></div>
@@ -3064,7 +3231,18 @@
 
     populateFormWithActive: function() {
       const p = this.getActiveProfile();
-      document.getElementById('inputProfileTag').value = p ? (p.profileTag || 'Mi Perfil') : 'Mi Perfil';
+      const isPersonal = p && (p.profileType === 'personal' || (p.profileTag && p.profileTag.toLowerCase().includes('personal')));
+      const type = isPersonal ? 'personal' : 'work';
+
+      document.getElementById('inputProfileTag').value = p ? (p.profileTag || (isPersonal ? 'Personal (Privado)' : 'ATSIT Trabajo')) : 'Mi Perfil';
+      const inputType = document.getElementById('inputProfileType');
+      if (inputType) inputType.value = type;
+      
+      const btnW = document.getElementById('btnProfileTypeWork');
+      const btnP = document.getElementById('btnProfileTypePersonal');
+      if (btnW) btnW.className = `btn btn-sm ${!isPersonal ? 'btn-primary' : 'btn-secondary'}`;
+      if (btnP) btnP.className = `btn btn-sm ${isPersonal ? 'btn-primary' : 'btn-secondary'}`;
+
       document.getElementById('inputFirstName').value = p ? (p.firstName || '') : '';
       document.getElementById('inputLastName').value = p ? (p.lastName || '') : '';
       document.getElementById('inputOrg').value = p ? (p.org || '') : '';
@@ -3087,10 +3265,10 @@
 
     saveActiveProfile: function() {
       let p = this.getActiveProfile();
-      const isNew = !p;
       if (!p) {
         p = {
           id: 'prof_' + Date.now(),
+          profileType: document.getElementById('inputProfileType')?.value || 'work',
           profileTag: document.getElementById('inputProfileTag').value.trim() || 'Mi Perfil',
           firstName: '',
           lastName: '',
@@ -3114,7 +3292,8 @@
         this.profiles.push(p);
         this.activeProfileId = p.id;
       }
-      p.profileTag = document.getElementById('inputProfileTag').value.trim() || 'Mi Perfil';
+      p.profileType = document.getElementById('inputProfileType')?.value || 'work';
+      p.profileTag = document.getElementById('inputProfileTag').value.trim() || (p.profileType === 'personal' ? 'Personal (Privado)' : 'Trabajo (Público)');
       p.firstName = document.getElementById('inputFirstName').value.trim();
       p.lastName = document.getElementById('inputLastName').value.trim();
       p.org = document.getElementById('inputOrg').value.trim();
@@ -3131,6 +3310,7 @@
       p.github = document.getElementById('inputGitHub').value.trim();
       p.address = document.getElementById('inputAddress').value.trim();
       p.bio = document.getElementById('inputBio').value.trim();
+      p.cardId = this.getProfileCardId(p);
 
       this.saveAll();
       this.renderProfilesList();
@@ -3139,32 +3319,39 @@
       if (typeof LiveSyncModule !== 'undefined') {
         LiveSyncModule.publishProfile(p);
       }
-      UIModal.alert('Perfil Guardado', 'Tu perfil profesional se ha guardado exitosamente y sincronizado en vivo.', '💾');
+      UIModal.alert('Perfil Guardado', `Tu perfil "${p.profileTag}" se ha guardado exitosamente y sincronizado en la nube soberana.`, '💾');
     },
 
-    createNewProfile: function() {
+    createNewProfile: function(type = 'work') {
+      const isPersonal = type === 'personal';
+      const existingFirst = this.profiles.length > 0 ? this.profiles[0].firstName : '';
+      const existingLast = this.profiles.length > 0 ? this.profiles[0].lastName : '';
+
       const newP = {
         id: 'prof_' + Date.now(),
-        profileTag: 'Nuevo Perfil',
-        firstName: '',
-        lastName: '',
-        org: '',
-        title: '',
-        phoneMobile: '',
-        whatsappUser: '',
-        phoneWork: '',
-        emailWork: '',
-        emailPersonal: '',
-        website: '',
-        linkedIn: '',
-        instagram: '',
+        profileType: type,
+        profileTag: isPersonal ? '👤 Personal (Privado)' : '💼 Trabajo (Público)',
+        firstName: existingFirst,
+        lastName: existingLast,
+        org: isPersonal ? '' : 'ATSIT',
+        title: isPersonal ? '' : 'Director / Consultor TI',
+        phoneMobile: isPersonal ? '+56 9 ' : '',
+        whatsappUser: isPersonal ? '' : '',
+        phoneWork: isPersonal ? '' : '+56 9 ',
+        emailWork: isPersonal ? '' : '',
+        emailPersonal: isPersonal ? '' : '',
+        website: isPersonal ? '' : 'https://atsit.cl',
+        linkedIn: isPersonal ? '' : '',
+        instagram: isPersonal ? '' : '',
         tiktok: '',
         github: '',
-        address: '',
+        address: isPersonal ? '' : 'Santiago, Chile',
         bio: '',
         avatarData: '',
         customFields: []
       };
+      newP.cardId = this.getProfileCardId(newP);
+
       this.profiles.push(newP);
       this.activeProfileId = newP.id;
       this.saveAll();
@@ -3176,6 +3363,12 @@
 
     loadAtsitTemplate: function() {
       document.getElementById('inputProfileTag').value = 'ATSIT Trabajo';
+      document.getElementById('inputProfileType').value = 'work';
+      const btnW = document.getElementById('btnProfileTypeWork');
+      const btnP = document.getElementById('btnProfileTypePersonal');
+      if (btnW) btnW.className = 'btn btn-primary btn-sm';
+      if (btnP) btnP.className = 'btn btn-secondary btn-sm';
+
       document.getElementById('inputFirstName').value = 'Patricio';
       document.getElementById('inputLastName').value = 'Díaz';
       document.getElementById('inputOrg').value = 'ATSIT';
@@ -3454,6 +3647,19 @@
       if (emptyCard) emptyCard.style.display = 'none';
       if (activeCard) activeCard.style.display = 'block';
 
+      const typeBadge = document.getElementById('activeProfileTypeBadge');
+      const heading = document.getElementById('activeProfileHeading');
+      const isPersonal = p.profileType === 'personal' || (p.profileTag && p.profileTag.toLowerCase().includes('personal'));
+      if (typeBadge) {
+        typeBadge.textContent = isPersonal ? '👤 Personal (Privado)' : '💼 Trabajo (Público)';
+        typeBadge.style.color = isPersonal ? '#f472b6' : 'var(--accent)';
+        typeBadge.style.borderColor = isPersonal ? 'rgba(236, 72, 153, 0.3)' : 'rgba(56, 189, 248, 0.3)';
+        typeBadge.style.background = isPersonal ? 'rgba(236, 72, 153, 0.12)' : 'rgba(56, 189, 248, 0.15)';
+      }
+      if (heading) {
+        heading.textContent = p.profileTag || (isPersonal ? 'Mi Tarjeta Personal' : 'Mi Tarjeta de Trabajo');
+      }
+
       if (!canvas) return;
 
       let qrPayloadText = '';
@@ -3474,19 +3680,12 @@
     renderCanvas: function(canvas, text) {
       if (!canvas || !text) return;
       try {
-        // Pure High-Contrast QR: Level L for massive modules and instant 0.05s scanning
-        const result = QREngine.drawOnCanvas(canvas, text, {
+        // Pure High-Contrast QR: Level L for instant scanning
+        QREngine.drawOnCanvas(canvas, text, {
           errorCorrectLevel: 1, // Level L
           darkColor: '#000000',
           margin: 12
         });
-
-        // Update readability indicator safely
-        const badge = document.getElementById('readabilityBadge');
-        if (badge) {
-          badge.className = 'readability-meter';
-          badge.innerHTML = '● Lectura Instantánea (0.05s)';
-        }
       } catch (err) {
         console.error('QR Render Error:', err);
       }
@@ -3504,7 +3703,7 @@
       }
 
       const shareData = {
-        cid: (p.firstName && p.firstName.toLowerCase() === 'patricio') ? 'atsit_patricio_diaz' : ('card_' + (p.phoneMobile || p.emailWork || p.id).replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()),
+        cid: ProfilesModule.getProfileCardId(p),
         fn: p.firstName || '',
         ln: p.lastName || '',
         org: this.selectedKeys.includes('org') ? p.org : '',
@@ -3576,6 +3775,8 @@
   // ----------------------------------------------------
   const DirectoryModule = {
     contacts: [],
+    categories: ['Todos', '💼 Trabajo', '👨‍👩‍👧‍👦 Familia', '🤝 Amigos', '⭐ Favoritos'],
+    activeCategory: 'Todos',
 
     init: function() {
       const saved = localStorage.getItem(StorageKeys.CONTACTS) || localStorage.getItem('smartcard_contacts_v1');
@@ -3583,11 +3784,22 @@
         try { this.contacts = JSON.parse(saved); } catch (e) { this.contacts = []; }
       }
       if (!this.contacts) this.contacts = [];
-      this.renderContacts(this.contacts);
+
+      const savedCats = localStorage.getItem(StorageKeys.CATEGORIES);
+      if (savedCats) {
+        try { this.categories = JSON.parse(savedCats); } catch (e) {}
+      }
+      if (!this.categories || !Array.isArray(this.categories) || this.categories.length === 0) {
+        this.categories = ['Todos', '💼 Trabajo', '👨‍👩‍👧‍👦 Familia', '🤝 Amigos', '⭐ Favoritos'];
+      }
+
+      this.renderCategoriesBar();
+      this.renderContacts(this.getFilteredList());
     },
 
     saveAll: function() {
       localStorage.setItem(StorageKeys.CONTACTS, JSON.stringify(this.contacts));
+      localStorage.setItem(StorageKeys.CATEGORIES, JSON.stringify(this.categories));
       if (typeof LiveSyncEngine !== 'undefined') {
         LiveSyncEngine.broadcastChange();
       }
@@ -3596,14 +3808,94 @@
       }
     },
 
+    renderCategoriesBar: function() {
+      const container = document.getElementById('categoryPillsContainer');
+      if (!container) return;
+      container.innerHTML = '';
+
+      this.categories.forEach(cat => {
+        const count = (cat === 'Todos') 
+          ? this.contacts.length 
+          : this.contacts.filter(c => (c.category || '💼 Trabajo') === cat || (c.category || '').includes(cat.replace(/^[^\w\s]+/, '').trim())).length;
+        
+        const pill = document.createElement('button');
+        pill.type = 'button';
+        pill.className = `category-pill ${this.activeCategory === cat ? 'active' : ''}`;
+        pill.innerHTML = `<span>${cat}</span> <span style="opacity: 0.7; font-size: 10px;">(${count})</span>`;
+        pill.onclick = () => {
+          this.activeCategory = cat;
+          this.renderCategoriesBar();
+          const term = document.getElementById('directorySearchInput')?.value || '';
+          this.filterContacts(term);
+        };
+        container.appendChild(pill);
+      });
+
+      // Add "➕ Nueva" button
+      const addBtn = document.createElement('button');
+      addBtn.type = 'button';
+      addBtn.className = 'category-pill';
+      addBtn.style.borderStyle = 'dashed';
+      addBtn.innerHTML = '<span>➕ Nueva</span>';
+      addBtn.onclick = () => this.addNewCategoryPrompt();
+      container.appendChild(addBtn);
+    },
+
+    addNewCategoryPrompt: async function() {
+      const name = await UIModal.prompt(
+        'Nueva Categoría',
+        'Ingresa el nombre de la categoría (ej: 🏢 Clientes VIP, 📦 Proveedores):',
+        '',
+        '🏷️',
+        'text',
+        'Crear Categoría',
+        'Cancelar'
+      );
+      if (!name || !name.trim()) return;
+      const cleanName = name.trim();
+      if (!this.categories.includes(cleanName)) {
+        this.categories.push(cleanName);
+        this.activeCategory = cleanName;
+        this.saveAll();
+        this.renderCategoriesBar();
+        this.renderContacts(this.getFilteredList());
+        UIModal.toast(`🏷️ Categoría "${cleanName}" creada`);
+      }
+    },
+
+    getFilteredList: function(term = '') {
+      let list = this.contacts;
+      if (this.activeCategory !== 'Todos') {
+        const cleanCat = this.activeCategory.replace(/^[^\w\s]+/, '').trim();
+        list = list.filter(c => {
+          const contactCat = c.category || '💼 Trabajo';
+          return contactCat === this.activeCategory || contactCat.includes(cleanCat);
+        });
+      }
+      if (term && term.trim()) {
+        const normalize = (s) => String(s || '').normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+        const cleanTerm = normalize(term);
+        const tokens = cleanTerm.split(/\s+/).filter(t => t.length > 0);
+        list = list.filter(c => {
+          const full = normalize(`${c.firstName || ''} ${c.lastName || ''} ${c.org || ''} ${c.title || ''} ${c.category || ''} ${c.bio || ''} ${c.privateNotes || ''}`);
+          return tokens.every(token => full.includes(token));
+        });
+      }
+      return list;
+    },
+
     addContact: function(contactObj) {
       if (!contactObj.id) contactObj.id = 'cont_' + Date.now();
+      if (!contactObj.category) {
+        contactObj.category = (this.activeCategory && this.activeCategory !== 'Todos') ? this.activeCategory : '💼 Trabajo';
+      }
       contactObj.updatedAt = Date.now();
       // Avoid duplicate contacts with same phone or name
       this.contacts = this.contacts.filter(c => c.id !== contactObj.id && `${c.firstName}_${c.lastName}` !== `${contactObj.firstName}_${contactObj.lastName}`);
       this.contacts.unshift(contactObj);
       this.saveAll();
-      this.renderContacts(this.contacts);
+      this.renderCategoriesBar();
+      this.renderContacts(this.getFilteredList());
       if (typeof LiveSyncEngine !== 'undefined') {
         LiveSyncEngine.broadcastContactMutation(contactObj);
       }
@@ -3614,27 +3906,52 @@
       if (ok) {
         this.contacts = this.contacts.filter(c => c.id !== id);
         this.saveAll();
-        this.renderContacts(this.contacts);
+        this.renderCategoriesBar();
+        this.renderContacts(this.getFilteredList());
         if (typeof LiveSyncEngine !== 'undefined') {
           LiveSyncEngine.broadcastContactDeletion(id);
         }
       }
     },
 
-    filterContacts: function(term) {
-      if (!term || !term.trim()) {
-        this.renderContacts(this.contacts);
-        return;
-      }
-      const normalize = (s) => String(s || '').normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
-      const cleanTerm = normalize(term);
-      const tokens = cleanTerm.split(/\s+/).filter(t => t.length > 0);
+    promptChangeCategory: async function(id) {
+      const contact = this.contacts.find(c => c.id === id);
+      if (!contact) return;
 
-      const filtered = this.contacts.filter(c => {
-        const full = normalize(`${c.firstName || ''} ${c.lastName || ''} ${c.org || ''} ${c.title || ''} ${c.bio || ''} ${c.privateNotes || ''}`);
-        return tokens.every(token => full.includes(token));
-      });
-      this.renderContacts(filtered);
+      const available = this.categories.filter(c => c !== 'Todos');
+      const catList = available.map((c, i) => `${i + 1}. ${c}`).join('\n');
+
+      const selected = await UIModal.prompt(
+        `Categoría: ${contact.firstName}`,
+        `Selecciona la categoría escribiendo el número o nombre:\n${catList}`,
+        contact.category || '💼 Trabajo',
+        '🏷️',
+        'text',
+        'Asignar',
+        'Cancelar'
+      );
+
+      if (selected !== null && selected.trim()) {
+        const num = parseInt(selected.trim(), 10);
+        let chosenCat = selected.trim();
+        if (!isNaN(num) && num >= 1 && num <= available.length) {
+          chosenCat = available[num - 1];
+        }
+        contact.category = chosenCat;
+        contact.updatedAt = Date.now();
+        this.saveAll();
+        this.renderCategoriesBar();
+        this.renderContacts(this.getFilteredList());
+        UIModal.toast(`🏷️ ${contact.firstName} asignado a ${chosenCat}`);
+        if (typeof LiveSyncEngine !== 'undefined') {
+          LiveSyncEngine.broadcastContactMutation(contact);
+        }
+      }
+    },
+
+    filterContacts: function(term) {
+      const list = this.getFilteredList(term);
+      this.renderContacts(list);
     },
 
     renderContacts: function(list) {
@@ -3646,7 +3963,7 @@
         container.innerHTML = `
           <div class="empty-state glass-card">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><circle cx="12" cy="12" r="10"></circle><line x1="8" y1="12" x2="16" y2="12"></line></svg>
-            <p>No se encontraron contactos en tu libreta</p>
+            <p>No se encontraron contactos en la categoría "${this.activeCategory}"</p>
           </div>
         `;
         return;
@@ -3674,7 +3991,7 @@
         if (waUrl) {
           actionsHtml += `
             <a href="${waUrl}" target="_blank" class="bento-action-btn wa-btn" title="WhatsApp">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
               <span>WhatsApp</span>
             </a>
           `;
@@ -3730,6 +4047,12 @@
           `;
         }
 
+        const cat = c.category || '💼 Trabajo';
+        let catClass = 'contact-category-badge';
+        if (cat.includes('Familia')) catClass += ' family';
+        else if (cat.includes('Amigos')) catClass += ' friends';
+        else if (cat.includes('Favorito')) catClass += ' starred';
+
         card.innerHTML = `
           <div class="bento-header">
             <div class="bento-avatar">
@@ -3739,7 +4062,13 @@
               <div class="bento-name">${Security.sanitizeText(c.firstName)} ${Security.sanitizeText(c.lastName || '')}</div>
               <div class="bento-org">${Security.sanitizeText(c.org || '')}</div>
               <div class="bento-title">${Security.sanitizeText(c.title || '')}</div>
-              ${c.privateNotes ? `<div style="font-size: 11px; color: var(--accent); margin-top: 3px; font-weight: 500;">📝 ${Security.sanitizeText(c.privateNotes)}</div>` : ''}
+              <div style="display: flex; align-items: center; gap: 6px; margin-top: 4px;">
+                <span class="${catClass}" onclick="DirectoryModule.promptChangeCategory('${c.id}')" title="Toca para cambiar categoría" style="cursor: pointer;">
+                  ${Security.sanitizeText(cat)} ▾
+                </span>
+                ${c.cardId ? `<span style="font-size: 9.5px; color: #34d399; font-weight: 600;" title="Sincronizado en Vivo">● En Vivo</span>` : ''}
+              </div>
+              ${c.privateNotes ? `<div style="font-size: 11px; color: var(--accent); margin-top: 4px; font-weight: 500;">📝 ${Security.sanitizeText(c.privateNotes)}</div>` : ''}
             </div>
             <div style="display: flex; gap: 4px; align-items: center;">
               <button class="btn btn-secondary btn-sm" style="padding: 6px 8px;" onclick="DirectoryModule.editContactNotes('${c.id}')" title="Notas Privadas">📝</button>
@@ -3772,7 +4101,7 @@
         contact.privateNotes = newNote.trim();
         contact.updatedAt = Date.now();
         this.saveAll();
-        this.renderContacts(this.contacts);
+        this.renderContacts(this.getFilteredList());
         UIModal.toast(`📝 Nota de ${contact.firstName} guardada`);
         if (typeof LiveSyncEngine !== 'undefined') {
           LiveSyncEngine.broadcastContactMutation(contact);
@@ -3784,7 +4113,7 @@
       const name = await UIModal.prompt('Nuevo Contacto', 'Nombre completo de la persona:', '', '👤', 'text', 'Siguiente', 'Cancelar');
       if (!name) return;
       const phone = await UIModal.prompt('Teléfono Móvil', 'Teléfono o WhatsApp (ej: +56 9 1234 5678):', '', '📱', 'tel', 'Siguiente', 'Omitir');
-      const org = await UIModal.prompt('Empresa / Cargo', 'Empresa o profesión (opcional):', '', '💼', 'text', 'Guardar Contacto', 'Omitir');
+      const org = await UIModal.prompt('Empresa / Cargo', 'Empresa o profesión (opcional):', '', '💼', 'text', 'Siguiente', 'Omitir');
 
       this.addContact({
         firstName: name.trim(),
@@ -3794,6 +4123,7 @@
         emailWork: '',
         org: org ? org.trim() : '',
         title: '',
+        category: (this.activeCategory && this.activeCategory !== 'Todos') ? this.activeCategory : '💼 Trabajo',
         website: '',
         linkedIn: '',
         instagram: '',
@@ -4759,7 +5089,7 @@
 
     publishProfile: async function(profile) {
       if (!profile || !profile.firstName) return;
-      const cardId = (profile.firstName && profile.firstName.toLowerCase() === 'patricio') ? 'atsit_patricio_diaz' : (profile.cardId || ('card_' + (profile.phoneMobile || profile.emailWork || profile.id).replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()));
+      const cardId = profile.cardId || ProfilesModule.getProfileCardId(profile);
       const payload = {
         fn: profile.firstName,
         ln: profile.lastName,
@@ -4785,7 +5115,7 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ cardId, payload, status: 'active' })
         });
-        console.log('✅ LiveSync: Ficha publicada en la nube exitosamente.');
+        console.log(`✅ LiveSync: Ficha [${cardId}] publicada en PostgreSQL exitosamente.`);
       } catch (err) {
         console.warn('ℹ️ LiveSync local cache activo:', err);
       }
@@ -4797,7 +5127,7 @@
 
       let updatedCount = 0;
       for (let contact of DirectoryModule.contacts) {
-        const cardId = (contact.firstName && contact.firstName.toLowerCase() === 'patricio') ? 'atsit_patricio_diaz' : contact.cardId;
+        const cardId = contact.cardId;
         if (!cardId) continue;
 
         try {
@@ -4806,7 +5136,20 @@
             const data = await resp.json();
             if (data && data.success && data.payload) {
               const p = data.payload;
-              if (contact.phoneMobile !== p.mob || contact.title !== p.tit || contact.emailWork !== p.emw || contact.org !== p.org || contact.phoneWork !== p.wrk) {
+              const hasChanged = (
+                contact.phoneMobile !== (p.mob || '') ||
+                contact.emailPersonal !== (p.emp || '') ||
+                contact.emailWork !== (p.emw || '') ||
+                contact.org !== (p.org || '') ||
+                contact.title !== (p.tit || '') ||
+                contact.phoneWork !== (p.wrk || '') ||
+                contact.website !== (p.web || '') ||
+                contact.linkedIn !== (p.lin || '') ||
+                contact.instagram !== (p.ins || '') ||
+                contact.tiktok !== (p.tik || '')
+              );
+
+              if (hasChanged) {
                 contact.firstName = p.fn || contact.firstName;
                 contact.lastName = p.ln || contact.lastName;
                 contact.org = p.org || contact.org;
@@ -4815,6 +5158,7 @@
                 contact.whatsappUser = p.wau || contact.whatsappUser;
                 contact.phoneWork = p.wrk || contact.phoneWork;
                 contact.emailWork = p.emw || contact.emailWork;
+                contact.emailPersonal = p.emp || contact.emailPersonal;
                 contact.website = p.web || contact.website;
                 contact.linkedIn = p.lin || contact.linkedIn;
                 contact.instagram = p.ins || contact.instagram;
@@ -4830,7 +5174,7 @@
 
       if (updatedCount > 0) {
         DirectoryModule.saveAll();
-        DirectoryModule.renderContacts(DirectoryModule.contacts);
+        DirectoryModule.renderContacts(DirectoryModule.getFilteredList());
         UIModal.toast('✨ Contactos actualizados automáticamente en vivo');
       }
     }
