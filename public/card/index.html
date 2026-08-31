@@ -1379,6 +1379,37 @@
       <!-- LEFT COLUMN (On Desktop) / PRIMARY CARD: QR & FAST ACTIONS -->
       <div class="glass-card qr-hero-card">
         
+        <!-- Desktop WhatsApp-Web Pairing State (For PC / Laptop) -->
+        <div id="qrDesktopPairCard" style="display: none; text-align: center; padding: 24px 18px;">
+          <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 6px;">
+            <span style="font-size: 26px;">💻</span>
+            <h3 style="font-size: 19px; font-weight: 800; color: #fff; margin: 0;">VentoCard Web</h3>
+          </div>
+          <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 16px;">
+            Sincroniza tus contactos y perfiles desde tu celular.
+          </p>
+
+          <!-- Pairing QR Canvas -->
+          <div style="background: #ffffff; padding: 12px; border-radius: 18px; box-shadow: 0 8px 30px rgba(0,0,0,0.5); width: 200px; height: 200px; margin: 0 auto 16px auto; display: flex; align-items: center; justify-content: center;">
+            <canvas id="desktopPairCanvas" width="180" height="180" style="width: 176px; height: 176px;"></canvas>
+          </div>
+
+          <div style="text-align: left; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 14px; padding: 12px 14px; margin-bottom: 16px; font-size: 12px; color: #94a3b8; display: flex; flex-direction: column; gap: 6px;">
+            <div>1. Abre <strong>VentoCard</strong> en tu teléfono.</div>
+            <div>2. Toca <strong>📷 Escanear</strong> arriba.</div>
+            <div>3. Apunta a este código QR para vincular.</div>
+          </div>
+
+          <div style="display: flex; gap: 8px; justify-content: center;">
+            <button type="button" class="btn btn-secondary btn-sm" style="font-size: 11.5px; padding: 7px 12px;" onclick="DesktopLinkManager.restoreViaPin()">
+              🔑 PIN de Bóveda
+            </button>
+            <button type="button" class="btn btn-sm" style="background: transparent; color: var(--text-dim); font-size: 11px; border: 1px solid var(--border-subtle); padding: 7px 10px;" onclick="DesktopLinkManager.skipPairing()">
+              Configurar en este PC
+            </button>
+          </div>
+        </div>
+
         <!-- Unconfigured New User Welcome State -->
         <div id="qrEmptyStateCard" style="display: none; text-align: center; padding: 28px 18px;">
           <div style="font-size: 52px; margin-bottom: 10px; filter: drop-shadow(0 4px 18px rgba(56, 189, 248, 0.4));">📇</div>
@@ -1745,6 +1776,31 @@
                 🔑 PIN
               </button>
             </div>
+          </div>
+
+          <!-- VentoCard Web (Usar en Computador) Card -->
+          <div class="glass-card" style="background: rgba(15, 23, 42, 0.7); border: 1.5px solid rgba(56, 189, 248, 0.35); padding: 14px; margin: 4px 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 22px;">💻</span>
+                <div>
+                  <div style="font-weight: 800; font-size: 13.5px; color: #fff;">VentoCard en tu Computador (Web)</div>
+                  <div style="font-size: 11px; color: var(--accent);">atsit.cl/card</div>
+                </div>
+              </div>
+            </div>
+
+            <p style="font-size: 11.5px; color: var(--text-muted); line-height: 1.45; margin-bottom: 12px;">
+              Para usar VentoCard en tu PC o Mac:<br>
+              <strong>1.</strong> Entra en tu computador a: <strong style="color: #fff;">https://atsit.cl/card</strong><br>
+              <strong>2.</strong> En la pantalla del PC verás el código QR de vinculación.<br>
+              <strong>3.</strong> Toca <strong>📷 Escanear</strong> arriba en este teléfono y apunta al PC.<br>
+              ¡Tus perfiles y contactos se sincronizarán al instante!
+            </p>
+
+            <button type="button" class="btn btn-secondary btn-sm" style="width: 100%; font-weight: 700; font-size: 12px; padding: 9px; display: flex; align-items: center; justify-content: center; gap: 6px;" onclick="navigator.clipboard.writeText('https://atsit.cl/card').then(() => UIModal.toast('🔗 Enlace copiado: atsit.cl/card'))">
+              <span>📋</span> <span>Copiar Enlace Web (atsit.cl/card)</span>
+            </button>
           </div>
 
           <hr style="border: 0; border-top: 1px solid var(--border-subtle);" />
@@ -3300,10 +3356,21 @@
       const canvas = document.getElementById('qrCanvas');
       const emptyCard = document.getElementById('qrEmptyStateCard');
       const activeCard = document.getElementById('qrActiveHeroCard');
+      const desktopPairCard = document.getElementById('qrDesktopPairCard');
 
       if (!p || !p.firstName) {
-        if (emptyCard) emptyCard.style.display = 'block';
         if (activeCard) activeCard.style.display = 'none';
+
+        // Check if running on Desktop PC to show WhatsApp-Web pairing QR
+        if (DesktopLinkManager.isDesktop() && !sessionStorage.getItem('ventocard_skip_desktop_pair')) {
+          if (emptyCard) emptyCard.style.display = 'none';
+          if (desktopPairCard) desktopPairCard.style.display = 'block';
+          DesktopLinkManager.startPairingSession();
+          return;
+        }
+
+        if (desktopPairCard) desktopPairCard.style.display = 'none';
+        if (emptyCard) emptyCard.style.display = 'block';
 
         const sender = sessionStorage.getItem('ventocard_welcome_sender');
         const badge = document.getElementById('welcomeSenderBadge');
@@ -3319,6 +3386,7 @@
         return;
       }
 
+      if (desktopPairCard) desktopPairCard.style.display = 'none';
       if (emptyCard) emptyCard.style.display = 'none';
       if (activeCard) activeCard.style.display = 'block';
 
@@ -5444,23 +5512,14 @@
     },
 
     init: function() {
-      if (!this.isDesktop()) return;
-
-      const hasProfiles = ProfilesModule.profiles && ProfilesModule.profiles.length > 0 && ProfilesModule.profiles[0].firstName;
-      const skip = sessionStorage.getItem('ventocard_skip_desktop_pair');
-
-      if (!hasProfiles && !skip) {
-        this.startPairingScreen();
-      }
+      // Dynamic activation via QRModule.generateQR()
     },
 
-    startPairingScreen: function() {
+    startPairingSession: function() {
+      if (this.pairSessionId && this.pollInterval) return;
+
       this.pairSessionId = 'pair_' + Math.random().toString(36).substring(2, 10) + Date.now().toString(36);
       const linkUrl = `${window.location.origin}${window.location.pathname}#pair=${this.pairSessionId}`;
-
-      document.querySelectorAll('.view-panel').forEach(v => v.classList.remove('active'));
-      const screen = document.getElementById('desktopLinkScreen');
-      if (screen) screen.style.display = 'block';
 
       // Render QR on desktopPairCanvas
       const canvas = document.getElementById('desktopPairCanvas');
@@ -5470,7 +5529,7 @@
 
       // Start Polling /api/card/sync
       if (this.pollInterval) clearInterval(this.pollInterval);
-      this.pollInterval = setInterval(() => this.checkPairingStatus(), 2000);
+      this.pollInterval = setInterval(() => this.checkPairingStatus(), 1800);
     },
 
     checkPairingStatus: async function() {
@@ -5495,7 +5554,7 @@
           UIModal.toast('💻 ¡Computador vinculado con éxito!');
           setTimeout(() => {
             window.location.reload();
-          }, 600);
+          }, 500);
         }
       } catch (e) {}
     },
@@ -5503,15 +5562,16 @@
     skipPairing: function() {
       sessionStorage.setItem('ventocard_skip_desktop_pair', 'true');
       if (this.pollInterval) clearInterval(this.pollInterval);
-      const screen = document.getElementById('desktopLinkScreen');
-      if (screen) screen.style.display = 'none';
-      AppNav.switchTab('qr');
+      this.pollInterval = null;
+      QRModule.generateQR();
     },
 
     restoreViaPin: function() {
       if (typeof AtsitCloudVaultModule !== 'undefined') {
         AtsitCloudVaultModule.restoreVault().then(() => {
-          this.skipPairing();
+          sessionStorage.setItem('ventocard_skip_desktop_pair', 'true');
+          if (this.pollInterval) clearInterval(this.pollInterval);
+          this.pollInterval = null;
         });
       }
     }
