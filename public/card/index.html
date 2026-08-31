@@ -1379,7 +1379,7 @@
             </div>
             <div style="display: flex; gap: 10px; align-items: flex-start;">
               <span style="background: rgba(56, 189, 248, 0.2); color: var(--accent); width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; flex-shrink: 0;">3</span>
-              <span>Apunta a este código e ingresa tu <strong>PIN de 4 dígitos</strong>.</span>
+              <span>Apunta a este código con la cámara de VentoCard.</span>
             </div>
           </div>
 
@@ -1392,11 +1392,11 @@
 
       <!-- Recovery / Fallback Options -->
       <div style="display: flex; gap: 12px; width: 100%; border-top: 1px solid var(--border-subtle); padding-top: 18px; margin-top: 6px; justify-content: center; flex-wrap: wrap;">
-        <button type="button" class="btn btn-secondary btn-sm" style="font-size: 12px; padding: 8px 16px; display: flex; align-items: center; gap: 6px;" onclick="DesktopLinkManager.restoreViaPin()">
-          <span>🔑</span> <span>Recuperar con PIN de Bóveda (Sin Teléfono)</span>
+        <button type="button" class="btn btn-primary btn-sm" style="font-size: 12.5px; padding: 9px 18px; font-weight: 800; display: flex; align-items: center; gap: 6px;" onclick="DesktopLinkManager.skipPairing()">
+          <span>💻</span> <span>Entrar directamente en este PC</span>
         </button>
-        <button type="button" class="btn btn-sm" style="background: transparent; color: var(--text-dim); font-size: 11.5px; border: 1px solid var(--border-subtle); padding: 8px 14px;" onclick="DesktopLinkManager.skipPairing()">
-          Configurar nuevo perfil en este PC
+        <button type="button" class="btn btn-secondary btn-sm" style="font-size: 12px; padding: 9px 16px; display: flex; align-items: center; gap: 6px;" onclick="DesktopLinkManager.restoreViaPin()">
+          <span>🔑</span> <span>Restaurar Bóveda con PIN</span>
         </button>
       </div>
 
@@ -1822,7 +1822,7 @@
           <!-- Auto-Update Status Card -->
           <div style="background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 12px; padding: 12px; display: flex; justify-content: space-between; align-items: center;">
             <div>
-              <div style="font-weight: 700; font-size: 12px; color: #fff;">VentoCard <span id="appVersionBadge" style="color: var(--accent);">v2.0.2</span></div>
+              <div style="font-weight: 700; font-size: 12px; color: #fff;">VentoCard <span id="appVersionBadge" style="color: var(--accent);">v2.0.3</span></div>
               <div id="updateStatusText" style="font-size: 10.5px; color: #34d399;">● Auto-Actualización Activa (Datos Protegidos)</div>
             </div>
             <button type="button" class="btn btn-secondary btn-sm" onclick="UpdateManager.checkForUpdateManual()">
@@ -1900,7 +1900,7 @@
 
       <!-- Footer Info -->
       <div class="full-width-desktop" style="font-size: 11px; color: var(--text-dim); text-align: center; line-height: 1.5; padding: 8px 0;">
-        VentoCard v2.0.2 • PWA Autónoma Soberana<br>
+        VentoCard v2.0.3 • PWA Autónoma Soberana<br>
         Ciberseguridad OWASP & Protección de Datos ATSIT
       </div>
     </div>
@@ -4223,6 +4223,7 @@
   const QRScannerModule = {
     stream: null,
     scanInterval: null,
+    isScanning: false,
 
     openScanner: async function() {
       const modal = document.getElementById('qrScannerModal');
@@ -4230,16 +4231,26 @@
       const statusText = document.getElementById('qrScannerStatus');
       statusText.textContent = 'Iniciando cámara...';
       modal.style.display = 'flex';
+      this.isScanning = true;
 
       try {
+        video.setAttribute('playsinline', 'true');
+        video.setAttribute('autoplay', 'true');
+        video.setAttribute('muted', 'true');
+        video.muted = true;
+
         const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } },
+          video: {
+            facingMode: { ideal: 'environment' },
+            width: { ideal: 1280, max: 1920 },
+            height: { ideal: 720, max: 1080 }
+          },
           audio: false
         });
         this.stream = stream;
         video.srcObject = stream;
-        video.setAttribute('playsinline', 'true');
-        await video.play();
+        
+        try { await video.play(); } catch (e) {}
 
         statusText.textContent = 'Apunta la cámara al código QR de la tarjeta.';
         this.startScanning();
@@ -4250,6 +4261,7 @@
     },
 
     closeScanner: function() {
+      this.isScanning = false;
       if (this.scanInterval) {
         clearInterval(this.scanInterval);
         this.scanInterval = null;
@@ -4267,18 +4279,41 @@
       const canvas = document.getElementById('qrScannerCanvas');
       const ctx = canvas.getContext('2d', { willReadFrequently: true });
 
-      this.scanInterval = setInterval(() => {
-        if (!video || video.readyState !== video.HAVE_ENOUGH_DATA) return;
+      let detector = null;
+      if ('BarcodeDetector' in window) {
+        try { detector = new BarcodeDetector({ formats: ['qr_code'] }); } catch (e) {}
+      }
 
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      this.scanInterval = setInterval(async () => {
+        if (!this.isScanning) return;
+        if (!video || video.readyState < 2 || !video.videoWidth || !video.videoHeight) return;
+
+        // 1. Ultra-fast native BarcodeDetector hardware detection
+        if (detector) {
+          try {
+            const barcodes = await detector.detect(video);
+            if (barcodes && barcodes.length > 0 && barcodes[0].rawValue) {
+              this.processScannedResult(barcodes[0].rawValue.trim());
+              return;
+            }
+          } catch (e) {}
+        }
+
+        // 2. High-speed jsQR fallback with auto-scaling
+        const maxDim = Math.max(video.videoWidth, video.videoHeight);
+        const scale = maxDim > 800 ? (800 / maxDim) : 1;
+        const w = Math.floor(video.videoWidth * scale);
+        const h = Math.floor(video.videoHeight * scale);
+
+        canvas.width = w;
+        canvas.height = h;
+        ctx.drawImage(video, 0, 0, w, h);
 
         try {
-          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-          if (window.jsQR) {
-            const code = window.jsQR(imageData.data, imageData.width, imageData.height, {
-              inversionAttempts: 'dontInvert'
+          const imageData = ctx.getImageData(0, 0, w, h);
+          if (typeof window.jsQR === 'function') {
+            const code = window.jsQR(imageData.data, w, h, {
+              inversionAttempts: 'attemptBoth'
             });
             if (code && code.data && code.data.trim()) {
               this.processScannedResult(code.data.trim());
@@ -4288,7 +4323,7 @@
         } catch (e) {
           console.warn('Frame scan error:', e);
         }
-      }, 120);
+      }, 90);
     },
 
     processScannedResult: async function(qrText) {
