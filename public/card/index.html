@@ -4165,7 +4165,7 @@
       const validated = Security.validatePayloadSchema(rawData);
       if (!validated) return false;
 
-      // 1. Automatically save sender as Contact #1 in local directory
+      // 1. Automatically save sender in local directory
       DirectoryModule.addContact({
         cardId: validated.fn && validated.fn.toLowerCase() === 'patricio' ? 'atsit_patricio_diaz' : ('card_' + (validated.t || Date.now())),
         firstName: validated.fn || 'Contacto',
@@ -4188,7 +4188,6 @@
 
       const senderName = `${validated.fn || ''} ${validated.ln || ''}`.trim() || 'Contacto';
       const senderOrg = validated.org ? `(${validated.org})` : '';
-      sessionStorage.setItem('ventocard_welcome_sender', `${senderName} ${senderOrg}`.trim());
 
       // 2. Clean the URL hash seamlessly without page reload
       try {
@@ -4197,21 +4196,25 @@
         window.location.hash = '';
       }
 
-      // 3. Position user in 'Mi QR' with standard app navigation
+      // 3. Make sure standard UI is visible
       document.querySelectorAll('.view-panel').forEach(v => v.classList.remove('active'));
       const recView = document.getElementById('recipientView');
       if (recView) recView.classList.remove('active');
       const bottomNav = document.querySelector('.bottom-nav');
       if (bottomNav) bottomNav.style.display = 'flex';
 
-      AppNav.switchTab('qr');
-      QRModule.refresh();
-
-      // 4. Proactively offer to install PWA on device
-      if (!PWAInstallManager.isInstalled()) {
-        setTimeout(() => {
-          PWAInstallManager.triggerInstall();
-        }, 600);
+      // 4. Intelligent navigation:
+      const activeP = ProfilesModule.getActiveProfile();
+      if (activeP && activeP.firstName) {
+        // User already has an active profile -> Go straight to Contactos to see the new contact!
+        AppNav.switchTab('directory');
+        UIModal.toast(`📇 Contacto guardado: ${senderName}`);
+      } else {
+        // Brand new user -> Go to Mi QR with welcome CTA
+        sessionStorage.setItem('ventocard_welcome_sender', `${senderName} ${senderOrg}`.trim());
+        AppNav.switchTab('qr');
+        QRModule.refresh();
+        UIModal.toast(`📇 Contacto de ${senderName} guardado`);
       }
 
       return true;
