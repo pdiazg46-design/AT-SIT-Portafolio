@@ -1269,11 +1269,15 @@
 
         <!-- Action Card for New Users -->
         <div style="display: flex; flex-direction: column; gap: 10px; width: 100%; margin-top: 10px;">
-          <button class="btn btn-primary btn-block" style="font-size: 14px; font-weight: 800; padding: 12px;" onclick="PWAInstallManager.triggerInstall()">
-            📲 Instalar App Oficial en tu Pantalla
+          <button class="btn btn-primary btn-block" style="font-size: 14px; font-weight: 800; padding: 13px;" onclick="RecipientManager.downloadVCard()">
+            📥 Guardar en Contactos del Teléfono (.VCF)
           </button>
           
-          <button class="btn btn-secondary btn-block" style="font-size: 13.5px; font-weight: 700; padding: 11px;" onclick="RecipientManager.startNewApp()">
+          <button class="btn btn-secondary btn-block" style="font-size: 13.5px; font-weight: 700; padding: 12px; background: rgba(56, 189, 248, 0.15); border-color: rgba(56, 189, 248, 0.4); color: var(--accent);" onclick="PWAInstallManager.triggerInstall()">
+            📲 Instalar App VentoCard en tu Pantalla
+          </button>
+
+          <button class="btn btn-secondary btn-block" style="font-size: 13px; font-weight: 600; padding: 10px;" onclick="RecipientManager.startNewApp()">
             🚀 Crear Mi Propia Tarjeta Digital
           </button>
         </div>
@@ -2701,7 +2705,7 @@
       }
       if (!this.profiles || this.profiles.length === 0) {
         this.profiles = [];
-        this.loadAtsitTemplate();
+        this.createNewProfile();
       }
       this.activeProfileId = localStorage.getItem(StorageKeys.ACTIVE_PROFILE_ID) || (this.profiles.length > 0 ? this.profiles[0].id : null);
       this.renderProfilesList();
@@ -3305,17 +3309,13 @@
       const p = ProfilesModule.getActiveProfile();
       const name = p && p.firstName ? `${p.firstName} ${p.lastName || ''}`.trim() : 'Patricio Díaz';
       const org = (p && p.org) ? p.org : 'ATSIT';
-      const title = (p && p.title) ? p.title : 'Director Ejecutivo / Consultor TI / Fundador';
-      const phone = (p && p.phoneMobile) ? p.phoneMobile : '+56 9 9335 1620';
-      const email = (p && p.emailWork) ? p.emailWork : 'pdiaz@atsit.cl';
-      const web = (p && p.website) ? p.website : 'https://atsit.cl';
 
       // Clean dynamic sharing URL with full encoded card payload for any user
       const shareData = this.getShareDataObject();
       const encoded = shareData ? DataCodec.encodePayload(shareData) : '';
       const link = encoded ? `https://www.atsit.cl/card/#card=${encoded}` : 'https://www.atsit.cl/card/';
 
-      const textMessage = `📇 *Tarjeta Digital Ejecutiva*\n*${name}* • *${org}*\n💼 *Cargo:* ${title}\n📱 *Móvil:* ${phone}\n✉️ *Email:* ${email}\n🌐 *Web:* ${web}\n\n📲 *Ver Tarjeta Interactiva:*\n${link}`;
+      const textMessage = `📇 *Tarjeta Digital de ${name} (${org})*\nToca el enlace para guardar mi contacto e instalar tu VentoCard:\n👉 ${link}`;
 
       window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(textMessage)}`, '_blank');
     },
@@ -5313,13 +5313,7 @@
     AppNav.updateHeader();
 
     // 2. Check if opened via shared hash payload
-    const isHashRecipient = RecipientManager.checkHashPayload();
-
-    // 3. If opened via clean URL (no hash) by a visitor who has no profile saved yet:
-    if (!isHashRecipient && (!ProfilesModule.profiles || ProfilesModule.profiles.length === 0)) {
-      RecipientManager.receivedData = RecipientManager.getOfficialCardData();
-      RecipientManager.renderRecipientView(RecipientManager.receivedData);
-    }
+    RecipientManager.checkHashPayload();
 
     // 4. Initialize Auto-Update Engine & Native Installer
     UpdateManager.init();
