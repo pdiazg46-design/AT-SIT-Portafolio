@@ -1770,7 +1770,7 @@
           <!-- Auto-Update Status Card -->
           <div style="background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 12px; padding: 12px; display: flex; justify-content: space-between; align-items: center;">
             <div>
-              <div style="font-weight: 700; font-size: 12px; color: #fff;">VentoCard <span id="appVersionBadge" style="color: var(--accent);">v1.8.0</span></div>
+              <div style="font-weight: 700; font-size: 12px; color: #fff;">VentoCard <span id="appVersionBadge" style="color: var(--accent);">v1.8.5</span></div>
               <div id="updateStatusText" style="font-size: 10.5px; color: #34d399;">● Auto-Actualización Activa (Datos Protegidos)</div>
             </div>
             <button type="button" class="btn btn-secondary btn-sm" onclick="UpdateManager.checkForUpdateManual()">
@@ -1848,7 +1848,7 @@
 
       <!-- Footer Info -->
       <div class="full-width-desktop" style="font-size: 11px; color: var(--text-dim); text-align: center; line-height: 1.5; padding: 8px 0;">
-        VentoCard v1.8.0 • PWA Autónoma Soberana<br>
+        VentoCard v1.8.5 • PWA Autónoma Soberana<br>
         Ciberseguridad OWASP & Protección de Datos ATSIT
       </div>
     </div>
@@ -1884,6 +1884,7 @@
   <!-- HIGH-PERFORMANCE JSQR ENGINE (Offline PWA) -->
   <!-- ========================================== -->
   <script src="./jsqr.min.js"></script>
+  <script src="./peerjs.min.js"></script>
 
   <!-- ========================================== -->
   <!-- JAVASCRIPT: MOTOR COMPLETO LOCAL           -->
@@ -4540,52 +4541,46 @@
         }
       }
 
-      // Establish stable shared syncChannel for continuous bi-directional sync
-      let syncChannel = localStorage.getItem('ventocard_sync_channel');
-      if (!syncChannel) {
-        const primary = ProfilesModule.getPrimaryProfile();
-        const key = primary ? (primary.workPhone || primary.phone || primary.workEmail || primary.email) : pairId;
-        syncChannel = 'sync_' + (key ? key.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase() : pairId);
-        localStorage.setItem('ventocard_sync_channel', syncChannel);
+      UIModal.toast('💻 Conectando directamente con el PC...');
+
+      // Connect via WebRTC directly to the PC
+      if (typeof LiveSyncEngine !== 'undefined') {
+        LiveSyncEngine.init();
+        LiveSyncEngine.connectToPeer(pairId);
+
+        // When connected, send initial full state and trigger unlock
+        setTimeout(() => {
+          if (LiveSyncEngine.activeConn && LiveSyncEngine.activeConn.open) {
+            LiveSyncEngine.activeConn.send({
+              type: 'PAIR_SUCCESS',
+              sourceDevice: LiveSyncEngine.getDeviceId(),
+              profiles: ProfilesModule.profiles,
+              contacts: DirectoryModule.contacts,
+              settings: SettingsModule.settings
+            });
+            UIModal.alert('¡Computador Vinculado!', 'Tu sesión, perfiles y contactos están conectados en vivo con tu computador.', '💻');
+          } else {
+            // Fallback: Also send via server API
+            const syncUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000/api/card/sync' : 'https://www.atsit.cl/api/card/sync';
+            fetch(syncUrl, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                cardId: pairId,
+                payload: {
+                  profiles: ProfilesModule.profiles,
+                  contacts: DirectoryModule.contacts,
+                  settings: SettingsModule.settings
+                }
+              })
+            }).catch(() => {});
+            UIModal.alert('¡Computador Vinculado!', 'Sesión enviada a la pantalla.', '💻');
+          }
+        }, 600);
       }
 
-      const payload = {
-        sourceDevice: typeof LiveSyncEngine !== 'undefined' ? LiveSyncEngine.getDeviceId() : 'mobile',
-        timestamp: Date.now(),
-        syncChannel: syncChannel,
-        profiles: ProfilesModule.profiles,
-        contacts: DirectoryModule.contacts,
-        settings: SettingsModule.settings
-      };
-
-      const syncUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000/api/card/sync' : 'https://www.atsit.cl/api/card/sync';
-
-      try {
-        UIModal.toast('💻 Vinculando con computador...');
-        const resp = await fetch(syncUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            cardId: pairId,
-            payload: payload
-          })
-        });
-
-        if (resp.ok) {
-          UIModal.alert('¡Computador Vinculado!', 'Tu sesión, perfiles y contactos se han transferido a la pantalla de tu computador exitosamente.', '💻');
-        } else {
-          UIModal.alert('Aviso de Vinculación', 'Datos enviados al computador.', '💻');
-        }
-        window.location.hash = '';
-        AppNav.switchTab('qr');
-        if (typeof LiveSyncEngine !== 'undefined') {
-          LiveSyncEngine.init();
-        }
-      } catch (e) {
-        UIModal.alert('Computador Vinculado', 'Sesión enviada a tu pantalla.', '💻');
-        window.location.hash = '';
-        AppNav.switchTab('qr');
-      }
+      window.location.hash = '';
+      AppNav.switchTab('qr');
     },
 
     renderRecipientView: function(d) {
@@ -5655,7 +5650,7 @@
   // 11.5 DESKTOP WHATSAPP-WEB PAIRING MANAGER
   // ----------------------------------------------------
   const DesktopLinkManager = {
-    pairSessionId: null,
+    peerId: null,
     pollInterval: null,
 
     isDesktop: function() {
@@ -5672,67 +5667,62 @@
       const logoutBtn = document.getElementById('desktopLogoutBtn');
 
       if (this.isDesktop() && !this.isSessionAuthenticated()) {
-        // Show ONLY the WhatsApp Web Gateway!
         if (viewport) viewport.style.display = 'none';
         if (gateway) {
           gateway.style.display = 'flex';
           this.startPairingSession();
         }
       } else {
-        // Authenticated or Mobile: Show standard app viewport
         if (gateway) gateway.style.display = 'none';
         if (viewport) viewport.style.display = 'block';
         if (logoutBtn && this.isDesktop()) {
           logoutBtn.style.display = 'inline-flex';
         }
+        if (typeof LiveSyncEngine !== 'undefined') {
+          LiveSyncEngine.init();
+        }
       }
     },
 
     startPairingSession: function() {
-      if (!this.pairSessionId) {
-        this.pairSessionId = 'pair_' + Math.random().toString(36).substring(2, 10) + Date.now().toString(36);
+      if (!this.peerId) {
+        this.peerId = 'vc_pc_' + Math.random().toString(36).substring(2, 8);
       }
 
-      let base = window.location.href.split('#')[0];
-      if (base.startsWith('file://') || base.includes('localhost') || base.includes('127.0.0.1')) {
-        base = 'https://www.atsit.cl/card/';
+      if (typeof LiveSyncEngine !== 'undefined') {
+        LiveSyncEngine.initPeer(this.peerId);
       }
-      const cleanBase = base.split('?')[0].replace(/\/+$/, '');
-      const linkUrl = `${cleanBase}/#pair=${this.pairSessionId}`;
 
-      // Render QR on desktopPairCanvas
+      let base = 'https://www.atsit.cl/card/';
+      const linkUrl = `${base}#pair=${this.peerId}`;
+
       const canvas = document.getElementById('desktopPairCanvas');
       if (canvas && typeof QRModule !== 'undefined') {
         QRModule.renderCanvas(canvas, linkUrl);
       }
 
-      // Start Polling /api/card/sync
       if (!this.pollInterval) {
         this.pollInterval = setInterval(() => this.checkPairingStatus(), 1000);
       }
     },
 
     checkPairingStatus: async function() {
-      if (!this.pairSessionId) return;
-      const syncUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000/api/card/sync' : 'https://www.atsit.cl/api/card/sync';
+      if (!this.peerId) return;
+      const syncUrl = 'https://www.atsit.cl/api/card/sync';
       try {
-        const resp = await fetch(`${syncUrl}?id=${encodeURIComponent(this.pairSessionId)}`, { cache: 'no-store' });
+        const resp = await fetch(`${syncUrl}?id=${encodeURIComponent(this.peerId)}`, { cache: 'no-store' });
         if (!resp.ok) return;
         const result = await resp.json();
         if (result.success && result.payload && result.payload.profiles && result.payload.profiles.length > 0) {
           clearInterval(this.pollInterval);
           this.pollInterval = null;
 
-          // Save paired data
           localStorage.setItem(StorageKeys.PROFILES, JSON.stringify(result.payload.profiles));
           if (result.payload.contacts) {
             localStorage.setItem(StorageKeys.CONTACTS, JSON.stringify(result.payload.contacts));
           }
           if (result.payload.settings) {
             localStorage.setItem(StorageKeys.SETTINGS, JSON.stringify(result.payload.settings));
-          }
-          if (result.payload.syncChannel) {
-            localStorage.setItem('ventocard_sync_channel', result.payload.syncChannel);
           }
 
           sessionStorage.setItem('ventocard_desktop_authenticated', 'true');
@@ -5769,6 +5759,7 @@
 
     logoutDesktop: function() {
       sessionStorage.removeItem('ventocard_desktop_authenticated');
+      localStorage.removeItem('ventocard_target_peer');
       localStorage.removeItem('ventocard_sync_channel');
       localStorage.removeItem(StorageKeys.PROFILES);
       localStorage.removeItem(StorageKeys.CONTACTS);
@@ -5780,30 +5771,30 @@
   };
 
   // ----------------------------------------------------
-  // 11.6 CONTINUOUS BI-DIRECTIONAL LIVESYNC ENGINE
+  // 11.6 CONTINUOUS BI-DIRECTIONAL LIVESYNC ENGINE (WebRTC P2P + Cloud Heartbeat)
   // ----------------------------------------------------
   const LiveSyncEngine = {
     ENDPOINT: 'https://www.atsit.cl/api/card/sync',
+    peer: null,
+    activeConn: null,
+    peerId: null,
     pollInterval: null,
     lastKnownTimestamp: 0,
-    isBroadcasting: false,
     debounceTimer: null,
 
     getDeviceId: function() {
       let id = localStorage.getItem('ventocard_device_id');
       if (!id) {
-        id = 'dev_' + Math.random().toString(36).substring(2, 10) + Date.now().toString(36);
+        id = 'dev_' + Math.random().toString(36).substring(2, 10);
         localStorage.setItem('ventocard_device_id', id);
       }
       return id;
     },
 
     getSyncChannel: function() {
-      // 1. Explicit channel set during pairing
       let ch = localStorage.getItem('ventocard_sync_channel');
       if (ch && ch.trim()) return ch.trim();
 
-      // 2. Vault User Key (phone or email)
       const vaultUser = localStorage.getItem('ventocard_vault_user');
       if (vaultUser && vaultUser.trim()) {
         ch = 'sync_' + vaultUser.trim().replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
@@ -5811,11 +5802,10 @@
         return ch;
       }
 
-      // 3. Primary profile phone / email
       if (typeof ProfilesModule !== 'undefined' && ProfilesModule.profiles && ProfilesModule.profiles.length > 0) {
-        const p = ProfilesModule.getPrimaryProfile();
+        const p = ProfilesModule.getActiveProfile();
         if (p) {
-          const key = p.workPhone || p.phone || p.workEmail || p.email;
+          const key = p.phoneMobile || p.phoneWork || p.emailWork || p.emailPersonal || (p.firstName ? `${p.firstName}_${p.lastName}` : null);
           if (key) {
             ch = 'sync_' + key.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
             localStorage.setItem('ventocard_sync_channel', ch);
@@ -5823,22 +5813,13 @@
           }
         }
       }
-      return null;
-    },
-
-    setSyncChannel: function(channelId) {
-      if (channelId) {
-        localStorage.setItem('ventocard_sync_channel', channelId);
-      }
+      return 'sync_default_shared';
     },
 
     init: function() {
-      const ch = this.getSyncChannel();
-      if (!ch) return;
-
+      this.initPeer();
       this.startHeartbeat();
 
-      // Resume immediately on window focus or tab visibility
       document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'visible') {
           this.pullLatestChanges();
@@ -5847,21 +5828,129 @@
       window.addEventListener('focus', () => this.pullLatestChanges());
     },
 
+    initPeer: function(customId = null) {
+      if (typeof Peer === 'undefined') return;
+      if (this.peer && !this.peer.destroyed) return;
+
+      try {
+        const id = customId || ('vc_' + this.getDeviceId());
+        this.peer = new Peer(id, { debug: 0 });
+
+        this.peer.on('open', (assignedId) => {
+          this.peerId = assignedId;
+          const targetPeer = localStorage.getItem('ventocard_target_peer');
+          if (targetPeer && targetPeer !== assignedId) {
+            this.connectToPeer(targetPeer);
+          }
+        });
+
+        this.peer.on('connection', (conn) => {
+          this.setupConnectionHandlers(conn);
+        });
+
+        this.peer.on('error', (err) => {
+          console.log('PeerJS info:', err.type);
+        });
+      } catch (e) {}
+    },
+
+    connectToPeer: function(targetId) {
+      if (!this.peer || this.peer.destroyed || !targetId || targetId === this.peerId) return;
+      try {
+        const conn = this.peer.connect(targetId, { reliable: true });
+        this.setupConnectionHandlers(conn);
+      } catch (e) {}
+    },
+
+    setupConnectionHandlers: function(conn) {
+      this.activeConn = conn;
+
+      conn.on('open', () => {
+        this.showSyncPill('🟢 P2P En Vivo Conectado');
+        localStorage.setItem('ventocard_target_peer', conn.peer);
+
+        if (!DesktopLinkManager.isDesktop()) {
+          conn.send({
+            type: 'STATE_SNAPSHOT',
+            sourceDevice: this.getDeviceId(),
+            profiles: ProfilesModule.profiles,
+            contacts: DirectoryModule.contacts,
+            settings: SettingsModule.settings
+          });
+        }
+      });
+
+      conn.on('data', (data) => {
+        this.handleIncomingData(data);
+      });
+
+      conn.on('close', () => {
+        this.activeConn = null;
+      });
+    },
+
+    handleIncomingData: function(data) {
+      if (!data) return;
+
+      let updated = false;
+
+      if (data.contacts && Array.isArray(data.contacts)) {
+        DirectoryModule.contacts = data.contacts;
+        localStorage.setItem(StorageKeys.CONTACTS, JSON.stringify(DirectoryModule.contacts));
+        DirectoryModule.renderContacts(DirectoryModule.contacts);
+        updated = true;
+      }
+
+      if (data.profiles && Array.isArray(data.profiles)) {
+        ProfilesModule.profiles = data.profiles;
+        localStorage.setItem(StorageKeys.PROFILES, JSON.stringify(ProfilesModule.profiles));
+        ProfilesModule.renderProfilesList();
+        QRModule.refresh();
+        updated = true;
+      }
+
+      if (data.settings) {
+        SettingsModule.settings = data.settings;
+        localStorage.setItem(StorageKeys.SETTINGS, JSON.stringify(SettingsModule.settings));
+        updated = true;
+      }
+
+      if (data.type === 'PAIR_SUCCESS') {
+        sessionStorage.setItem('ventocard_desktop_authenticated', 'true');
+        UIModal.toast('💻 ¡Computador vinculado en vivo!');
+        setTimeout(() => window.location.reload(), 300);
+      } else if (updated) {
+        this.showSyncPill('⚡ Sincronizado en vivo');
+      }
+    },
+
     startHeartbeat: function() {
       if (this.pollInterval) clearInterval(this.pollInterval);
-      // Real-time heartbeat every 2000ms
       this.pollInterval = setInterval(() => {
         if (document.visibilityState === 'visible' && navigator.onLine) {
-          this.pullLatestChanges();
+          if (!this.activeConn || !this.activeConn.open) {
+            const targetPeer = localStorage.getItem('ventocard_target_peer');
+            if (targetPeer) this.connectToPeer(targetPeer);
+            this.pullLatestChanges();
+          }
         }
       }, 2000);
     },
 
     broadcastChange: function() {
-      if (!navigator.onLine) return;
-      const ch = this.getSyncChannel();
-      if (!ch) return;
+      if (this.activeConn && this.activeConn.open) {
+        this.activeConn.send({
+          type: 'LIVE_MUTATION',
+          sourceDevice: this.getDeviceId(),
+          timestamp: Date.now(),
+          contacts: DirectoryModule.contacts,
+          profiles: ProfilesModule.profiles,
+          settings: SettingsModule.settings
+        });
+        this.showSyncPill('🟢 P2P Enviado');
+      }
 
+      if (!navigator.onLine) return;
       if (this.debounceTimer) clearTimeout(this.debounceTimer);
       this.debounceTimer = setTimeout(() => {
         this.executeBroadcast();
@@ -5872,12 +5961,9 @@
       const ch = this.getSyncChannel();
       if (!ch) return;
 
-      const now = Date.now();
-      this.lastKnownTimestamp = now;
-
       const payload = {
         sourceDevice: this.getDeviceId(),
-        timestamp: now,
+        timestamp: Date.now(),
         profiles: ProfilesModule.profiles,
         contacts: DirectoryModule.contacts,
         settings: SettingsModule.settings
@@ -5887,15 +5973,10 @@
         await fetch(this.ENDPOINT, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            cardId: ch,
-            payload: payload
-          })
+          body: JSON.stringify({ cardId: ch, payload: payload })
         });
         this.showSyncPill('🟢 Sincronizado');
-      } catch (err) {
-        console.warn('LiveSync push error:', err);
-      }
+      } catch (err) {}
     },
 
     pullLatestChanges: async function() {
@@ -5911,36 +5992,9 @@
           const incomingTime = result.payload.timestamp;
           const incomingDevice = result.payload.sourceDevice;
 
-          // If change came from another device and is newer than our local state
           if (incomingDevice !== this.getDeviceId() && incomingTime > this.lastKnownTimestamp) {
             this.lastKnownTimestamp = incomingTime;
-
-            let updated = false;
-
-            if (result.payload.contacts && Array.isArray(result.payload.contacts)) {
-              DirectoryModule.contacts = result.payload.contacts;
-              localStorage.setItem(StorageKeys.CONTACTS, JSON.stringify(DirectoryModule.contacts));
-              DirectoryModule.renderContacts(DirectoryModule.contacts);
-              updated = true;
-            }
-
-            if (result.payload.profiles && Array.isArray(result.payload.profiles)) {
-              ProfilesModule.profiles = result.payload.profiles;
-              localStorage.setItem(StorageKeys.PROFILES, JSON.stringify(ProfilesModule.profiles));
-              ProfilesModule.renderProfilesList();
-              QRModule.refresh();
-              updated = true;
-            }
-
-            if (result.payload.settings) {
-              SettingsModule.settings = result.payload.settings;
-              localStorage.setItem(StorageKeys.SETTINGS, JSON.stringify(SettingsModule.settings));
-              updated = true;
-            }
-
-            if (updated) {
-              this.showSyncPill('⚡ Sincronizado');
-            }
+            this.handleIncomingData(result.payload);
           }
         }
       } catch (err) {

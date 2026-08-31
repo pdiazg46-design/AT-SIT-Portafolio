@@ -1,9 +1,10 @@
-const APP_VERSION = '1.8.0';
+const APP_VERSION = '1.8.5';
 const CACHE_NAME = `ventocard-v${APP_VERSION}`;
 const ASSETS = [
   './',
   './index.html',
   './jsqr.min.js',
+  './peerjs.min.js',
   './manifest.json',
   './icon.svg',
   './icon-192.png',
