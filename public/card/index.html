@@ -3294,14 +3294,17 @@
     },
 
     filterContacts: function(term) {
-      const cleanTerm = (term || '').toLowerCase().trim();
-      if (!cleanTerm) {
+      if (!term || !term.trim()) {
         this.renderContacts(this.contacts);
         return;
       }
+      const normalize = (s) => String(s || '').normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+      const cleanTerm = normalize(term);
+      const tokens = cleanTerm.split(/\s+/).filter(t => t.length > 0);
+
       const filtered = this.contacts.filter(c => {
-        const full = `${c.firstName || ''} ${c.lastName || ''} ${c.org || ''} ${c.title || ''} ${c.bio || ''}`.toLowerCase();
-        return full.includes(cleanTerm);
+        const full = normalize(`${c.firstName || ''} ${c.lastName || ''} ${c.org || ''} ${c.title || ''} ${c.bio || ''} ${c.privateNotes || ''}`);
+        return tokens.every(token => full.includes(token));
       });
       this.renderContacts(filtered);
     },
