@@ -3768,40 +3768,129 @@
       setTimeout(() => this.stopListening(), 800);
     },
 
-    findMatchingContact: function(name) {
-      if (!name) return null;
-      const clean = name.toLowerCase().trim();
-      return DirectoryModule.contacts.find(c => {
-        const full = `${c.firstName || ''} ${c.lastName || ''}`.toLowerCase();
-        return full.includes(clean) || (c.org && c.org.toLowerCase().includes(clean));
+    normalizeText: function(str) {
+      if (!str) return '';
+      return String(str).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+    },
+
+    getAliases: function(name) {
+      const aliases = {
+        'fran': ['francisca', 'franchesca'],
+        'francisca': ['fran', 'pancha'],
+        'pato': ['patricio'],
+        'patricio': ['pato'],
+        'nacho': ['ignacio'],
+        'ignacio': ['nacho'],
+        'pancho': ['francisco'],
+        'francisco': ['pancho'],
+        'marce': ['marcela'],
+        'marcela': ['marce'],
+        'barbi': ['barbara'],
+        'barbara': ['barbi'],
+        'tangente': ['tangente']
+      };
+      const clean = this.normalizeText(name);
+      return aliases[clean] || [];
+    },
+
+    findMatchingContact: function(rawQuery) {
+      if (!rawQuery || !DirectoryModule.contacts || DirectoryModule.contacts.length === 0) return null;
+      const cleanQuery = this.normalizeText(rawQuery);
+      const queryTokens = cleanQuery.split(/\s+/).filter(t => t.length > 1);
+      if (queryTokens.length === 0) return null;
+
+      let bestContact = null;
+      let highestScore = 0;
+
+      DirectoryModule.contacts.forEach(c => {
+        const cFirst = this.normalizeText(c.firstName || '');
+        const cLast = this.normalizeText(c.lastName || '');
+        const cOrg = this.normalizeText(c.org || '');
+        const cTitle = this.normalizeText(c.title || '');
+        const full = `${cFirst} ${cLast}`.trim();
+
+        let score = 0;
+
+        // Exact full name match
+        if (full === cleanQuery) {
+          score += 100;
+        } else if (full.includes(cleanQuery)) {
+          score += 60;
+        }
+
+        // Token matching
+        queryTokens.forEach(token => {
+          if (cFirst === token || cLast === token) {
+            score += 30;
+          } else if (cFirst.startsWith(token) || cLast.startsWith(token)) {
+            score += 20;
+          } else if (cFirst.includes(token) || cLast.includes(token)) {
+            score += 15;
+          } else if (cOrg.includes(token) || cTitle.includes(token)) {
+            score += 10;
+          }
+
+          // Alias match (e.g. Francisca <-> Fran, Pato <-> Patricio)
+          const aliases = this.getAliases(token);
+          aliases.forEach(al => {
+            if (cFirst.includes(al) || cLast.includes(al) || full.includes(al)) {
+              score += 25;
+            }
+          });
+        });
+
+        if (score > highestScore) {
+          highestScore = score;
+          bestContact = c;
+        }
       });
+
+      return highestScore >= 10 ? bestContact : null;
     },
 
     executeCall: function(name) {
       const contact = this.findMatchingContact(name);
-      if (contact && (contact.phoneMobile || contact.phoneWork)) {
-        const phone = contact.phoneMobile || contact.phoneWork;
+      if (!contact) {
+        this.speakFeedback(`No encontré el contacto ${name}`);
+        setTimeout(() => this.stopListening(), 1500);
+        return;
+      }
+
+      const phoneRaw = contact.phoneMobile || contact.phoneWork || contact.whatsappUser;
+      const digits = phoneRaw ? phoneRaw.replace(/[^0-9+]/g, '') : '';
+
+      if (digits && digits.length >= 7) {
+        const phone = digits.replace(/\s+/g, '');
         this.speakFeedback(`Llamando a ${contact.firstName}`);
         setTimeout(() => {
           this.stopListening();
           window.location.href = `tel:${phone}`;
-        }, 1000);
+        }, 800);
       } else {
-        this.speakFeedback(`No encontré el teléfono de ${name}`);
-        setTimeout(() => this.stopListening(), 1500);
+        const waUrl = Security.getWhatsAppUrl(contact.whatsappUser, contact.phoneMobile || contact.phoneWork);
+        if (waUrl) {
+          this.speakFeedback(`Abriendo WhatsApp de ${contact.firstName}`);
+          setTimeout(() => {
+            this.stopListening();
+            window.open(waUrl, '_blank');
+          }, 800);
+        } else {
+          this.speakFeedback(`No encontré teléfono para ${contact.firstName}`);
+          setTimeout(() => this.stopListening(), 1500);
+        }
       }
     },
 
     executeWhatsApp: function(name) {
       const contact = this.findMatchingContact(name);
-      const waSource = contact ? (contact.whatsappUser || contact.phoneMobile || contact.phoneWork) : null;
-      if (contact && waSource) {
-        const waUrl = Security.getWhatsAppUrl(waSource);
+      const waPhone = contact ? (contact.phoneMobile || contact.phoneWork) : null;
+      const waUrl = contact ? Security.getWhatsAppUrl(contact.whatsappUser, waPhone) : '';
+      if (contact && waUrl) {
         this.speakFeedback(`Abriendo WhatsApp de ${contact.firstName}`);
         setTimeout(() => {
           this.stopListening();
           window.open(waUrl, '_blank');
-        }, 1000);
+        }, 800);
       } else {
         this.speakFeedback(`No encontré el contacto ${name}`);
         setTimeout(() => this.stopListening(), 1500);
