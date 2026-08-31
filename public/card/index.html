@@ -1822,7 +1822,7 @@
           <!-- Auto-Update Status Card -->
           <div style="background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 12px; padding: 12px; display: flex; justify-content: space-between; align-items: center;">
             <div>
-              <div style="font-weight: 700; font-size: 12px; color: #fff;">VentoCard <span id="appVersionBadge" style="color: var(--accent);">v2.0.0</span></div>
+              <div style="font-weight: 700; font-size: 12px; color: #fff;">VentoCard <span id="appVersionBadge" style="color: var(--accent);">v2.0.1</span></div>
               <div id="updateStatusText" style="font-size: 10.5px; color: #34d399;">● Auto-Actualización Activa (Datos Protegidos)</div>
             </div>
             <button type="button" class="btn btn-secondary btn-sm" onclick="UpdateManager.checkForUpdateManual()">
@@ -1900,7 +1900,7 @@
 
       <!-- Footer Info -->
       <div class="full-width-desktop" style="font-size: 11px; color: var(--text-dim); text-align: center; line-height: 1.5; padding: 8px 0;">
-        VentoCard v2.0.0 • PWA Autónoma Soberana<br>
+        VentoCard v2.0.1 • PWA Autónoma Soberana<br>
         Ciberseguridad OWASP & Protección de Datos ATSIT
       </div>
     </div>
@@ -2098,6 +2098,63 @@
 
         overlay.style.display = 'flex';
         if (input) setTimeout(() => input.focus(), 100);
+      });
+    },
+
+    selectOption: function(title, message, options, currentSelected = '', icon = '🏷️') {
+      return new Promise((resolve) => {
+        let pickerOverlay = document.getElementById('categoryPickerOverlay');
+        if (!pickerOverlay) {
+          pickerOverlay = document.createElement('div');
+          pickerOverlay.id = 'categoryPickerOverlay';
+          pickerOverlay.className = 'custom-modal-overlay';
+          pickerOverlay.style.zIndex = '10005';
+          document.body.appendChild(pickerOverlay);
+        }
+
+        let optionsHtml = '';
+        options.forEach(opt => {
+          const isSelected = opt === currentSelected;
+          optionsHtml += `
+            <button type="button" class="btn btn-block" style="text-align: left; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; background: ${isSelected ? 'rgba(56, 189, 248, 0.22)' : 'rgba(255, 255, 255, 0.05)'}; border: 1.5px solid ${isSelected ? 'var(--accent)' : 'var(--border-subtle)'}; color: #fff; font-weight: 700; font-size: 13.5px; border-radius: 12px; margin-bottom: 8px; cursor: pointer; transition: all 0.2s ease;" onclick="window._onCategoryChosen('${encodeURIComponent(opt)}')">
+              <span>${opt}</span>
+              ${isSelected ? '<span style="color: var(--accent); font-size: 16px; font-weight: 900;">✓</span>' : ''}
+            </button>
+          `;
+        });
+
+        pickerOverlay.innerHTML = `
+          <div class="custom-modal-card glass-card" style="max-width: 360px; width: 92%; padding: 20px;">
+            <div style="font-size: 36px; text-align: center; margin-bottom: 4px;">${icon}</div>
+            <h3 style="font-size: 16px; font-weight: 800; color: #fff; text-align: center; margin-bottom: 4px;">${Security.sanitizeText(title)}</h3>
+            <p style="font-size: 12px; color: var(--text-muted); text-align: center; margin-bottom: 16px;">${Security.sanitizeText(message)}</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 4px; max-height: 280px; overflow-y: auto; margin-bottom: 12px; padding-right: 2px;">
+              ${optionsHtml}
+            </div>
+
+            <div style="display: flex; gap: 8px;">
+              <button type="button" class="btn btn-secondary btn-sm" style="flex: 1; padding: 10px; font-weight: 700;" onclick="window._onCategoryChosen(null)">
+                Cancelar
+              </button>
+              <button type="button" class="btn btn-primary btn-sm" style="flex: 1; padding: 10px; font-weight: 700;" onclick="window._onCategoryCreateNew()">
+                ➕ Nueva
+              </button>
+            </div>
+          </div>
+        `;
+
+        window._onCategoryChosen = (val) => {
+          pickerOverlay.style.display = 'none';
+          resolve(val ? decodeURIComponent(val) : null);
+        };
+
+        window._onCategoryCreateNew = () => {
+          pickerOverlay.style.display = 'none';
+          resolve('__NEW__');
+        };
+
+        pickerOverlay.style.display = 'flex';
       });
     },
 
@@ -3919,30 +3976,49 @@
       if (!contact) return;
 
       const available = this.categories.filter(c => c !== 'Todos');
-      const catList = available.map((c, i) => `${i + 1}. ${c}`).join('\n');
-
-      const selected = await UIModal.prompt(
+      const chosen = await UIModal.selectOption(
         `Categoría: ${contact.firstName}`,
-        `Selecciona la categoría escribiendo el número o nombre:\n${catList}`,
+        'Selecciona una categoría para este contacto:',
+        available,
         contact.category || '💼 Trabajo',
-        '🏷️',
-        'text',
-        'Asignar',
-        'Cancelar'
+        '🏷️'
       );
 
-      if (selected !== null && selected.trim()) {
-        const num = parseInt(selected.trim(), 10);
-        let chosenCat = selected.trim();
-        if (!isNaN(num) && num >= 1 && num <= available.length) {
-          chosenCat = available[num - 1];
+      if (chosen === '__NEW__') {
+        const newCat = await UIModal.prompt(
+          'Nueva Categoría',
+          'Ingresa el nombre de la categoría (ej: 🏢 Clientes VIP, 📦 Proveedores):',
+          '',
+          '🏷️',
+          'text',
+          'Crear y Asignar',
+          'Cancelar'
+        );
+        if (newCat && newCat.trim()) {
+          const cleanNew = newCat.trim();
+          if (!this.categories.includes(cleanNew)) {
+            this.categories.push(cleanNew);
+          }
+          contact.category = cleanNew;
+          contact.updatedAt = Date.now();
+          this.saveAll();
+          this.renderCategoriesBar();
+          this.renderContacts(this.getFilteredList());
+          UIModal.toast(`🏷️ ${contact.firstName} asignado a ${cleanNew}`);
+          if (typeof LiveSyncEngine !== 'undefined') {
+            LiveSyncEngine.broadcastContactMutation(contact);
+          }
         }
-        contact.category = chosenCat;
+        return;
+      }
+
+      if (chosen) {
+        contact.category = chosen;
         contact.updatedAt = Date.now();
         this.saveAll();
         this.renderCategoriesBar();
         this.renderContacts(this.getFilteredList());
-        UIModal.toast(`🏷️ ${contact.firstName} asignado a ${chosenCat}`);
+        UIModal.toast(`🏷️ ${contact.firstName} asignado a ${chosen}`);
         if (typeof LiveSyncEngine !== 'undefined') {
           LiveSyncEngine.broadcastContactMutation(contact);
         }
@@ -4115,6 +4191,11 @@
       const phone = await UIModal.prompt('Teléfono Móvil', 'Teléfono o WhatsApp (ej: +56 9 1234 5678):', '', '📱', 'tel', 'Siguiente', 'Omitir');
       const org = await UIModal.prompt('Empresa / Cargo', 'Empresa o profesión (opcional):', '', '💼', 'text', 'Siguiente', 'Omitir');
 
+      const available = this.categories.filter(c => c !== 'Todos');
+      let chosenCat = (this.activeCategory && this.activeCategory !== 'Todos') ? this.activeCategory : '💼 Trabajo';
+      const userChoice = await UIModal.selectOption('Categoría', 'Asigna una categoría a este contacto:', available, chosenCat, '🏷️');
+      if (userChoice && userChoice !== '__NEW__') chosenCat = userChoice;
+
       this.addContact({
         firstName: name.trim(),
         lastName: '',
@@ -4123,7 +4204,7 @@
         emailWork: '',
         org: org ? org.trim() : '',
         title: '',
-        category: (this.activeCategory && this.activeCategory !== 'Todos') ? this.activeCategory : '💼 Trabajo',
+        category: chosenCat,
         website: '',
         linkedIn: '',
         instagram: '',
