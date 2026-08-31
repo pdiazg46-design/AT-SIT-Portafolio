@@ -1743,7 +1743,17 @@
         const input = document.getElementById('modalInput');
         if (inputContainer && input) {
           inputContainer.style.display = 'block';
-          input.type = inputType;
+          if (inputType === 'numeric' || inputType === 'password-numeric' || inputType === 'tel' || inputType === 'pin' || inputType === 'password') {
+            input.type = (inputType === 'password-numeric' || inputType === 'pin' || inputType === 'password') ? 'password' : 'tel';
+            input.inputMode = 'numeric';
+            input.pattern = '[0-9]*';
+            input.autocomplete = 'one-time-code';
+          } else {
+            input.type = inputType;
+            input.inputMode = 'text';
+            input.removeAttribute('pattern');
+            input.removeAttribute('autocomplete');
+          }
           input.value = defaultValue;
         }
 
@@ -4481,15 +4491,64 @@
       return localStorage.getItem('ventocard_lock_pin') || '';
     },
 
+    registerBiometrics: async function() {
+      if (window.PublicKeyCredential && navigator.credentials) {
+        try {
+          const challenge = new Uint8Array(32);
+          window.crypto.getRandomValues(challenge);
+          const userId = new Uint8Array(16);
+          window.crypto.getRandomValues(userId);
+
+          const credential = await navigator.credentials.create({
+            publicKey: {
+              challenge: challenge,
+              rp: {
+                name: 'VentoCard ATSIT',
+                id: window.location.hostname || 'atsit.cl'
+              },
+              user: {
+                id: userId,
+                name: 'usuario@atsit.cl',
+                displayName: 'Usuario VentoCard'
+              },
+              pubKeyCredParams: [
+                { type: 'public-key', alg: -7 },
+                { type: 'public-key', alg: -257 }
+              ],
+              authenticatorSelection: {
+                authenticatorAttachment: 'platform',
+                userVerification: 'preferred',
+                residentKey: 'preferred'
+              },
+              timeout: 60000,
+              attestation: 'none'
+            }
+          });
+
+          if (credential && credential.id) {
+            localStorage.setItem('ventocard_cred_id', btoa(String.fromCharCode(...new Uint8Array(credential.rawId))));
+            return true;
+          }
+        } catch (e) {
+          console.warn('Biometric Enrollment:', e);
+        }
+      }
+      return false;
+    },
+
     toggleBiometricLock: async function() {
       const currentlyEnabled = this.isEnabled();
       if (!currentlyEnabled) {
+        // First register biometric (Face / Fingerprint) on the phone
+        UIModal.toast('👤 Registrando sensor biométrico...');
+        await this.registerBiometrics();
+
         const pin = await UIModal.prompt(
           'Crear PIN de Seguridad',
-          'Ingresa un PIN de 4 dígitos para proteger tu VentoCard:',
+          'Ingresa un PIN numérico de 4 dígitos como respaldo:',
           '',
           '🔐',
-          'password',
+          'pin',
           'Guardar PIN',
           'Cancelar'
         );
@@ -4501,9 +4560,10 @@
         localStorage.setItem('ventocard_lock_pin', pin.trim());
         localStorage.setItem('ventocard_bio_enabled', 'true');
         this.updateUI();
-        UIModal.alert('Protección Activada', 'VentoCard ahora exigirá tu huella o PIN cada vez que abras la app.', '🔒');
+        UIModal.alert('Protección Activada', 'VentoCard ahora se desbloqueará con tu Rostro, Huella o PIN.', '🔒');
       } else {
         localStorage.setItem('ventocard_bio_enabled', 'false');
+        localStorage.removeItem('ventocard_cred_id');
         this.updateUI();
         UIModal.alert('Protección Desactivada', 'El bloqueo de seguridad ha sido desactivado.', '🔓');
       }
@@ -4541,15 +4601,30 @@
         try {
           const challenge = new Uint8Array(32);
           window.crypto.getRandomValues(challenge);
+          const credId = localStorage.getItem('ventocard_cred_id');
+
+          const getOptions = {
+            challenge: challenge,
+            timeout: 60000,
+            userVerification: 'preferred',
+            rpId: window.location.hostname || 'atsit.cl'
+          };
+
+          if (credId) {
+            try {
+              const raw = atob(credId);
+              const bytes = new Uint8Array(raw.length);
+              for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
+              getOptions.allowCredentials = [{
+                type: 'public-key',
+                id: bytes,
+                transports: ['internal']
+              }];
+            } catch (e) {}
+          }
 
           const cred = await navigator.credentials.get({
-            publicKey: {
-              challenge: challenge,
-              timeout: 60000,
-              userVerification: 'preferred',
-              rpId: window.location.hostname || 'atsit.cl',
-              allowCredentials: []
-            }
+            publicKey: getOptions
           }).catch(() => null);
 
           if (cred) {
@@ -4557,7 +4632,7 @@
             return;
           }
         } catch (e) {
-          console.warn('WebAuthn fallback:', e);
+          console.warn('Biometric unlock fallback:', e);
         }
       }
 
@@ -4569,10 +4644,10 @@
       const vaultPin = (typeof AtsitCloudVaultModule !== 'undefined') ? AtsitCloudVaultModule.getPin() : '';
       const pin = await UIModal.prompt(
         'Desbloquear VentoCard',
-        'Ingresa tu PIN o clave de seguridad:',
+        'Ingresa tu PIN de seguridad (4 dígitos):',
         '',
         '🔒',
-        'password',
+        'pin',
         'Desbloquear',
         'Cancelar'
       );
