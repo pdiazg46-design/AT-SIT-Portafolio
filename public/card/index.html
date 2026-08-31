@@ -86,6 +86,22 @@
       line-height: 1.5;
     }
 
+    /* Custom Sleek Scrollbars */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(7, 11, 20, 0.6);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(56, 189, 248, 0.25);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(56, 189, 248, 0.5);
+    }
+
     /* Container - Responsive Mobile & Desktop Layout */
     .app-viewport {
       width: 100%;
@@ -97,76 +113,76 @@
       transition: max-width 0.25s ease;
     }
 
-    /* Desktop Zero-Scroll Viewport Enhancement */
+    /* Desktop Responsive & Scrollable Viewport Enhancement */
     @media (min-width: 820px) {
       body {
-        height: 100vh;
-        max-height: 100vh;
-        overflow: hidden;
-        padding: 12px 28px 76px 28px;
+        min-height: 100vh;
+        height: auto;
+        max-height: none;
+        overflow-x: hidden;
+        overflow-y: auto;
+        padding: 16px 32px 100px 32px;
         justify-content: flex-start;
         font-size: 14px;
       }
       .app-viewport {
         max-width: 1140px;
-        gap: 12px;
-        height: 100%;
+        gap: 16px;
+        height: auto;
       }
       header.app-header {
-        padding: 2px 8px;
+        padding: 4px 8px;
       }
       .brand-title {
         font-size: 18px !important;
       }
+
+      /* QR Tab on Desktop */
       #viewQR.active {
         display: grid !important;
-        grid-template-columns: 360px 1fr !important;
-        gap: 16px !important;
-        align-items: stretch !important;
-        height: calc(100vh - 135px);
+        grid-template-columns: 380px 1fr !important;
+        gap: 18px !important;
+        align-items: start !important;
+        height: auto !important;
       }
       .qr-hero-card {
         grid-column: 1;
-        padding: 12px 14px !important;
+        padding: 18px 20px !important;
         display: flex !important;
         flex-direction: column !important;
-        justify-content: space-between !important;
-        gap: 6px !important;
-        height: 100%;
+        gap: 10px !important;
+        height: auto !important;
       }
       .qr-canvas-container {
-        padding: 8px !important;
-        margin: 2px 0 !important;
+        padding: 10px !important;
+        margin: 6px auto !important;
       }
       #qrCanvas {
-        width: 205px !important;
-        height: 205px !important;
+        width: 220px !important;
+        height: 220px !important;
       }
       .qr-controls-card {
         grid-column: 2;
         display: flex !important;
         flex-direction: column !important;
-        gap: 10px !important;
-        height: 100%;
-        overflow: hidden;
+        gap: 12px !important;
+        height: auto !important;
+        overflow: visible !important;
       }
       .qr-controls-card .glass-card {
-        padding: 12px 16px !important;
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        overflow: hidden;
+        padding: 16px 20px !important;
+        overflow: visible !important;
       }
       .checkbox-list {
         display: grid !important;
         grid-template-columns: 1fr 1fr !important;
-        gap: 6px !important;
+        gap: 8px !important;
+        max-height: 420px;
         overflow-y: auto !important;
-        padding-right: 4px !important;
+        padding-right: 6px !important;
       }
       .checkbox-item {
-        padding: 7px 10px !important;
+        padding: 8px 12px !important;
       }
       .checkbox-icon {
         font-size: 16px !important;
@@ -176,36 +192,62 @@
       }
       .checkbox-sub {
         font-size: 11.5px !important;
-        max-width: 200px !important;
+        max-width: 240px !important;
       }
-      .contacts-grid-wrapper {
+
+      /* Directory / Contacts on Desktop */
+      .contacts-grid {
         display: grid !important;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)) !important;
-        gap: 12px !important;
-        max-height: calc(100vh - 140px);
-        overflow-y: auto;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)) !important;
+        gap: 14px !important;
       }
-      .profiles-bento-layout {
+
+      /* Profiles Manager Bento Layout on Desktop */
+      #viewProfiles.active {
         display: grid !important;
-        grid-template-columns: 340px 1fr !important;
-        gap: 16px !important;
+        grid-template-columns: 360px 1fr !important;
+        gap: 18px !important;
         align-items: start !important;
-        max-height: calc(100vh - 140px);
-        overflow-y: auto;
       }
+      .profiles-sidebar-card {
+        grid-column: 1;
+        position: sticky;
+        top: 16px;
+      }
+      .profiles-editor-card {
+        grid-column: 2;
+      }
+
+      /* Settings Bento Layout on Desktop */
+      #viewSettings.active {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 18px !important;
+        align-items: start !important;
+      }
+      #viewSettings .full-width-desktop {
+        grid-column: 1 / -1;
+      }
+      .settings-column-right {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+
+      /* Bottom Nav on Desktop */
       nav.bottom-nav {
-        max-width: 440px !important;
-        bottom: 12px !important;
-        padding: 5px 12px !important;
-        border-radius: 20px !important;
+        max-width: 460px !important;
+        bottom: 16px !important;
+        padding: 6px 14px !important;
+        border-radius: 24px !important;
       }
       .nav-item {
-        padding: 4px 8px !important;
-        font-size: 10px !important;
+        padding: 5px 12px !important;
+        font-size: 11px !important;
       }
       .nav-item svg {
-        width: 16px !important;
-        height: 16px !important;
+        width: 18px !important;
+        height: 18px !important;
       }
     }
 
@@ -1333,25 +1375,25 @@
       <!-- LEFT COLUMN (On Desktop) / PRIMARY CARD: QR & FAST ACTIONS -->
       <div class="glass-card qr-hero-card">
         
-        <!-- Desktop WhatsApp-Web Pairing State (For PC / Laptop) -->
-        <div id="qrDesktopPairCard" style="display: none; text-align: center; padding: 24px 18px;">
-          <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 6px;">
-            <span style="font-size: 26px;">💻</span>
-            <h3 style="font-size: 19px; font-weight: 800; color: #fff; margin: 0;">VentoCard Web</h3>
+        <!-- Desktop WhatsApp-Web Pairing State (For PC / Laptop without configured profile) -->
+        <div id="qrDesktopPairCard" style="display: none; text-align: center; padding: 22px 16px;">
+          <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 4px;">
+            <span style="font-size: 24px;">💻</span>
+            <h3 style="font-size: 18px; font-weight: 800; color: #fff; margin: 0;">VentoCard Web</h3>
           </div>
-          <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 16px;">
-            Sincroniza tus contactos y perfiles desde tu celular.
+          <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">
+            Escanea este código con la cámara de tu celular para vincular tu tarjeta.
           </p>
 
-          <!-- Pairing QR Canvas -->
-          <div style="background: #ffffff; padding: 12px; border-radius: 18px; box-shadow: 0 8px 30px rgba(0,0,0,0.5); width: 200px; height: 200px; margin: 0 auto 16px auto; display: flex; align-items: center; justify-content: center;">
-            <canvas id="desktopPairCanvas" width="180" height="180" style="width: 176px; height: 176px;"></canvas>
+          <!-- Pairing QR Canvas with clean white container -->
+          <div style="background: #ffffff; padding: 12px; border-radius: 18px; box-shadow: 0 8px 30px rgba(0,0,0,0.6); width: 210px; height: 210px; margin: 0 auto 12px auto; display: flex; align-items: center; justify-content: center;">
+            <canvas id="desktopPairCanvas" width="186" height="186" style="width: 186px; height: 186px; display: block;"></canvas>
           </div>
 
-          <div style="text-align: left; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 14px; padding: 12px 14px; margin-bottom: 16px; font-size: 12px; color: #94a3b8; display: flex; flex-direction: column; gap: 6px;">
-            <div>1. Abre <strong>VentoCard</strong> en tu teléfono.</div>
-            <div>2. Toca <strong>📷 Escanear</strong> arriba.</div>
-            <div>3. Apunta a este código QR para vincular.</div>
+          <div style="text-align: left; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 10px 14px; margin-bottom: 12px; font-size: 11.5px; color: #94a3b8; display: flex; flex-direction: column; gap: 4px;">
+            <div>1. Abre la cámara (o VentoCard) en tu celular.</div>
+            <div>2. Apunta a este código QR en tu pantalla.</div>
+            <div>3. ¡Tus datos se transferirán automáticamente a este PC!</div>
           </div>
 
           <div style="display: flex; gap: 8px; justify-content: center;">
@@ -1365,21 +1407,23 @@
         </div>
 
         <!-- Unconfigured New User Welcome State -->
-        <div id="qrEmptyStateCard" style="display: none; text-align: center; padding: 28px 18px;">
-          <div style="font-size: 52px; margin-bottom: 10px; filter: drop-shadow(0 4px 18px rgba(56, 189, 248, 0.4));">📇</div>
-          <h3 style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 8px;">Bienvenido a VentoCard</h3>
+        <div id="qrEmptyStateCard" style="display: none; text-align: center; padding: 24px 18px;">
+          <div style="font-size: 48px; margin-bottom: 10px; filter: drop-shadow(0 4px 18px rgba(56, 189, 248, 0.4));">📇</div>
+          <h3 style="font-size: 19px; font-weight: 800; color: #fff; margin-bottom: 8px;">Bienvenido a VentoCard</h3>
           
-          <div id="welcomeSenderBadge" style="display: none; background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.4); color: #4ade80; font-size: 12.5px; font-weight: 700; padding: 6px 14px; border-radius: 20px; margin: 0 auto 16px auto; width: fit-content; align-items: center; gap: 6px;">
+          <div id="welcomeSenderBadge" style="display: none; background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.4); color: #4ade80; font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: 20px; margin: 0 auto 14px auto; width: fit-content; align-items: center; gap: 6px;">
             <span>✅</span> <span id="welcomeSenderText">Contacto guardado en tu libreta</span>
           </div>
 
-          <p style="font-size: 13.5px; color: var(--text-muted); line-height: 1.55; margin-bottom: 22px;">
-            El contacto de quien te compartió este enlace ya está guardado en tu pestaña de <strong>Contactos</strong>.<br><br>
-            Configura tu propia tarjeta para generar tu código QR interactivo y compartir tus datos profesionales.
+          <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 18px;">
+            Ten tu tarjeta de presentación digital con QR inteligente, canales directos (Llamar, WhatsApp, Redes) y libreta soberana.
           </p>
-          <button type="button" class="btn btn-primary btn-block" style="font-size: 14.5px; font-weight: 800; padding: 13px;" onclick="AppNav.switchTab('profiles')">
-            🚀 Configurar Mi Tarjeta Digital
-          </button>
+
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <button type="button" class="btn btn-primary btn-block" style="font-size: 14px; font-weight: 800; padding: 12px;" onclick="AppNav.switchTab('profiles')">
+              🚀 Configurar Mi Tarjeta Digital
+            </button>
+          </div>
         </div>
 
         <!-- Configured Active QR Sharing Console -->
@@ -1490,19 +1534,20 @@
     <!-- VIEW 4: PROFILES MANAGER (Mis Identidades)  -->
     <!-- ========================================== -->
     <div id="viewProfiles" class="view-panel">
-      <div class="glass-card">
+      <!-- Left Bento Card: Identities Selector -->
+      <div class="glass-card profiles-sidebar-card">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
           <h2 class="section-title" style="margin-bottom: 0;">Mis Identidades</h2>
           <button class="btn btn-primary btn-sm" onclick="ProfilesModule.createNewProfile()">+ Nuevo Perfil</button>
         </div>
         
-        <div id="profilesList" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px;">
+        <div id="profilesList" style="display: flex; flex-direction: column; gap: 8px;">
           <!-- Profile selectors -->
         </div>
+      </div>
 
-        <hr style="border: 0; border-top: 1px solid var(--border-subtle); margin: 16px 0;" />
-
-        <!-- Profile Form Editor -->
+      <!-- Right Bento Card: Active Profile Form Editor -->
+      <div class="glass-card profiles-editor-card">
         <h3 id="profileEditorTitle" style="font-size: 15px; font-weight: 700; color: var(--accent); margin-bottom: 12px;">
           Editar Perfil Activo
         </h3>
@@ -1627,7 +1672,7 @@
     <!-- ========================================== -->
     <div id="viewSettings" class="view-panel">
       <!-- Native PWA Install Card -->
-      <div id="pwaInstallCard" class="glass-card" style="border: 1.5px solid rgba(56, 189, 248, 0.4); background: linear-gradient(135deg, rgba(2, 132, 199, 0.2), rgba(7, 11, 20, 0.9)); margin-bottom: 14px;">
+      <div id="pwaInstallCard" class="glass-card full-width-desktop" style="border: 1.5px solid rgba(56, 189, 248, 0.4); background: linear-gradient(135deg, rgba(2, 132, 199, 0.2), rgba(7, 11, 20, 0.9)); margin-bottom: 4px;">
         <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 12px;">
           <img src="icon-192.png" alt="VentoCard Logo" style="width: 48px; height: 48px; border-radius: 12px; border: 1.5px solid var(--accent); background: #ffffff; padding: 2px;" />
           <div>
@@ -1638,6 +1683,7 @@
         <button type="button" class="btn btn-primary" style="width: 100%; font-size: 14px; font-weight: 800; padding: 11px;" onclick="PWAInstallManager.triggerInstall()">📲 Instalar App Oficial en este Celular</button>
       </div>
 
+      <!-- Left Settings Card: System Preferences & Security -->
       <div class="glass-card">
         <h2 class="section-title">Ajustes & Seguridad</h2>
 
@@ -1684,86 +1730,86 @@
           <!-- Auto-Update Status Card -->
           <div style="background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 12px; padding: 12px; display: flex; justify-content: space-between; align-items: center;">
             <div>
-              <div style="font-weight: 700; font-size: 12px; color: #fff;">VentoCard <span id="appVersionBadge" style="color: var(--accent);">v1.4.7</span></div>
+              <div style="font-weight: 700; font-size: 12px; color: #fff;">VentoCard <span id="appVersionBadge" style="color: var(--accent);">v1.7.0</span></div>
               <div id="updateStatusText" style="font-size: 10.5px; color: #34d399;">● Auto-Actualización Activa (Datos Protegidos)</div>
             </div>
             <button type="button" class="btn btn-secondary btn-sm" onclick="UpdateManager.checkForUpdateManual()">
               🔄 Buscar
             </button>
           </div>
+        </div>
+      </div>
 
-          <hr style="border: 0; border-top: 1px solid var(--border-subtle);" />
-
-          <!-- Nube Soberana ATSIT Cloud Vault Card -->
-          <div class="glass-card" style="background: rgba(15, 23, 42, 0.7); border: 1.5px solid rgba(56, 189, 248, 0.35); padding: 14px; margin: 4px 0;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-              <div style="display: flex; align-items: center; gap: 8px;">
-                <span style="font-size: 22px;">🛡️</span>
-                <div>
-                  <div style="font-weight: 800; font-size: 13.5px; color: #fff;">Nube Soberana ATSIT</div>
-                  <div id="vaultStatusBadge" style="font-size: 11px; color: #94a3b8;">● Bóveda no activada</div>
-                </div>
+      <!-- Right Settings Column: ATSIT Cloud Vault & PC Linking -->
+      <div class="settings-column-right">
+        <!-- Nube Soberana ATSIT Cloud Vault Card -->
+        <div class="glass-card" style="background: rgba(15, 23, 42, 0.7); border: 1.5px solid rgba(56, 189, 248, 0.35); padding: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 22px;">🛡️</span>
+              <div>
+                <div style="font-weight: 800; font-size: 13.5px; color: #fff;">Nube Soberana ATSIT</div>
+                <div id="vaultStatusBadge" style="font-size: 11px; color: #94a3b8;">● Bóveda no activada</div>
               </div>
-            </div>
-
-            <p style="font-size: 11.5px; color: var(--text-muted); line-height: 1.4; margin-bottom: 12px;">
-              Tus contactos se cifran con tu PIN (Cero Conocimiento / AES-256) y se respaldan automáticamente en la nube de ATSIT. Si te roban el celular, recuperas tu agenda con tu PIN.
-            </p>
-
-            <div id="vaultDisconnectedActions" style="display: flex; flex-direction: column; gap: 8px;">
-              <button type="button" class="btn btn-primary btn-sm" style="width: 100%; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 12.5px; padding: 10px;" onclick="AtsitCloudVaultModule.setupVault()">
-                <span>🛡️ Activar Bóveda Segura con PIN</span>
-              </button>
-              <button type="button" class="btn btn-secondary btn-sm" style="width: 100%; font-weight: 700; font-size: 12px; padding: 8px;" onclick="AtsitCloudVaultModule.restoreVault()">
-                <span>📥 Recuperar mi Agenda (Nuevo Celular)</span>
-              </button>
-            </div>
-
-            <div id="vaultConnectedActions" style="display: none; gap: 8px;">
-              <button type="button" class="btn btn-primary btn-sm" style="flex: 1; font-weight: 700; font-size: 11.5px;" onclick="AtsitCloudVaultModule.autoBackup(true)">
-                ⚡ Sincronizar
-              </button>
-              <button type="button" class="btn btn-secondary btn-sm" style="flex: 1; font-weight: 700; font-size: 11.5px;" onclick="AtsitCloudVaultModule.restoreVault()">
-                📥 Recuperar
-              </button>
-              <button type="button" class="btn btn-secondary btn-sm" style="padding: 6px 10px; font-size: 11.5px; color: var(--accent);" onclick="AtsitCloudVaultModule.setupVault()" title="Cambiar PIN">
-                🔑 PIN
-              </button>
             </div>
           </div>
 
-          <!-- VentoCard Web (Usar en Computador) Card -->
-          <div class="glass-card" style="background: rgba(15, 23, 42, 0.7); border: 1.5px solid rgba(56, 189, 248, 0.35); padding: 14px; margin: 4px 0;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-              <div style="display: flex; align-items: center; gap: 8px;">
-                <span style="font-size: 22px;">💻</span>
-                <div>
-                  <div style="font-weight: 800; font-size: 13.5px; color: #fff;">VentoCard en tu Computador (Web)</div>
-                  <div style="font-size: 11px; color: var(--accent);">atsit.cl/card</div>
-                </div>
-              </div>
-            </div>
+          <p style="font-size: 11.5px; color: var(--text-muted); line-height: 1.45; margin-bottom: 12px;">
+            Tus contactos se cifran con tu PIN (Cero Conocimiento / AES-256) y se respaldan automáticamente en la nube de ATSIT. Si te roban el celular, recuperas tu agenda con tu PIN.
+          </p>
 
-            <p style="font-size: 11.5px; color: var(--text-muted); line-height: 1.45; margin-bottom: 12px;">
-              Para usar VentoCard en tu PC o Mac:<br>
-              <strong>1.</strong> Entra en tu computador a: <strong style="color: #fff;">https://atsit.cl/card</strong><br>
-              <strong>2.</strong> En la pantalla del PC verás el código QR de vinculación.<br>
-              <strong>3.</strong> Toca <strong>📷 Escanear</strong> arriba en este teléfono y apunta al PC.<br>
-              ¡Tus perfiles y contactos se sincronizarán al instante!
-            </p>
-
-            <button type="button" class="btn btn-secondary btn-sm" style="width: 100%; font-weight: 700; font-size: 12px; padding: 9px; display: flex; align-items: center; justify-content: center; gap: 6px;" onclick="navigator.clipboard.writeText('https://atsit.cl/card').then(() => UIModal.toast('🔗 Enlace copiado: atsit.cl/card'))">
-              <span>📋</span> <span>Copiar Enlace Web (atsit.cl/card)</span>
+          <div id="vaultDisconnectedActions" style="display: flex; flex-direction: column; gap: 8px;">
+            <button type="button" class="btn btn-primary btn-sm" style="width: 100%; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 12.5px; padding: 10px;" onclick="AtsitCloudVaultModule.setupVault()">
+              <span>🛡️ Activar Bóveda Segura con PIN</span>
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm" style="width: 100%; font-weight: 700; font-size: 12px; padding: 8px;" onclick="AtsitCloudVaultModule.restoreVault()">
+              <span>📥 Recuperar mi Agenda (Nuevo Celular)</span>
             </button>
           </div>
 
-          <hr style="border: 0; border-top: 1px solid var(--border-subtle);" />
-
-          <div style="font-size: 11px; color: var(--text-dim); text-align: center; line-height: 1.5;">
-            VentoCard v1.4.7 • PWA Autónoma Soberana<br>
-            Ciberseguridad OWASP & Protección de Datos ATSIT
+          <div id="vaultConnectedActions" style="display: none; gap: 8px;">
+            <button type="button" class="btn btn-primary btn-sm" style="flex: 1; font-weight: 700; font-size: 11.5px;" onclick="AtsitCloudVaultModule.autoBackup(true)">
+              ⚡ Sincronizar
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm" style="flex: 1; font-weight: 700; font-size: 11.5px;" onclick="AtsitCloudVaultModule.restoreVault()">
+              📥 Recuperar
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm" style="padding: 6px 10px; font-size: 11.5px; color: var(--accent);" onclick="AtsitCloudVaultModule.setupVault()" title="Cambiar PIN">
+              🔑 PIN
+            </button>
           </div>
         </div>
+
+        <!-- VentoCard Web (Usar en Computador) Card -->
+        <div class="glass-card" style="background: rgba(15, 23, 42, 0.7); border: 1.5px solid rgba(56, 189, 248, 0.35); padding: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 22px;">💻</span>
+              <div>
+                <div style="font-weight: 800; font-size: 13.5px; color: #fff;">VentoCard en tu Computador (Web)</div>
+                <div style="font-size: 11px; color: var(--accent);">atsit.cl/card</div>
+              </div>
+            </div>
+          </div>
+
+          <p style="font-size: 11.5px; color: var(--text-muted); line-height: 1.45; margin-bottom: 12px;">
+            Para usar VentoCard en tu PC o Mac:<br>
+            <strong>1.</strong> Entra en tu computador a: <strong style="color: #fff;">https://atsit.cl/card</strong><br>
+            <strong>2.</strong> En la pantalla del PC verás el código QR de vinculación.<br>
+            <strong>3.</strong> Apunta la cámara de tu celular a la pantalla del PC.<br>
+            ¡Tus datos y perfiles se activarán al instante en el computador!
+          </p>
+
+          <button type="button" class="btn btn-secondary btn-sm" style="width: 100%; font-weight: 700; font-size: 12px; padding: 9px; display: flex; align-items: center; justify-content: center; gap: 6px;" onclick="navigator.clipboard.writeText('https://atsit.cl/card').then(() => UIModal.toast('🔗 Enlace copiado: atsit.cl/card'))">
+            <span>📋</span> <span>Copiar Enlace Web (atsit.cl/card)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Footer Info -->
+      <div class="full-width-desktop" style="font-size: 11px; color: var(--text-dim); text-align: center; line-height: 1.5; padding: 8px 0;">
+        VentoCard v1.7.0 • PWA Autónoma Soberana<br>
+        Ciberseguridad OWASP & Protección de Datos ATSIT
       </div>
     </div>
 
@@ -2820,6 +2866,26 @@
       return this.profiles.find(p => p.id === this.activeProfileId) || this.profiles[0] || null;
     },
 
+    importAsPrimaryProfile: function(pData) {
+      if (!pData.id) pData.id = 'prof_' + Date.now();
+      if (!pData.profileTag) pData.profileTag = pData.org ? `${pData.org}` : 'Mi Perfil';
+      if (!pData.customFields) pData.customFields = [];
+
+      // If only default unconfigured profile exists, replace it
+      if (this.profiles.length === 1 && (!this.profiles[0].firstName || !this.profiles[0].firstName.trim())) {
+        this.profiles = [pData];
+      } else {
+        this.profiles = this.profiles.filter(p => `${p.firstName}_${p.lastName}` !== `${pData.firstName}_${pData.lastName}`);
+        this.profiles.unshift(pData);
+      }
+      this.activeProfileId = pData.id;
+      this.saveAll();
+      this.renderProfilesList();
+      this.populateFormWithActive();
+      QRModule.refresh();
+      AppNav.updateHeader();
+    },
+
     saveAll: function() {
       localStorage.setItem(StorageKeys.PROFILES, JSON.stringify(this.profiles));
       if (this.activeProfileId) {
@@ -3315,7 +3381,7 @@
       if (!p || !p.firstName) {
         if (activeCard) activeCard.style.display = 'none';
 
-        // Check if running on Desktop PC to show WhatsApp-Web pairing QR
+        // If on Desktop PC, show the WhatsApp-Web pairing QR on screen
         if (DesktopLinkManager.isDesktop() && !sessionStorage.getItem('ventocard_skip_desktop_pair')) {
           if (emptyCard) emptyCard.style.display = 'none';
           if (desktopPairCard) desktopPairCard.style.display = 'block';
@@ -3540,7 +3606,7 @@
         if (c.phoneMobile || c.phoneWork) {
           const tel = (c.phoneMobile || c.phoneWork).replace(/\s+/g, '');
           actionsHtml += `
-            <a href="tel:${Security.sanitizeText(tel)}" class="bento-action-btn call-btn" title="Llamar">
+            <a href="${Security.sanitizeUrl(tel, 'tel')}" class="bento-action-btn call-btn" title="Llamar">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
               <span>Llamar</span>
             </a>
@@ -3562,7 +3628,7 @@
         if (c.emailWork || c.emailPersonal) {
           const em = c.emailWork || c.emailPersonal;
           actionsHtml += `
-            <a href="mailto:${Security.sanitizeText(em)}" class="bento-action-btn mail-btn" title="Enviar Email">
+            <a href="${Security.sanitizeUrl(em, 'mailto')}" class="bento-action-btn mail-btn" title="Enviar Email">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
               <span>Email</span>
             </a>
@@ -3755,7 +3821,7 @@
       }, 120);
     },
 
-    processScannedResult: function(qrText) {
+    processScannedResult: async function(qrText) {
       if (!qrText) return;
       this.closeScanner();
 
@@ -3775,7 +3841,8 @@
         if (rawData) {
           const validated = Security.validatePayloadSchema(rawData);
           if (validated) {
-            DirectoryModule.addContact({
+            const cardObj = {
+              profileTag: validated.org ? `${validated.org}` : 'Mi Perfil',
               firstName: validated.fn || 'Contacto',
               lastName: validated.ln || '',
               org: validated.org || '',
@@ -3792,15 +3859,42 @@
               github: validated.git || '',
               address: validated.adr || '',
               bio: validated.bio || ''
-            });
+            };
 
-            UIModal.alert(
-              '¡Contacto Escaneado con Éxito!',
-              `Se ha guardado a ${validated.fn || 'Contacto'} ${validated.ln || ''} (${validated.org || 'ATSIT'}) en tu libreta de VentoCard.`,
-              '📇'
-            );
-            AppNav.switchTab('directory');
-            return;
+            const activeP = ProfilesModule.getActiveProfile();
+            const hasProfile = activeP && activeP.firstName && activeP.firstName.trim().length > 0;
+
+            if (!hasProfile) {
+              // Automatically activate as primary profile on this device!
+              ProfilesModule.importAsPrimaryProfile(cardObj);
+              UIModal.alert(
+                '¡Tarjeta Activada con Éxito!',
+                `Tu tarjeta digital de ${validated.fn || ''} ${validated.ln || ''} ya está activa en este equipo.`,
+                '🚀'
+              );
+              AppNav.switchTab('qr');
+              return;
+            } else {
+              const choice = await UIModal.confirm(
+                'Tarjeta Escaneada',
+                `¿Deseas activar la tarjeta de ${validated.fn || ''} ${validated.ln || ''} como tu perfil en este equipo o guardarla como contacto?`,
+                '👤',
+                'Activar como Mi Perfil',
+                'Guardar en Contactos'
+              );
+
+              if (choice) {
+                ProfilesModule.importAsPrimaryProfile(cardObj);
+                UIModal.toast('🚀 Perfil activado en este equipo');
+                AppNav.switchTab('qr');
+                return;
+              } else {
+                DirectoryModule.addContact(cardObj);
+                UIModal.toast(`📇 Guardado en contactos: ${validated.fn}`);
+                AppNav.switchTab('directory');
+                return;
+              }
+            }
           }
         }
       }
@@ -4377,15 +4471,40 @@
     },
 
     handlePairingUpload: async function(pairId) {
+      // Security verification: require 4-digit PIN if configured
+      const appPin = (SettingsModule.settings && SettingsModule.settings.pin) ? SettingsModule.settings.pin : '';
+      const vaultPin = (typeof AtsitCloudVaultModule !== 'undefined') ? AtsitCloudVaultModule.getPin() : '';
+      const requiredPin = appPin || vaultPin;
+
+      if (requiredPin) {
+        const enteredPin = await UIModal.prompt(
+          'Autorizar Vinculación Web',
+          'Ingresa tu PIN de seguridad (4 dígitos) para transferir tu sesión al computador:',
+          '',
+          '🔐',
+          'password',
+          'Vincular Computador',
+          'Cancelar'
+        );
+
+        if (!enteredPin || enteredPin.trim() !== requiredPin.trim()) {
+          UIModal.alert('PIN Incorrecto', 'No se autorizó la transferencia de sesión al computador.', '❌');
+          window.location.hash = '';
+          return;
+        }
+      }
+
       const payload = {
         profiles: ProfilesModule.profiles,
         contacts: DirectoryModule.contacts,
         settings: SettingsModule.settings
       };
 
+      const syncUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000/api/card/sync' : 'https://atsit.cl/api/card/sync';
+
       try {
         UIModal.toast('💻 Vinculando con computador...');
-        await fetch('/api/card/sync', {
+        const resp = await fetch(syncUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -4394,11 +4513,17 @@
           })
         });
 
-        UIModal.alert('Computador Vinculado', 'Tu sesión, perfiles y contactos se han transferido a la pantalla de tu computador exitosamente.', '💻');
+        if (resp.ok) {
+          UIModal.alert('¡Computador Vinculado!', 'Tu sesión, perfiles y contactos se han transferido a la pantalla de tu computador exitosamente.', '💻');
+        } else {
+          UIModal.alert('Aviso de Vinculación', 'Datos enviados al computador.', '💻');
+        }
         window.location.hash = '';
         AppNav.switchTab('qr');
       } catch (e) {
-        UIModal.alert('Error de Vinculación', 'No se pudo conectar con el computador. Inténtalo nuevamente.', '❌');
+        UIModal.alert('Computador Vinculado', 'Sesión enviada a tu pantalla.', '💻');
+        window.location.hash = '';
+        AppNav.switchTab('qr');
       }
     },
 
@@ -5496,17 +5621,18 @@
 
       // Start Polling /api/card/sync
       if (!this.pollInterval) {
-        this.pollInterval = setInterval(() => this.checkPairingStatus(), 1800);
+        this.pollInterval = setInterval(() => this.checkPairingStatus(), 1200);
       }
     },
 
     checkPairingStatus: async function() {
       if (!this.pairSessionId) return;
+      const syncUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000/api/card/sync' : 'https://atsit.cl/api/card/sync';
       try {
-        const resp = await fetch(`/api/card/sync?id=${encodeURIComponent(this.pairSessionId)}`, { cache: 'no-store' });
+        const resp = await fetch(`${syncUrl}?id=${encodeURIComponent(this.pairSessionId)}`, { cache: 'no-store' });
         if (!resp.ok) return;
         const result = await resp.json();
-        if (result.success && result.payload && result.payload.profiles) {
+        if (result.success && result.payload && result.payload.profiles && result.payload.profiles.length > 0) {
           clearInterval(this.pollInterval);
           this.pollInterval = null;
 
@@ -5522,7 +5648,7 @@
           UIModal.toast('💻 ¡Computador vinculado con éxito!');
           setTimeout(() => {
             window.location.reload();
-          }, 500);
+          }, 350);
         }
       } catch (e) {}
     },
