@@ -1,4 +1,4 @@
-﻿import { NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 
 const globalLiveSyncStore = new Map<string, {
   version: number;
@@ -29,6 +29,17 @@ globalLiveSyncStore.set('atsit_patricio_diaz', {
   }
 });
 
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    },
+  });
+}
+
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
@@ -38,13 +49,31 @@ export async function GET(req: Request) {
     if (!card) {
       if (cardId === 'atsit_patricio_diaz' || cardId === 'official') {
         const defaultCard = globalLiveSyncStore.get('atsit_patricio_diaz');
-        return NextResponse.json({ success: true, card: defaultCard }, { status: 200 });
+        return NextResponse.json({ success: true, card: defaultCard }, {
+          status: 200,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Cache-Control': 'no-store, no-cache, must-revalidate'
+          }
+        });
       }
-      return NextResponse.json({ success: false, error: 'Tarjeta no encontrada o inactiva' }, { status: 404 });
+      return NextResponse.json({ success: false, error: 'Tarjeta no encontrada o inactiva' }, {
+        status: 404,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Cache-Control': 'no-store, no-cache, must-revalidate'
+        }
+      });
     }
 
     if (card.status === 'revoked') {
-      return NextResponse.json({ success: true, status: 'revoked', message: 'Tarjeta revocada por el titular (Ley N° 21.719)' }, { status: 200 });
+      return NextResponse.json({ success: true, status: 'revoked', message: 'Tarjeta revocada por el titular (Ley N° 21.719)' }, {
+        status: 200,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Cache-Control': 'no-store, no-cache, must-revalidate'
+        }
+      });
     }
 
     return NextResponse.json({
@@ -57,11 +86,15 @@ export async function GET(req: Request) {
     }, {
       status: 200,
       headers: {
-        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300'
+        'Access-Control-Allow-Origin': '*',
+        'Cache-Control': 'no-store, no-cache, must-revalidate'
       }
     });
   } catch (error: any) {
-    return NextResponse.json({ success: false, error: error.message || 'Error en LiveSync' }, { status: 500 });
+    return NextResponse.json({ success: false, error: error.message || 'Error en LiveSync' }, {
+      status: 500,
+      headers: { 'Access-Control-Allow-Origin': '*' }
+    });
   }
 }
 
@@ -71,7 +104,10 @@ export async function POST(req: Request) {
     const { cardId, payload, status = 'active' } = body;
 
     if (!cardId || (!payload && status !== 'revoked')) {
-      return NextResponse.json({ success: false, error: 'Datos incompletos para sincronización' }, { status: 400 });
+      return NextResponse.json({ success: false, error: 'Datos incompletos para sincronización' }, {
+        status: 400,
+        headers: { 'Access-Control-Allow-Origin': '*' }
+      });
     }
 
     const now = Date.now();
@@ -89,8 +125,17 @@ export async function POST(req: Request) {
       cardId,
       version: now,
       message: status === 'revoked' ? 'Tarjeta revocada soberanamente' : 'Ficha actualizada exitosamente en LiveSync'
-    }, { status: 200 });
+    }, {
+      status: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Cache-Control': 'no-store, no-cache, must-revalidate'
+      }
+    });
   } catch (error: any) {
-    return NextResponse.json({ success: false, error: error.message || 'Error al procesar LiveSync' }, { status: 500 });
+    return NextResponse.json({ success: false, error: error.message || 'Error al procesar LiveSync' }, {
+      status: 500,
+      headers: { 'Access-Control-Allow-Origin': '*' }
+    });
   }
 }
