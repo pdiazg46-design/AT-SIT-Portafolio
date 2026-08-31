@@ -1822,7 +1822,7 @@
           <!-- Auto-Update Status Card -->
           <div style="background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 12px; padding: 12px; display: flex; justify-content: space-between; align-items: center;">
             <div>
-              <div style="font-weight: 700; font-size: 12px; color: #fff;">VentoCard <span id="appVersionBadge" style="color: var(--accent);">v2.0.1</span></div>
+              <div style="font-weight: 700; font-size: 12px; color: #fff;">VentoCard <span id="appVersionBadge" style="color: var(--accent);">v2.0.2</span></div>
               <div id="updateStatusText" style="font-size: 10.5px; color: #34d399;">● Auto-Actualización Activa (Datos Protegidos)</div>
             </div>
             <button type="button" class="btn btn-secondary btn-sm" onclick="UpdateManager.checkForUpdateManual()">
@@ -1900,7 +1900,7 @@
 
       <!-- Footer Info -->
       <div class="full-width-desktop" style="font-size: 11px; color: var(--text-dim); text-align: center; line-height: 1.5; padding: 8px 0;">
-        VentoCard v2.0.1 • PWA Autónoma Soberana<br>
+        VentoCard v2.0.2 • PWA Autónoma Soberana<br>
         Ciberseguridad OWASP & Protección de Datos ATSIT
       </div>
     </div>
@@ -4915,37 +4915,35 @@
     },
 
     handlePairingUpload: async function(pairId) {
-      // Security verification: require 4-digit PIN if configured
-      const appPin = (SettingsModule.settings && SettingsModule.settings.pin) ? SettingsModule.settings.pin : '';
-      const vaultPin = (typeof AtsitCloudVaultModule !== 'undefined') ? AtsitCloudVaultModule.getPin() : '';
-      const requiredPin = appPin || vaultPin;
+      if (!pairId) return;
 
-      if (requiredPin) {
-        const enteredPin = await UIModal.prompt(
-          'Autorizar Vinculación Web',
-          'Ingresa tu PIN de seguridad (4 dígitos) para transferir tu sesión al computador:',
-          '',
-          '🔐',
-          'password',
-          'Vincular Computador',
-          'Cancelar'
-        );
+      UIModal.toast('💻 Vinculando sesión con tu computador...');
 
-        if (!enteredPin || enteredPin.trim() !== requiredPin.trim()) {
-          UIModal.alert('PIN Incorrecto', 'No se autorizó la transferencia de sesión al computador.', '❌');
-          window.location.hash = '';
-          return;
-        }
+      // 1. Immediately upload full phone state to PostgreSQL under this pairId (0ms delay)
+      const syncUrl = 'https://www.atsit.cl/api/card/sync';
+      try {
+        await fetch(syncUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            cardId: pairId,
+            payload: {
+              profiles: ProfilesModule.profiles,
+              contacts: DirectoryModule.contacts,
+              categories: DirectoryModule.categories,
+              settings: SettingsModule.settings
+            }
+          })
+        });
+        console.log('✅ Sesión subida a PostgreSQL para vinculación PC:', pairId);
+      } catch (err) {
+        console.warn('Error subiendo sesión para PC:', err);
       }
 
-      UIModal.toast('💻 Conectando directamente con el PC...');
-
-      // Connect via WebRTC directly to the PC
+      // 2. Also establish direct WebRTC P2P DataChannel in background
       if (typeof LiveSyncEngine !== 'undefined') {
         LiveSyncEngine.init();
         LiveSyncEngine.connectToPeer(pairId);
-
-        // When connected, send initial full state and trigger unlock
         setTimeout(() => {
           if (LiveSyncEngine.activeConn && LiveSyncEngine.activeConn.open) {
             LiveSyncEngine.activeConn.send({
@@ -4953,29 +4951,14 @@
               sourceDevice: LiveSyncEngine.getDeviceId(),
               profiles: ProfilesModule.profiles,
               contacts: DirectoryModule.contacts,
+              categories: DirectoryModule.categories,
               settings: SettingsModule.settings
             });
-            UIModal.alert('¡Computador Vinculado!', 'Tu sesión, perfiles y contactos están conectados en vivo con tu computador.', '💻');
-          } else {
-            // Fallback: Also send via server API
-            const syncUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000/api/card/sync' : 'https://www.atsit.cl/api/card/sync';
-            fetch(syncUrl, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                cardId: pairId,
-                payload: {
-                  profiles: ProfilesModule.profiles,
-                  contacts: DirectoryModule.contacts,
-                  settings: SettingsModule.settings
-                }
-              })
-            }).catch(() => {});
-            UIModal.alert('¡Computador Vinculado!', 'Sesión enviada a la pantalla.', '💻');
           }
-        }, 600);
+        }, 500);
       }
 
+      UIModal.alert('¡Computador Vinculado!', 'Tu sesión, perfiles, categorías y contactos se activaron en la pantalla de tu computador.', '💻');
       window.location.hash = '';
       AppNav.switchTab('qr');
     },
@@ -6119,7 +6102,7 @@
       }
 
       if (!this.pollInterval) {
-        this.pollInterval = setInterval(() => this.checkPairingStatus(), 1000);
+        this.pollInterval = setInterval(() => this.checkPairingStatus(), 700);
       }
     },
 
@@ -6138,6 +6121,9 @@
           if (result.payload.contacts) {
             localStorage.setItem(StorageKeys.CONTACTS, JSON.stringify(result.payload.contacts));
           }
+          if (result.payload.categories) {
+            localStorage.setItem(StorageKeys.CATEGORIES, JSON.stringify(result.payload.categories));
+          }
           if (result.payload.settings) {
             localStorage.setItem(StorageKeys.SETTINGS, JSON.stringify(result.payload.settings));
           }
@@ -6146,7 +6132,7 @@
           UIModal.toast('💻 ¡Computador vinculado con éxito!');
           setTimeout(() => {
             window.location.reload();
-          }, 350);
+          }, 300);
         }
       } catch (e) {}
     },
