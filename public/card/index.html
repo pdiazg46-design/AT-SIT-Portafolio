@@ -1580,20 +1580,15 @@
 
           <hr style="border: 0; border-top: 1px solid var(--border-subtle);" />
 
-          <h3 style="font-size: 14px; font-weight: 700; color: var(--accent);">Copia Cifrada Soberana (Militar AES-256)</h3>
+          <h3 style="font-size: 14px; font-weight: 700; color: var(--accent);">Restaurar Copia de Seguridad</h3>
           <p style="font-size: 12px; color: var(--text-muted);">
-            Cifra tus perfiles y contactos con tu clave maestra antes de guardar en tu Google Drive, correo o nube personal.
+            ¿Tienes un archivo de respaldo en tu dispositivo (JSON o cifrado)? Impórtalo aquí para recuperar tus contactos.
           </p>
 
-          <div style="display: flex; gap: 10px;">
-            <button class="btn btn-primary btn-sm" style="flex: 1; font-weight: 800; font-size: 12.5px;" onclick="CryptoBackupModule.promptExport()">
-              🔐 Exportar Cifrado
-            </button>
-            <label class="btn btn-secondary btn-sm" style="flex: 1; font-weight: 700; font-size: 12.5px; cursor: pointer; text-align: center; display: flex; align-items: center; justify-content: center;">
-              📥 Restaurar Copia
-              <input type="file" accept=".json" style="display: none;" onchange="CryptoBackupModule.handleImport(event)" />
-            </label>
-          </div>
+          <label class="btn btn-secondary btn-sm" style="width: 100%; font-weight: 700; font-size: 12.5px; cursor: pointer; text-align: center; display: flex; align-items: center; justify-content: center; padding: 10px;">
+            📥 Restaurar Archivo de Respaldo
+            <input type="file" accept=".json" style="display: none;" onchange="CryptoBackupModule.handleImport(event)" />
+          </label>
 
           <hr style="border: 0; border-top: 1px solid var(--border-subtle);" />
 
