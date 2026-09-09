@@ -3009,22 +3009,22 @@
           id: 'prof_public_default',
           profileType: 'work',
           profileTag: '💼 Mi Perfil Público (Trabajo)',
-          firstName: 'Patricio',
-          lastName: 'Díaz',
-          org: 'ATSIT',
-          title: 'Director Ejecutivo / Consultor TI',
-          phoneMobile: '+56 9 9335 1620',
-          whatsappUser: '@PatoDiazg',
-          phoneWork: '+56 9 9335 1620',
-          emailWork: 'pdiaz@atsit.cl',
+          firstName: '',
+          lastName: '',
+          org: '',
+          title: '',
+          phoneMobile: '',
+          whatsappUser: '',
+          phoneWork: '',
+          emailWork: '',
           emailPersonal: '',
-          website: 'https://atsit.cl',
-          linkedIn: 'https://www.linkedin.com/in/patriciod1/',
-          instagram: '@pdiazg37',
-          tiktok: '@pato.diaz84',
+          website: '',
+          linkedIn: '',
+          instagram: '',
+          tiktok: '',
           github: '',
-          address: 'Santiago, Chile',
-          bio: 'Especialista en arquitectura de software de alta eficiencia, ciberseguridad e inteligencia artificial empresarial.',
+          address: '',
+          bio: '',
           avatarData: '',
           customFields: []
         };
@@ -3034,8 +3034,8 @@
           id: 'prof_private_default',
           profileType: 'personal',
           profileTag: '👤 Mi Perfil Privado (Personal)',
-          firstName: 'Patricio',
-          lastName: 'Díaz',
+          firstName: '',
+          lastName: '',
           org: '',
           title: '',
           phoneMobile: '',
@@ -3808,15 +3808,15 @@
 
     shareViaWhatsApp: function() {
       const p = ProfilesModule.getActiveProfile();
-      const name = p && p.firstName ? `${p.firstName} ${p.lastName || ''}`.trim() : 'Patricio Díaz';
-      const org = (p && p.org) ? p.org : 'ATSIT';
+      const name = p && p.firstName ? `${p.firstName} ${p.lastName || ''}`.trim() : 'Contacto';
+      const org = (p && p.org) ? ` (${p.org})` : '';
 
       // Clean dynamic sharing URL with full encoded card payload for any user
       const shareData = this.getShareDataObject();
       const encoded = shareData ? DataCodec.encodePayload(shareData) : '';
       const link = encoded ? `https://www.atsit.cl/card/#card=${encoded}` : 'https://www.atsit.cl/card/';
 
-      const textMessage = `📇 *Tarjeta Digital de ${name} (${org})*\nToca el enlace para guardar mi contacto e instalar tu VentoCard:\n👉 ${link}`;
+      const textMessage = `📇 *Tarjeta Digital de ${name}${org}*\nToca el enlace para guardar mi contacto e instalar tu VentoCard:\n👉 ${link}`;
 
       window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(textMessage)}`, '_blank');
     },
