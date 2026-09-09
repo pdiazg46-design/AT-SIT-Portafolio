@@ -166,7 +166,14 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
+    let body: any = {};
+    try {
+      const rawText = await req.text();
+      body = rawText ? JSON.parse(rawText) : {};
+    } catch (parseErr) {
+      body = {};
+    }
+
     const { cardId, payload, status = 'active' } = body;
 
     if (!cardId || (!payload && status !== 'revoked')) {
