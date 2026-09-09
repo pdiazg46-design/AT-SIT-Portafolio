@@ -7,7 +7,7 @@ const pool = new Pool({
   connectionString,
   ssl: { rejectUnauthorized: false },
   max: 5,
-  connectionTimeoutMillis: 3000,
+  connectionTimeoutMillis: 5000,
   idleTimeoutMillis: 15000
 });
 
@@ -71,7 +71,7 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const cardId = searchParams.get('id') || 'atsit_patricio_diaz';
 
-    // 1. Instant check from fast In-Memory Cache
+    // 1. Check In-Memory Cache first
     if (memoryCache.has(cardId)) {
       const cached = memoryCache.get(cardId)!;
       return NextResponse.json({
@@ -108,7 +108,7 @@ export async function GET(req: Request) {
       });
     }
 
-    // 3. PostgreSQL Database Check
+    // 3. Query PostgreSQL Database
     try {
       await ensureTable();
       const client = await pool.connect();
@@ -186,7 +186,7 @@ export async function POST(req: Request) {
     const now = Date.now();
     const isoDate = new Date().toISOString();
 
-    // 1. Instant save in fast In-Memory Cache (Guarantees 0ms pairing response)
+    // 1. Instant save in fast In-Memory Cache
     memoryCache.set(cardId, {
       payload: payload || {},
       version: now,
@@ -194,7 +194,7 @@ export async function POST(req: Request) {
       updatedAt: isoDate
     });
 
-    // 2. PostgreSQL DB save with clean error handling
+    // 2. Synchronously Await PostgreSQL DB insertion
     try {
       await ensureTable();
       const client = await pool.connect();
