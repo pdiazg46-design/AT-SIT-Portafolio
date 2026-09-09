@@ -4929,8 +4929,8 @@
       const activeP = ProfilesModule.getActiveProfile();
       const isInstalled = (typeof PWAInstallManager !== 'undefined') ? PWAInstallManager.isInstalled() : false;
 
-      if (activeP && activeP.firstName && isInstalled) {
-        // User already has active profile and app is installed -> Go straight to Contactos!
+      if (activeP && activeP.firstName && activeP.firstName.trim() !== '') {
+        // User already has active profile configured -> Go straight to Contactos directory!
         AppNav.switchTab('directory');
         UIModal.toast(`📇 Contacto guardado: ${senderName}`);
       } else {
