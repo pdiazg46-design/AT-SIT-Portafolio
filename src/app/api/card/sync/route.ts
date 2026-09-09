@@ -187,28 +187,26 @@ export async function POST(req: Request) {
       updatedAt: isoDate
     });
 
-    // 2. Async save to PostgreSQL Database in background
-    (async () => {
+    // 2. PostgreSQL DB save with clean error handling
+    try {
+      await ensureTable();
+      const client = await pool.connect();
       try {
-        await ensureTable();
-        const client = await pool.connect();
-        try {
-          await client.query(`
-            INSERT INTO ventocard_public_cards (card_id, payload, version, status, updated_at)
-            VALUES ($1, $2, $3, $4, NOW())
-            ON CONFLICT (card_id) DO UPDATE SET
-              payload = EXCLUDED.payload,
-              version = EXCLUDED.version,
-              status = EXCLUDED.status,
-              updated_at = NOW();
-          `, [cardId, payload || {}, now, status]);
-        } finally {
-          client.release();
-        }
-      } catch (dbErr) {
-        console.warn('Async PostgreSQL save warning:', dbErr);
+        await client.query(`
+          INSERT INTO ventocard_public_cards (card_id, payload, version, status, updated_at)
+          VALUES ($1, $2::jsonb, $3, $4, NOW())
+          ON CONFLICT (card_id) DO UPDATE SET
+            payload = EXCLUDED.payload,
+            version = EXCLUDED.version,
+            status = EXCLUDED.status,
+            updated_at = NOW();
+        `, [cardId, JSON.stringify(payload || {}), now, status]);
+      } finally {
+        client.release();
       }
-    })();
+    } catch (dbErr) {
+      console.warn('PostgreSQL save warning (using memory cache):', dbErr);
+    }
 
     return NextResponse.json({
       success: true,
