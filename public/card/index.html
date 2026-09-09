@@ -5018,6 +5018,13 @@
 
       UIModal.toast('💻 Vinculando sesión con tu computador...');
 
+      if (typeof DirectoryModule !== 'undefined' && (!DirectoryModule.contacts || DirectoryModule.contacts.length === 0)) {
+        DirectoryModule.init();
+      }
+      if (typeof ProfilesModule !== 'undefined' && (!ProfilesModule.profiles || ProfilesModule.profiles.length === 0)) {
+        ProfilesModule.init();
+      }
+
       // 1. Immediately upload full phone state to PostgreSQL under this pairId (0ms delay)
       const syncUrl = 'https://www.atsit.cl/api/card/sync';
       try {
@@ -5027,10 +5034,10 @@
           body: JSON.stringify({
             cardId: pairId,
             payload: {
-              profiles: ProfilesModule.profiles,
-              contacts: DirectoryModule.contacts,
-              categories: DirectoryModule.categories,
-              settings: SettingsModule.settings
+              profiles: ProfilesModule.profiles || [],
+              contacts: DirectoryModule.contacts || [],
+              categories: DirectoryModule.categories || [],
+              settings: SettingsModule.settings || {}
             }
           })
         });
@@ -6194,6 +6201,14 @@
         if (typeof LiveSyncEngine !== 'undefined') {
           LiveSyncEngine.init();
         }
+        if (sessionStorage.getItem('ventocard_paired_target_tab') === 'directory') {
+          sessionStorage.removeItem('ventocard_paired_target_tab');
+          setTimeout(() => {
+            AppNav.switchTab('directory');
+            const count = (DirectoryModule.contacts) ? DirectoryModule.contacts.length : 0;
+            UIModal.toast(`💻 ¡Celular vinculado! Sincronizados ${count} contactos.`);
+          }, 150);
+        }
       }
     },
 
@@ -6242,6 +6257,7 @@
           }
 
           sessionStorage.setItem('ventocard_desktop_authenticated', 'true');
+          sessionStorage.setItem('ventocard_paired_target_tab', 'directory');
           UIModal.toast('💻 ¡Computador vinculado con éxito!');
           setTimeout(() => {
             window.location.reload();
