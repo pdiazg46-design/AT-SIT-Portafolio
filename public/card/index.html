@@ -1405,16 +1405,6 @@
 
       </div>
 
-      <!-- Recovery / Fallback Options -->
-      <div style="display: flex; gap: 12px; width: 100%; border-top: 1px solid var(--border-subtle); padding-top: 18px; margin-top: 6px; justify-content: center; flex-wrap: wrap;">
-        <button type="button" class="btn btn-primary btn-sm" style="font-size: 12.5px; padding: 9px 18px; font-weight: 800; display: flex; align-items: center; gap: 6px;" onclick="DesktopLinkManager.skipPairing()">
-          <span>💻</span> <span>Entrar directamente en este PC</span>
-        </button>
-        <button type="button" class="btn btn-secondary btn-sm" style="font-size: 12px; padding: 9px 16px; display: flex; align-items: center; gap: 6px;" onclick="DesktopLinkManager.restoreViaPin()">
-          <span>🔑</span> <span>Restaurar Bóveda con PIN</span>
-        </button>
-      </div>
-
     </div>
   </div>
 
@@ -6241,11 +6231,13 @@
         const resp = await fetch(`${syncUrl}?id=${encodeURIComponent(this.peerId)}`, { cache: 'no-store' });
         if (!resp.ok) return;
         const result = await resp.json();
-        if (result.success && result.payload && result.payload.profiles && result.payload.profiles.length > 0) {
+        if (result.success && result.payload && (result.payload.profiles || result.payload.contacts)) {
           clearInterval(this.pollInterval);
           this.pollInterval = null;
 
-          localStorage.setItem(StorageKeys.PROFILES, JSON.stringify(result.payload.profiles));
+          if (result.payload.profiles && Array.isArray(result.payload.profiles) && result.payload.profiles.length > 0) {
+            localStorage.setItem(StorageKeys.PROFILES, JSON.stringify(result.payload.profiles));
+          }
           if (result.payload.contacts) {
             localStorage.setItem(StorageKeys.CONTACTS, JSON.stringify(result.payload.contacts));
           }
