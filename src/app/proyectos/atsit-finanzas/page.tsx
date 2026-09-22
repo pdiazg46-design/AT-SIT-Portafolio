@@ -61,7 +61,7 @@ export default function AtsitFinanzasDetail() {
                                         <DownloadCloud size={12} /> +124 Descargas Realizadas
                                     </span>
                                     <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-[10px] font-black uppercase tracking-wider">
-                                        <CheckCircle2 size={12} /> v1.1.0 — Actualizado: 05/08/2026 (Sudamérica)
+                                        <CheckCircle2 size={12} /> v1.1.1 — Actualizado: 21/09/2026 (Sudamérica)
                                     </span>
                                 </div>
                                 <h3 className="text-2xl font-black text-white mb-2">Descargar ATSIT Finanzas</h3>
@@ -70,7 +70,7 @@ export default function AtsitFinanzasDetail() {
                                 </p>
                                 <div className="flex flex-col sm:flex-row gap-4 mb-4">
                                     <a
-                                        href="https://github.com/pdiazg46-design/ATSIT-Finanzas/releases/download/v1.1.0/ATSIT-Finanzas-Setup-1.1.0.exe"
+                                        href="https://github.com/pdiazg46-design/ATSIT-Finanzas/releases/download/v1.1.1/ATSIT-Finanzas-Setup-1.1.1.exe"
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="w-full sm:w-auto inline-flex items-center justify-center gap-3 bg-gradient-to-r from-purple-500 via-indigo-600 to-blue-600 hover:from-purple-600 hover:to-blue-700 text-white font-black px-7 py-4 rounded-2xl shadow-xl shadow-purple-500/25 transition-all transform hover:scale-[1.02] active:scale-95 text-sm"
@@ -81,7 +81,7 @@ export default function AtsitFinanzasDetail() {
                                 </div>
                                 <div className="pt-3 border-t border-white/10 flex items-center gap-2 text-xs text-slate-300 font-medium">
                                     <ShieldCheck size={16} className="text-emerald-400 shrink-0" />
-                                    <span><strong>Última Versión Publicada en Nube:</strong> v1.1.0 (05/08/2026) — Edición Sudamérica (Instalador oficial exclusivo para Windows).</span>
+                                    <span><strong>Última Versión Publicada en Nube:</strong> v1.1.1 (21/09/2026) — Edición Sudamérica (Instalador oficial exclusivo para Windows).</span>
                                 </div>
                             </div>
                         </motion.div>
