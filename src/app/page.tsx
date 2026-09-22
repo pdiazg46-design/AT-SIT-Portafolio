@@ -256,11 +256,11 @@ export default function Home() {
                                 color="purple"
                                 image="/projects/atsit-finanzas-desktop.jpg"
                                 href="/proyectos/atsit-finanzas"
-                                downloadLink="https://github.com/pdiazg46-design/ATSIT-Finanzas/releases/download/v1.1.1/ATSIT-Finanzas-Setup-1.1.1.exe"
+                                downloadLink="https://github.com/pdiazg46-design/ATSIT-Finanzas/releases/download/v1.1.2/ATSIT-Finanzas-Setup-1.1.2.exe"
                                 downloadText="Descargar Windows (.exe)"
                                 trialBadge="15 Días de Prueba"
                                 osBadge="Windows Nativo"
-                                updateBadge="v1.1.1 — Actualizado: 21/09/2026"
+                                updateBadge="v1.1.2 — Actualizado: 21/09/2026"
                                 isFeaturedDownload={true}
                             />
                             <ProjectCard
@@ -411,7 +411,7 @@ export default function Home() {
                                                 <DownloadCloud size={12} /> +124 Descargas Realizadas
                                             </span>
                                             <span className="bg-emerald-400 text-slate-950 font-black text-[10px] uppercase tracking-widest px-3.5 py-1.5 rounded-full shadow-xl flex items-center gap-1.5">
-                                                <CheckCircle2 size={12} /> v1.1.1 — Actualizado 21/09/2026 (Sudamérica)
+                                                <CheckCircle2 size={12} /> v1.1.2 — Actualizado 21/09/2026 (Sudamérica)
                                             </span>
                                         </div>
                                     </div>
@@ -493,7 +493,7 @@ export default function Home() {
                                     {/* Action Buttons Bar */}
                                     <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-6 border-t border-white/10">
                                         <a
-                                            href="https://github.com/pdiazg46-design/ATSIT-Finanzas/releases/download/v1.1.1/ATSIT-Finanzas-Setup-1.1.1.exe"
+                                            href="https://github.com/pdiazg46-design/ATSIT-Finanzas/releases/download/v1.1.2/ATSIT-Finanzas-Setup-1.1.2.exe"
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="bg-gradient-to-r from-purple-500 via-indigo-600 to-blue-600 hover:from-purple-600 hover:to-blue-700 text-white font-black px-8 py-4 rounded-2xl shadow-xl shadow-purple-500/20 transition-all transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 text-sm text-center group/btn"
@@ -510,7 +510,7 @@ export default function Home() {
                                     </div>
                                     <p className="text-[11px] text-emerald-300 mt-4 text-center sm:text-left font-medium flex items-center gap-1.5 bg-emerald-950/40 border border-emerald-500/30 p-2.5 rounded-xl">
                                         <ShieldCheck size={16} className="text-emerald-400 shrink-0" />
-                                        <span><strong>Versión v1.1.1 Publicada:</strong> 21/09/2026 — Edición Sudamérica (Instalador ejecutable Windows).</span>
+                                        <span><strong>Versión v1.1.2 Publicada:</strong> 21/09/2026 — Edición Sudamérica (Instalador ejecutable Windows).</span>
                                     </p>
                                 </div>
                             </div>
