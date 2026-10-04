@@ -488,7 +488,7 @@
             </button>
             <span id="cajaActiveUserBadge" style="font-size: 0.78rem; font-weight: 800; color: var(--accent); background: #eff6ff; padding: 4px 10px; border-radius: 6px; border: 1px solid #bfdbfe;">👤 Cajero</span>
             <button type="button" onclick="executeLogout()" style="background: #ef4444; color: #ffffff; border: none; padding: 4px 8px; border-radius: 6px; font-weight: 700; font-size: 0.75rem; cursor: pointer;">🚪 Salir</button>
-            <a href="admin.html" id="cajaAdminBtn" style="display: none; text-decoration: none; color: var(--accent); font-size: 0.8rem; font-weight: 700; margin-left: 6px;">⚙️ Admin</a>
+            <a href="/comandas/admin.html" id="cajaAdminBtn" style="display: none; text-decoration: none; color: var(--accent); font-size: 0.8rem; font-weight: 700; margin-left: 6px;">⚙️ Admin</a>
             <div class="badge-mcm">MCMplus SpA</div>
             <div class="badge-live"><div class="dot-green"></div> En Línea</div>
         </div>
@@ -2326,7 +2326,7 @@
 
         function executeLogout() {
             POSStore.logout();
-            checkCajaAuth();
+            window.location.href = '/comandas/';
         }
 
         document.addEventListener('DOMContentLoaded', () => {

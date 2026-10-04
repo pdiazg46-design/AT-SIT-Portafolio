@@ -473,18 +473,18 @@
                 POSStore.addAuditLog('LOGIN', `Ingreso exitoso al perfil ${matchedUser.role} (${matchedUser.name})`, sessionData);
             }
 
-            // Redirigir de inmediato al destino del rol
+            // Redirigir de inmediato al destino del rol con ruta absoluta asegurada
             const role = matchedUser.role.toUpperCase();
             if (role === 'ADMIN') {
-                window.location.href = 'admin.html';
+                window.location.href = '/comandas/admin.html';
             } else if (role === 'CAJA') {
-                window.location.href = 'caja.html';
+                window.location.href = '/comandas/caja.html';
             } else if (role === 'MESERA') {
-                window.location.href = 'mesera.html';
+                window.location.href = '/comandas/mesera.html';
             } else if (role === 'COCINA') {
-                window.location.href = 'cocina.html';
+                window.location.href = '/comandas/cocina.html';
             } else {
-                window.location.href = cfg.target;
+                window.location.href = '/comandas/' + cfg.target;
             }
         }
     </script>
