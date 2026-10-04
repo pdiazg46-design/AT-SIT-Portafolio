@@ -803,7 +803,8 @@
 
             notifyListeners({
                 type: 'SALE_COMPLETED',
-                sale: newSale
+                sale: newSale,
+                pendingOrderId: saleData.pendingOrderId
             });
 
             fetch('/api/sales', {

@@ -117,12 +117,18 @@
             gap: 6px;
         }
 
-        /* 1. Selector de Perfiles */
+        /* 1. Selector de Perfiles (3 Perfiles Activos de Operación) */
         .roles-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(3, 1fr);
             gap: 10px;
             margin-bottom: 24px;
+        }
+
+        @media (max-width: 480px) {
+            .roles-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         .role-card {
@@ -333,13 +339,7 @@
             <div class="role-card" id="card-mesera" onclick="selectRole('MESERA', 'mesera', '123', 'mesera.html')">
                 <div class="role-card-icon">📱</div>
                 <div class="role-card-title">Garzón / Mesas</div>
-                <div class="role-card-desc">Comandero móvil y pedidos a cocina</div>
-            </div>
-
-            <div class="role-card" id="card-cocina" onclick="selectRole('COCINA', 'cocina', '123', 'cocina.html')">
-                <div class="role-card-icon">👨‍🍳</div>
-                <div class="role-card-title">Pantalla Cocina</div>
-                <div class="role-card-desc">Comandas KDS y despacho en sala</div>
+                <div class="role-card-desc">Comandero móvil y pedidos</div>
             </div>
         </div>
 

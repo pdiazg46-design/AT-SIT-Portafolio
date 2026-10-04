@@ -1686,6 +1686,11 @@
             POSStore.onRealtimeEvent((data) => {
                 refreshDashboard();
             });
+
+            // Refresco periódico garantizado en segundo plano para métricas, ventas y arqueo
+            setInterval(() => {
+                refreshDashboard();
+            }, 2500);
         });
 
         function switchTab(tabId) {
@@ -1713,6 +1718,7 @@
         }
 
         function refreshDashboard() {
+            renderKPIs();
             renderExecutiveDashboard();
             renderInventoryTable();
             renderCategoryOptions();

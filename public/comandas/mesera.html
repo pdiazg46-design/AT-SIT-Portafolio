@@ -830,6 +830,11 @@
                 renderCategoryButtons();
                 renderProducts();
             });
+
+            // Refresco periódico para mesas ocupadas y catálogo en mesera
+            setInterval(() => {
+                updateTableStatusBadges();
+            }, 2500);
         });
 
         function renderCategoryButtons() {
