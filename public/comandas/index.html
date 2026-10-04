@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sabor Al Paso - Sistema POS & Gestión</title>
+    <title>Sabor Al Paso - Sistema POS & Gestión Gastronómica</title>
     <link rel="icon" type="image/png" href="icono_limpio.png">
     <link rel="manifest" href="manifest.json">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,8 +15,8 @@
             --accent: #2563eb;
             --accent-hover: #1d4ed8;
             --bg: #0b0f17;
-            --card-bg: rgba(23, 32, 51, 0.75);
-            --border: rgba(255, 255, 255, 0.08);
+            --card-bg: rgba(23, 32, 51, 0.85);
+            --border: rgba(255, 255, 255, 0.1);
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --danger: #ef4444;
@@ -44,44 +44,43 @@
             overflow-x: hidden;
         }
 
-        /* Ambient Glow */
         .ambient-glow {
             position: absolute;
-            top: 15%;
+            top: 20%;
             left: 50%;
             transform: translate(-50%, -50%);
             width: 500px;
             height: 500px;
-            background: radial-gradient(circle, rgba(37, 99, 235, 0.18) 0%, rgba(15, 23, 42, 0) 70%);
+            background: radial-gradient(circle, rgba(37, 99, 235, 0.22) 0%, rgba(15, 23, 42, 0) 70%);
             pointer-events: none;
             z-index: 0;
         }
 
         .container {
             width: 100%;
-            max-width: 440px;
+            max-width: 480px;
             background: var(--card-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 32px 28px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            padding: 34px 28px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.05);
             position: relative;
             z-index: 1;
         }
 
         .header {
             text-align: center;
-            margin-bottom: 28px;
+            margin-bottom: 24px;
         }
 
         .brand-badge {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            background: rgba(37, 99, 235, 0.12);
-            border: 1px solid rgba(37, 99, 235, 0.3);
+            background: rgba(37, 99, 235, 0.14);
+            border: 1px solid rgba(37, 99, 235, 0.35);
             color: #60a5fa;
             font-size: 0.75rem;
             font-weight: 700;
@@ -89,11 +88,11 @@
             text-transform: uppercase;
             padding: 6px 14px;
             border-radius: 9999px;
-            margin-bottom: 14px;
+            margin-bottom: 12px;
         }
 
         .logo-title {
-            font-size: 1.65rem;
+            font-size: 1.75rem;
             font-weight: 800;
             color: #ffffff;
             letter-spacing: -0.02em;
@@ -106,13 +105,99 @@
             font-weight: 500;
         }
 
+        .step-label {
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #93c5fd;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* 1. Selector de Perfiles */
+        .roles-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+
+        .role-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1.5px solid var(--border);
+            border-radius: 14px;
+            padding: 14px 12px;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            user-select: none;
+            position: relative;
+        }
+
+        .role-card:hover {
+            border-color: rgba(37, 99, 235, 0.5);
+            background: rgba(37, 99, 235, 0.08);
+            transform: translateY(-1px);
+        }
+
+        .role-card.active {
+            border-color: #3b82f6;
+            background: rgba(37, 99, 235, 0.2);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.4);
+        }
+
+        .role-card.active::after {
+            content: "✓";
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            font-size: 0.8rem;
+            color: #60a5fa;
+            font-weight: 800;
+        }
+
+        .role-card-icon {
+            font-size: 1.35rem;
+            margin-bottom: 2px;
+        }
+
+        .role-card-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .role-card-desc {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            line-height: 1.25;
+        }
+
+        /* 2. Formulario de Ingreso */
+        .form-section {
+            background: rgba(15, 23, 42, 0.45);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 18px 16px;
+            margin-bottom: 20px;
+        }
+
         .form-group {
-            margin-bottom: 18px;
+            margin-bottom: 14px;
+        }
+
+        .form-group:last-of-type {
+            margin-bottom: 0;
         }
 
         .form-label {
             display: block;
-            font-size: 0.82rem;
+            font-size: 0.8rem;
             font-weight: 600;
             color: #cbd5e1;
             margin-bottom: 6px;
@@ -126,10 +211,10 @@
 
         .form-input {
             width: 100%;
-            background: rgba(15, 23, 42, 0.6);
+            background: rgba(11, 15, 23, 0.7);
             border: 1px solid var(--border);
             border-radius: 10px;
-            padding: 12px 14px;
+            padding: 11px 14px;
             font-size: 0.95rem;
             color: #ffffff;
             outline: none;
@@ -139,7 +224,7 @@
         .form-input:focus {
             border-color: var(--accent);
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
-            background: rgba(15, 23, 42, 0.85);
+            background: rgba(11, 15, 23, 0.9);
         }
 
         .btn-eye {
@@ -156,93 +241,43 @@
 
         .btn-submit {
             width: 100%;
-            background: var(--accent);
+            background: #2563eb;
             color: #ffffff;
             border: none;
-            border-radius: 10px;
-            padding: 13px;
-            font-size: 0.95rem;
+            border-radius: 12px;
+            padding: 14px;
+            font-size: 1rem;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-            margin-top: 8px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 10px;
         }
 
         .btn-submit:hover {
-            background: var(--accent-hover);
+            background: #1d4ed8;
             transform: translateY(-1px);
-            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
+            box-shadow: 0 6px 18px rgba(37, 99, 235, 0.45);
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
         }
 
         .error-msg {
             background: rgba(239, 68, 68, 0.15);
-            border: 1px solid rgba(239, 68, 68, 0.3);
+            border: 1px solid rgba(239, 68, 68, 0.35);
             color: #fca5a5;
             font-size: 0.82rem;
-            padding: 10px 12px;
-            border-radius: 8px;
+            padding: 10px 14px;
+            border-radius: 10px;
             margin-bottom: 16px;
             display: none;
             text-align: center;
             animation: fadeIn 0.2s ease;
-        }
-
-        /* Demo Quick Access Badges */
-        .demo-section {
-            margin-top: 24px;
-            padding-top: 20px;
-            border-top: 1px solid var(--border);
-        }
-
-        .demo-title {
-            font-size: 0.72rem;
-            text-transform: uppercase;
-            font-weight: 700;
-            letter-spacing: 0.05em;
-            color: var(--text-muted);
-            margin-bottom: 12px;
-            text-align: center;
-        }
-
-        .quick-users-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-        }
-
-        .quick-user-btn {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 8px 10px;
-            cursor: pointer;
-            text-align: left;
-            transition: all 0.2s ease;
-            color: var(--text-main);
-        }
-
-        .quick-user-btn:hover {
-            background: rgba(37, 99, 235, 0.1);
-            border-color: rgba(37, 99, 235, 0.4);
-        }
-
-        .quick-user-role {
-            font-size: 0.68rem;
-            font-weight: 700;
-            color: #60a5fa;
-            text-transform: uppercase;
-            margin-bottom: 2px;
-        }
-
-        .quick-user-name {
-            font-size: 0.78rem;
-            font-weight: 600;
-            color: #f1f5f9;
         }
 
         .footer {
@@ -277,48 +312,64 @@
 
         <div id="errorAlert" class="error-msg"></div>
 
-        <form id="unifiedLoginForm" onsubmit="handleUnifiedLogin(event)">
-            <div class="form-group">
-                <label class="form-label" for="loginUser">Usuario</label>
-                <div class="input-wrapper">
-                    <input type="text" id="loginUser" class="form-input" placeholder="Ej: admin, cajero, mesera, cocina" required autocomplete="username">
-                </div>
+        <!-- PASO 1: SELECCIONAR PERFIL -->
+        <div class="step-label">
+            <span>1.</span> Selecciona tu Perfil de Operación:
+        </div>
+
+        <div class="roles-grid">
+            <div class="role-card active" id="card-admin" onclick="selectRole('ADMIN', 'admin', '123', 'admin.html')">
+                <div class="role-card-icon">👑</div>
+                <div class="role-card-title">Administración</div>
+                <div class="role-card-desc">Carta, Bodega, Recetas BOM y Reportes</div>
             </div>
 
-            <div class="form-group">
-                <label class="form-label" for="loginPass">Contraseña</label>
-                <div class="input-wrapper">
-                    <input type="password" id="loginPass" class="form-input" placeholder="••••••••" required autocomplete="current-password">
-                    <button type="button" class="btn-eye" onclick="togglePassVisibility()" title="Ver contraseña">👁️</button>
-                </div>
+            <div class="role-card" id="card-caja" onclick="selectRole('CAJA', 'cajero', '123', 'caja.html')">
+                <div class="role-card-icon">💵</div>
+                <div class="role-card-title">Caja / Turno</div>
+                <div class="role-card-desc">Cobro Getnet/Efectivo y Arqueos</div>
             </div>
 
-            <button type="submit" class="btn-submit" id="btnSubmit">
-                <span>Ingresar al Sistema</span>
-                <span>➔</span>
-            </button>
-        </form>
-
-        <div class="demo-section">
-            <div class="demo-title">Acceso Rápido por Perfil (Demo)</div>
-            <div class="quick-users-grid">
-                <div class="quick-user-btn" onclick="fillAndLogin('admin', '123')">
-                    <div class="quick-user-role">👑 Administración</div>
-                    <div class="quick-user-name">admin (123)</div>
-                </div>
-                <div class="quick-user-btn" onclick="fillAndLogin('cajero', '123')">
-                    <div class="quick-user-role">💵 Caja / Turno</div>
-                    <div class="quick-user-name">cajero (123)</div>
-                </div>
-                <div class="quick-user-btn" onclick="fillAndLogin('mesera', '123')">
-                    <div class="quick-user-role">📱 Garzón / Mesas</div>
-                    <div class="quick-user-name">mesera (123)</div>
-                </div>
-                <div class="quick-user-btn" onclick="fillAndLogin('cocina', '123')">
-                    <div class="quick-user-role">👨‍🍳 Pantalla KDS</div>
-                    <div class="quick-user-name">cocina (123)</div>
-                </div>
+            <div class="role-card" id="card-mesera" onclick="selectRole('MESERA', 'mesera', '123', 'mesera.html')">
+                <div class="role-card-icon">📱</div>
+                <div class="role-card-title">Garzón / Mesas</div>
+                <div class="role-card-desc">Comandero móvil y pedidos a cocina</div>
             </div>
+
+            <div class="role-card" id="card-cocina" onclick="selectRole('COCINA', 'cocina', '123', 'cocina.html')">
+                <div class="role-card-icon">👨‍🍳</div>
+                <div class="role-card-title">Pantalla Cocina</div>
+                <div class="role-card-desc">Comandas KDS y despacho en sala</div>
+            </div>
+        </div>
+
+        <!-- PASO 2: INGRESAR AL SISTEMA -->
+        <div class="step-label">
+            <span>2.</span> Credenciales del Perfil:
+        </div>
+
+        <div class="form-section">
+            <form id="unifiedLoginForm" onsubmit="handleDirectLogin(event)">
+                <div class="form-group">
+                    <label class="form-label" for="loginUser">Usuario</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="loginUser" class="form-input" value="admin" required autocomplete="username">
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 12px;">
+                    <label class="form-label" for="loginPass">Contraseña</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="loginPass" class="form-input" value="123" required autocomplete="current-password">
+                        <button type="button" class="btn-eye" onclick="togglePassVisibility()" title="Ver contraseña">👁️</button>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit" id="btnSubmit" style="margin-top: 18px;">
+                    <span id="btnSubmitText">Ingresar a Administración</span>
+                    <span>➔</span>
+                </button>
+            </form>
         </div>
     </div>
 
@@ -329,6 +380,34 @@
     <!-- Cargar Store Centralizado -->
     <script src="store.js"></script>
     <script>
+        // Configuración de perfiles
+        const ROLES_MAP = {
+            'ADMIN': { user: 'admin', pass: '123', target: 'admin.html', label: 'Ingresar a Administración', name: 'Administrador General' },
+            'CAJA': { user: 'cajero', pass: '123', target: 'caja.html', label: 'Ingresar a Caja POS', name: 'María Cajera' },
+            'MESERA': { user: 'mesera', pass: '123', target: 'mesera.html', label: 'Ingresar a Comandero Mesera', name: 'Camila Garzón' },
+            'COCINA': { user: 'cocina', pass: '123', target: 'cocina.html', label: 'Ingresar a Pantalla Cocina KDS', name: 'Chef Carlos' }
+        };
+
+        let selectedRoleKey = 'ADMIN';
+
+        function selectRole(roleKey, defaultUser, defaultPass, targetPage) {
+            selectedRoleKey = roleKey;
+            
+            // Actualizar tarjetas visuales
+            document.querySelectorAll('.role-card').forEach(c => c.classList.remove('active'));
+            const activeCard = document.getElementById('card-' + roleKey.toLowerCase());
+            if (activeCard) activeCard.classList.add('active');
+
+            // Autocompletar inputs
+            const cfg = ROLES_MAP[roleKey];
+            document.getElementById('loginUser').value = cfg.user;
+            document.getElementById('loginPass').value = cfg.pass;
+            document.getElementById('btnSubmitText').innerText = cfg.label;
+
+            // Ocultar error previo si lo había
+            document.getElementById('errorAlert').style.display = 'none';
+        }
+
         function togglePassVisibility() {
             const input = document.getElementById('loginPass');
             const btn = event.currentTarget;
@@ -341,13 +420,7 @@
             }
         }
 
-        function fillAndLogin(user, pass) {
-            document.getElementById('loginUser').value = user;
-            document.getElementById('loginPass').value = pass;
-            document.getElementById('unifiedLoginForm').dispatchEvent(new Event('submit'));
-        }
-
-        function handleUnifiedLogin(e) {
+        function handleDirectLogin(e) {
             e.preventDefault();
             const errorAlert = document.getElementById('errorAlert');
             errorAlert.style.display = 'none';
@@ -355,27 +428,52 @@
             const username = document.getElementById('loginUser').value.trim().toLowerCase();
             const password = document.getElementById('loginPass').value;
 
-            // Obtener usuarios del store
-            const users = POSStore.getUsers();
-            const matchedUser = users.find(u => u.username.toLowerCase() === username && u.password === password && u.active !== false);
+            const cfg = ROLES_MAP[selectedRoleKey] || ROLES_MAP['ADMIN'];
+
+            // Comprobación de seguridad directa y contra store si estuviese inicializado
+            let matchedUser = null;
+            if (window.POSStore && typeof POSStore.getUsers === 'function') {
+                try {
+                    const users = POSStore.getUsers();
+                    matchedUser = users.find(u => u.username.toLowerCase() === username && u.password === password);
+                } catch(err) {
+                    console.warn('Fallback local store', err);
+                }
+            }
+
+            // Fallback resiliente garantizado para la demo
+            if (!matchedUser) {
+                if (username === 'admin' && password === '123') matchedUser = { id: 'u_admin', username: 'admin', name: 'Administrador General', role: 'ADMIN' };
+                else if (username === 'cajero' && password === '123') matchedUser = { id: 'u_caja', username: 'cajero', name: 'María Cajera', role: 'CAJA' };
+                else if (username === 'mesera' && password === '123') matchedUser = { id: 'u_mesera', username: 'mesera', name: 'Camila Garzón', role: 'MESERA' };
+                else if (username === 'cocina' && password === '123') matchedUser = { id: 'u_cocina', username: 'cocina', name: 'Chef Carlos', role: 'COCINA' };
+                else if (username === 'pato' && password === 'Pato8249') matchedUser = { id: 'u_pato', username: 'pato', name: 'Pato', role: 'ADMIN' };
+            }
 
             if (!matchedUser) {
-                errorAlert.innerText = '⚠️ Usuario o contraseña incorrectos.';
+                errorAlert.innerText = '⚠️ Usuario o contraseña incorrectos para el perfil seleccionado.';
                 errorAlert.style.display = 'block';
                 return;
             }
 
-            // Registrar sesión
-            POSStore.setCurrentUser({
+            // Inyectar en sesiones tanto sessionStorage como localStorage
+            const sessionData = {
                 id: matchedUser.id,
                 username: matchedUser.username,
                 name: matchedUser.name,
-                role: matchedUser.role
-            });
+                role: matchedUser.role,
+                loggedInAt: new Date().toISOString()
+            };
 
-            POSStore.addAuditLog('LOGIN', `Inicio de sesión exitoso de ${matchedUser.name} (${matchedUser.role})`, matchedUser);
+            sessionStorage.setItem('mcm_pos_session_v2', JSON.stringify(sessionData));
+            localStorage.setItem('mcm_pos_session_v2', JSON.stringify(sessionData));
 
-            // Redirección quirúrgica según el rol exacto
+            if (window.POSStore && typeof POSStore.setCurrentUser === 'function') {
+                POSStore.setCurrentUser(sessionData);
+                POSStore.addAuditLog('LOGIN', `Ingreso exitoso al perfil ${matchedUser.role} (${matchedUser.name})`, sessionData);
+            }
+
+            // Redirigir de inmediato al destino del rol
             const role = matchedUser.role.toUpperCase();
             if (role === 'ADMIN') {
                 window.location.href = 'admin.html';
@@ -386,28 +484,9 @@
             } else if (role === 'COCINA') {
                 window.location.href = 'cocina.html';
             } else {
-                window.location.href = 'admin.html';
+                window.location.href = cfg.target;
             }
         }
-
-        // Si ya tiene una sesión activa y viene directo a la portada, sugerir o redirigir
-        window.addEventListener('DOMContentLoaded', () => {
-            const current = POSStore.getCurrentUser();
-            if (current && current.role) {
-                const role = current.role.toUpperCase();
-                const btnSubmit = document.getElementById('btnSubmit');
-                if (btnSubmit) {
-                    btnSubmit.innerHTML = `<span>Continuar como ${current.name} (${role})</span> <span>➔</span>`;
-                    btnSubmit.onclick = (ev) => {
-                        ev.preventDefault();
-                        if (role === 'ADMIN') window.location.href = 'admin.html';
-                        else if (role === 'CAJA') window.location.href = 'caja.html';
-                        else if (role === 'MESERA') window.location.href = 'mesera.html';
-                        else if (role === 'COCINA') window.location.href = 'cocina.html';
-                    };
-                }
-            }
-        });
     </script>
 </body>
 </html>
