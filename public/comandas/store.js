@@ -262,11 +262,19 @@
                     lastCloudVersion = res.version;
                     const st = res.state;
                     if (Array.isArray(st.orders)) saveData(STORAGE_KEY_ORDERS, st.orders);
-                    if (Array.isArray(st.sales)) saveData(STORAGE_KEY_SALES, st.sales);
-                    if (Array.isArray(st.inventory)) saveData(STORAGE_KEY_INVENTORY, st.inventory);
-                    if (Array.isArray(st.products)) saveData(STORAGE_KEY_PRODUCTS, st.products);
-                    if (Array.isArray(st.categories)) saveData(STORAGE_KEY_CATEGORIES, st.categories);
-                    if (Array.isArray(st.suppliers)) saveData(STORAGE_KEY_SUPPLIERS, st.suppliers);
+                    if (Array.isArray(st.sales) && st.sales.length > 0) {
+                        saveData(STORAGE_KEY_SALES, st.sales);
+                    } else if (Array.isArray(st.sales) && st.sales.length === 0) {
+                        const localSales = loadData(STORAGE_KEY_SALES, []);
+                        if (localSales.length > 0) {
+                            // Subir ventas locales a la nube si la nube vino vacía
+                            pushStateToCloud();
+                        }
+                    }
+                    if (Array.isArray(st.inventory) && st.inventory.length > 0) saveData(STORAGE_KEY_INVENTORY, st.inventory);
+                    if (Array.isArray(st.products) && st.products.length > 0) saveData(STORAGE_KEY_PRODUCTS, st.products);
+                    if (Array.isArray(st.categories) && st.categories.length > 0) saveData(STORAGE_KEY_CATEGORIES, st.categories);
+                    if (Array.isArray(st.suppliers) && st.suppliers.length > 0) saveData(STORAGE_KEY_SUPPLIERS, st.suppliers);
                     if (Array.isArray(st.purchases)) saveData(STORAGE_KEY_PURCHASES, st.purchases);
                     notifyListeners({ type: 'SERVER_STATE_SYNCED' });
                 }

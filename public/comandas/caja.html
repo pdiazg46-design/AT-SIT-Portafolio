@@ -591,8 +591,8 @@
     </div>
 
     <!-- Modal Prompt 10% Propina Voluntaria -->
-    <div class="payment-modal-overlay" id="tipPromptModal">
-        <div class="payment-modal" style="max-width: 420px; text-align: center; background: #ffffff; border-radius: 16px; padding: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.4);">
+    <div class="payment-modal-overlay" id="tipPromptModal" onclick="if(event.target===this)cancelTipPromptModal()">
+        <div class="payment-modal" onclick="event.stopPropagation()" style="max-width: 420px; text-align: center; background: #ffffff; border-radius: 16px; padding: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.4);">
             <div style="font-size: 2.2rem; margin-bottom: 4px;">🪙</div>
             <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--primary);">Consulta Propina Voluntaria</h3>
             <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">Mesa / Consumo: <strong id="tipModalConsumptionTotal" style="color: var(--primary);">$0 CLP</strong></p>
@@ -621,13 +621,17 @@
                         <button type="button" style="background: #f8fafc; color: #334155; border: 1.5px solid #cbd5e1; padding: 6px 12px; border-radius: 8px; font-size: 0.78rem; font-weight: 800; cursor: pointer;" onclick="promptCustomTip()">✏️ Otro Monto</button>
                     </div>
                 </div>
+
+                <div style="margin-top: 10px; border-top: 1px solid var(--border); padding-top: 8px;">
+                    <button type="button" style="background: transparent; border: none; color: #64748b; font-weight: 700; font-size: 0.8rem; cursor: pointer; text-decoration: underline;" onclick="cancelTipPromptModal()">✕ Cancelar y Volver al Carrito</button>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Modal de Procesamiento Getnet Santander -->
-    <div class="payment-modal-overlay" id="getnetModal">
-        <div class="payment-modal">
+    <div class="payment-modal-overlay" id="getnetModal" onclick="if(event.target===this)cancelGetnetPayment()">
+        <div class="payment-modal" onclick="event.stopPropagation()">
             <h3 style="font-size: 1.1rem; color: var(--primary);" id="getnetModalTitle">Conectando Terminal Getnet...</h3>
             <div class="payment-spinner"></div>
             <p style="font-size: 0.85rem; color: var(--text-muted);" id="getnetModalStatus">Acerque o inserte la tarjeta en la terminal Getnet Santander...</p>
@@ -641,8 +645,8 @@
     </div>
 
     <!-- Modal Elegante de Vista Previa de Recibo (Simulación en Pantalla) -->
-    <div class="receipt-modal-overlay" id="receiptModal">
-        <div class="receipt-modal-card">
+    <div class="receipt-modal-overlay" id="receiptModal" onclick="if(event.target===this)closeReceiptModal()">
+        <div class="receipt-modal-card" onclick="event.stopPropagation()">
             <div class="receipt-modal-header">
                 <div style="display: flex; align-items: center; gap: 8px;">
                     <span style="font-size: 1.2rem;">🧾</span>
@@ -952,10 +956,19 @@
                 if (window.showToast) {
                     showToast(`🧾 ${ticketTitle} listo en pantalla`, 'info');
                 }
+                // Si el cajero no cierra manualmente el recibo en 8 segundos, se cierra automáticamente para agilizar cobros consecutivos
+                if (window.__receiptAutoCloseTimeout) clearTimeout(window.__receiptAutoCloseTimeout);
+                window.__receiptAutoCloseTimeout = setTimeout(() => {
+                    closeReceiptModal();
+                }, 8000);
             }
         }
 
         function closeReceiptModal() {
+            if (window.__receiptAutoCloseTimeout) {
+                clearTimeout(window.__receiptAutoCloseTimeout);
+                window.__receiptAutoCloseTimeout = null;
+            }
             const receiptModal = document.getElementById('receiptModal');
             if (receiptModal) receiptModal.classList.remove('active');
             const printable = document.getElementById('printableTicket');
@@ -1337,24 +1350,44 @@
         }
 
         function loadMeseraOrderToCart(order) {
-            loadedPendingOrderId = order.id;
-            currentCart = {};
-            
-            order.items.forEach((i, idx) => {
-                const key = (i.productId || i.name) + '_' + idx;
-                currentCart[key] = {
-                    cartKey: key,
-                    product: { id: i.productId || i.name, name: i.name, price: i.price },
-                    qty: i.qty,
-                    removals: i.removals || [],
-                    additions: i.additions || []
-                };
-            });
+            try {
+                // Cerrar cualquier modal o vista previa de recibo previo que pudiera estar abierto
+                closeReceiptModal();
+                const modalTip = document.getElementById('tipPromptModal');
+                if (modalTip) modalTip.classList.remove('active');
+                const modalGetnet = document.getElementById('getnetModal');
+                if (modalGetnet) modalGetnet.classList.remove('active');
 
-            setServiceType(order.serviceType || 'Para Servir');
-            renderCurrentOrderHeader(order);
-            updateCart();
-            renderPendingMeseraOrders();
+                if (!order) return;
+                loadedPendingOrderId = order.id;
+                currentCart = {};
+                
+                (order.items || []).forEach((i, idx) => {
+                    const key = (i.productId || i.name || 'item') + '_' + idx;
+                    currentCart[key] = {
+                        cartKey: key,
+                        product: { 
+                            id: i.productId || i.name || ('p_' + idx), 
+                            name: i.name || 'Producto', 
+                            price: Number(i.price) || 0 
+                        },
+                        qty: Number(i.qty) || 1,
+                        removals: Array.isArray(i.removals) ? i.removals : [],
+                        additions: Array.isArray(i.additions) ? i.additions : []
+                    };
+                });
+
+                setServiceType(order.serviceType || 'Para Servir');
+                renderCurrentOrderHeader(order);
+                updateCart();
+                renderPendingMeseraOrders();
+
+                if (window.showToast) {
+                    showToast(`📋 ${order.tableNum} cargada al carrito para cobro`, 'info');
+                }
+            } catch (err) {
+                console.error('Error al cargar orden al carrito:', err);
+            }
         }
 
         function renderCurrentOrderHeader(order) {
@@ -1392,31 +1425,35 @@
         }
 
         function returnOrderToPending() {
-            if (loadedPendingOrderId) {
-                const orders = POSStore.getPendingOrders();
-                const existingOrder = orders.find(o => o.id === loadedPendingOrderId);
-                POSStore.revertToPending(loadedPendingOrderId);
+            try {
+                if (loadedPendingOrderId) {
+                    const orders = POSStore.getPendingOrders();
+                    const existingOrder = orders.find(o => o.id === loadedPendingOrderId);
+                    POSStore.revertToPending(loadedPendingOrderId);
 
-                const tableName = existingOrder ? existingOrder.tableNum : 'Mesa';
-                const orderNum = existingOrder ? existingOrder.orderNum : '';
+                    const tableName = existingOrder ? existingOrder.tableNum : 'Mesa';
+                    const orderNum = existingOrder ? existingOrder.orderNum : '';
 
-                loadedPendingOrderId = null;
-                currentCart = {};
-                renderCurrentOrderHeader(null);
-                updateCart();
-                renderPendingMeseraOrders();
+                    loadedPendingOrderId = null;
+                    currentCart = {};
+                    renderCurrentOrderHeader(null);
+                    updateCart();
+                    renderPendingMeseraOrders();
 
-                if (window.showToast) {
-                    showToast(`↩️ ${tableName} (#${orderNum}) desmarcada de cobro. Permanece PENDIENTE.`, 'warning');
-                } else if (window.UIModal) {
-                    UIModal.alert({
-                        title: '↩️ Mesa Devuelta a Pendiente',
-                        message: `El pedido de la ${tableName} (#${orderNum}) se desmarcó de cobro y volvió al estado PENDIENTE DE PAGO. La mesa continúa abierta para recibir más consumos.`
-                    });
+                    if (window.showToast) {
+                        showToast(`↩️ ${tableName} (#${orderNum}) desmarcada de cobro. Permanece PENDIENTE.`, 'warning');
+                    } else if (window.UIModal) {
+                        UIModal.alert({
+                            title: '↩️ Mesa Devuelta a Pendiente',
+                            message: `El pedido de la ${tableName} (#${orderNum}) se desmarcó de cobro y volvió al estado PENDIENTE DE PAGO. La mesa continúa abierta para recibir más consumos.`
+                        });
+                    }
+                } else {
+                    currentCart = {};
+                    updateCart();
                 }
-            } else {
-                currentCart = {};
-                updateCart();
+            } catch (err) {
+                console.error('Error al desmarcar orden:', err);
             }
         }
 
@@ -1609,13 +1646,20 @@
         }
 
         function cancelGetnetPayment() {
-            document.getElementById('getnetModal').classList.remove('active');
+            const modal = document.getElementById('getnetModal');
+            if (modal) modal.classList.remove('active');
+        }
+
+        function cancelTipPromptModal() {
+            const modal = document.getElementById('tipPromptModal');
+            if (modal) modal.classList.remove('active');
         }
 
         function simulateGetnetSuccess() {
             document.getElementById('getnetModalStatus').innerText = `✓ Transacción Aprobada en Getnet Santander. Emitiendo comprobantes...`;
             setTimeout(() => {
-                document.getElementById('getnetModal').classList.remove('active');
+                const modal = document.getElementById('getnetModal');
+                if (modal) modal.classList.remove('active');
                 finalizeSale(activePaymentType);
             }, 600);
         }
@@ -1625,6 +1669,12 @@
         }
 
         function finalizeSale(paymentMethod) {
+            // Asegurar que todos los modales de proceso de pago se cierren inmediatamente
+            const modalTip = document.getElementById('tipPromptModal');
+            if (modalTip) modalTip.classList.remove('active');
+            const modalGetnet = document.getElementById('getnetModal');
+            if (modalGetnet) modalGetnet.classList.remove('active');
+
             const consumptionTotal = calculateTotal();
             if (consumptionTotal === 0) return;
             const tip = currentSelectedTip || 0;
