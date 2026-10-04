@@ -995,18 +995,6 @@
                     renderCatGrid();
                 }
             });
-
-            // Polling de respaldo cada 3 segundos en Caja para garantizar sincronización imperecedera
-            setInterval(() => {
-                fetch('/api/state')
-                    .then(r => r.json())
-                    .then(state => {
-                        if (state && Array.isArray(state.orders)) {
-                            localStorage.setItem('mcm_pos_orders_v2', JSON.stringify(state.orders));
-                            renderPendingMeseraOrders();
-                        }
-                    }).catch(() => {});
-            }, 3000);
         });
 
         function renderCatCategories() {
@@ -1214,9 +1202,12 @@
 
         function setServiceType(type) {
             currentServiceType = type;
-            document.getElementById('btnTypeLlevar').classList.toggle('active', type === 'Para Llevar');
-            document.getElementById('btnTypeServir').classList.toggle('active', type === 'Para Servir');
-            document.getElementById('currentTableTag').innerText = type;
+            const btnLlevar = document.getElementById('btnTypeLlevar');
+            const btnServir = document.getElementById('btnTypeServir');
+            if (btnLlevar) btnLlevar.classList.toggle('active', type === 'Para Llevar');
+            if (btnServir) btnServir.classList.toggle('active', type === 'Para Servir');
+            const tag = document.getElementById('currentTableTag');
+            if (tag) tag.innerText = type;
         }
 
         function updateCart() {
@@ -1375,6 +1366,7 @@
                     <div style="display: flex; align-items: center; gap: 8px;">
                         <span>Orden Mesera: <strong>#${order.orderNum} (${order.tableNum})</strong></span>
                         <span style="font-size: 0.7rem; background: #fef3c7; color: #b45309; padding: 2px 6px; border-radius: 4px; font-weight: 700;">EN COBRO</span>
+                        <span id="currentTableTag" style="font-size: 0.7rem; background: #e0f2fe; color: #0369a1; padding: 2px 6px; border-radius: 4px; font-weight: 700;">${currentServiceType}</span>
                     </div>
                     <div style="display: flex; gap: 6px; align-items: center;">
                         <button type="button" onclick="printCurrentKitchenComanda()" style="background: #2563eb; color: #ffffff; border: none; border-radius: 6px; padding: 4px 8px; font-size: 0.75rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);" title="Imprimir comanda para armado en cocina">
