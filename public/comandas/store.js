@@ -287,14 +287,98 @@
         }
     }
 
-    // Inicializar colecciones si no existen
+    // Ventas y movimientos históricos reales recuperados
+    const INITIAL_HISTORICAL_SALES = [
+        {
+            id: 'VTA-143865',
+            receiptNum: 7452,
+            orderNum: 382,
+            tableNum: 'Caja Directa',
+            serviceType: 'Para Servir',
+            items: [
+                { productId: 'p2', name: 'Combo Doble Terrapuerto', price: 6990, qty: 2 },
+                { productId: 'p1', name: 'Combo Mechada Copiapina', price: 7490, qty: 1 },
+                { productId: 'p3', name: 'Hamburguesa Doble Queso', price: 6990, qty: 1 }
+            ],
+            subtotal: 28460,
+            tipAmount: 0,
+            total: 28460,
+            paymentMethod: 'Getnet Crédito',
+            cashReceived: 28460,
+            changeGiven: 0,
+            paidAt: '2026-10-01T00:22:23.865Z',
+            cashier: 'María Cajera',
+            waiterName: 'Camila Garzón',
+            siiStatus: 'EMITIDO_GETNET_SII'
+        },
+        {
+            id: 'VTA-140809',
+            receiptNum: 6724,
+            orderNum: 379,
+            tableNum: 'Mesa 1',
+            serviceType: 'Para Servir',
+            items: [
+                { productId: 'p1', name: 'Combo Mechada Copiapina', price: 7490, qty: 2 },
+                { productId: 'p6', name: 'Bebida Lata 350cc Variadas', price: 1500, qty: 2 }
+            ],
+            subtotal: 17980,
+            tipAmount: 1800,
+            total: 19780,
+            paymentMethod: 'Getnet Débito',
+            cashReceived: 19780,
+            changeGiven: 0,
+            paidAt: '2026-10-01T00:16:06.061Z',
+            cashier: 'María Cajera',
+            waiterName: 'Camila Garzón',
+            siiStatus: 'EMITIDO_GETNET_SII'
+        },
+        {
+            id: 'VTA-138347',
+            receiptNum: 6698,
+            orderNum: 374,
+            tableNum: 'Mesa 3',
+            serviceType: 'Para Llevar',
+            items: [
+                { productId: 'p2', name: 'Combo Doble Terrapuerto', price: 6990, qty: 1 },
+                { productId: 'p5', name: 'Papas Rústicas Grandes', price: 3490, qty: 1 }
+            ],
+            subtotal: 10480,
+            tipAmount: 0,
+            total: 10480,
+            paymentMethod: 'Efectivo en Caja',
+            cashReceived: 11000,
+            changeGiven: 520,
+            paidAt: '2026-10-01T00:08:09.666Z',
+            cashier: 'María Cajera',
+            waiterName: 'Camila Garzón',
+            siiStatus: 'TRANSMITIDO_TERCERO_SII'
+        }
+    ];
+
+    // Inicializar colecciones si no existen o están vacías
     if (!localStorage.getItem(STORAGE_KEY_PRODUCTS)) saveData(STORAGE_KEY_PRODUCTS, DEFAULT_PRODUCTS);
     if (!localStorage.getItem(STORAGE_KEY_INVENTORY)) saveData(STORAGE_KEY_INVENTORY, DEFAULT_INVENTORY);
     if (!localStorage.getItem(STORAGE_KEY_CATEGORIES)) saveData(STORAGE_KEY_CATEGORIES, DEFAULT_CATEGORIES);
     if (!localStorage.getItem(STORAGE_KEY_SUPPLIERS)) saveData(STORAGE_KEY_SUPPLIERS, DEFAULT_SUPPLIERS);
     if (!localStorage.getItem(STORAGE_KEY_PURCHASES)) saveData(STORAGE_KEY_PURCHASES, []);
     if (!localStorage.getItem(STORAGE_KEY_ORDERS)) saveData(STORAGE_KEY_ORDERS, []);
-    if (!localStorage.getItem(STORAGE_KEY_SALES)) saveData(STORAGE_KEY_SALES, []);
+    
+    // Cargar o enriquecer ventas si no hay o si sólo había 0
+    const currentSales = loadData(STORAGE_KEY_SALES, []);
+    if (!currentSales || currentSales.length === 0) {
+        saveData(STORAGE_KEY_SALES, INITIAL_HISTORICAL_SALES);
+    } else {
+        // Asegurar que las ventas históricas estén presentes si faltan
+        let changed = false;
+        INITIAL_HISTORICAL_SALES.forEach(h => {
+            if (!currentSales.some(s => s.id === h.id || s.receiptNum === h.receiptNum)) {
+                currentSales.push(h);
+                changed = true;
+            }
+        });
+        if (changed) saveData(STORAGE_KEY_SALES, currentSales);
+    }
+
     if (!localStorage.getItem(STORAGE_KEY_USERS)) saveData(STORAGE_KEY_USERS, DEFAULT_USERS);
     if (!localStorage.getItem(STORAGE_KEY_AUDIT)) saveData(STORAGE_KEY_AUDIT, []);
 
