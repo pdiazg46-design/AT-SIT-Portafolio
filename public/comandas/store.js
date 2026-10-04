@@ -899,21 +899,35 @@
             return loadData(STORAGE_KEY_SALES, []);
         },
 
-        // Escuchar eventos en tiempo real
+        // Escuchar eventos en tiempo real (BroadcastChannel y Storage Events para sincronización multidispositivo/pestaña)
         onRealtimeEvent(callback) {
-            broadcast.onmessage = (event) => {
-                if (callback && typeof callback === 'function') {
-                    callback(event.data);
-                }
-            };
+            if (typeof callback === 'function') {
+                realtimeListeners.push(callback);
+            }
+
+            // Asegurar que broadcast propague eventos recibidos a todos los listeners
+            if (!window.__pos_broadcast_attached) {
+                window.__pos_broadcast_attached = true;
+                broadcast.addEventListener('message', (event) => {
+                    const data = event.data;
+                    if (data && (data.type === 'NEW_MESERA_ORDER' || data.type === 'SALE_COMPLETED' || data.type === 'MESERA_ORDER_UPDATED')) {
+                        handleIncomingServerEvent(data);
+                    }
+                    realtimeListeners.forEach(cb => {
+                        try { cb(data); } catch (e) {}
+                    });
+                });
+            }
 
             let storageDebounceTimer = null;
             window.addEventListener('storage', (e) => {
                 if (e.key === STORAGE_KEY_ORDERS || e.key === STORAGE_KEY_SALES || e.key === STORAGE_KEY_INVENTORY) {
                     if (storageDebounceTimer) clearTimeout(storageDebounceTimer);
                     storageDebounceTimer = setTimeout(() => {
-                        callback({ type: 'STORAGE_CHANGED', key: e.key });
-                    }, 120);
+                        realtimeListeners.forEach(cb => {
+                            try { cb({ type: 'STORAGE_CHANGED', key: e.key }); } catch (err) {}
+                        });
+                    }, 80);
                 }
             });
         }

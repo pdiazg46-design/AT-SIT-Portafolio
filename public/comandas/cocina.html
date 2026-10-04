@@ -218,6 +218,11 @@
             POSStore.onRealtimeEvent((data) => {
                 renderComandas();
             });
+
+            // Polling de respaldo cada 2.5 segundos para garantizar lectura instantánea de pedidos
+            setInterval(() => {
+                renderComandas();
+            }, 2500);
         });
 
         function checkAuthRequirement() {
