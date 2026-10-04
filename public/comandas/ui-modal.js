@@ -401,6 +401,19 @@
   window.showToast = function (message, type = 'info') {
     createModalDOM();
     const container = document.getElementById('cd-toast-container');
+    if (!container) return;
+
+    // Si ya existe un toast con el mismo mensaje, no duplicarlo en ráfaga
+    const existing = Array.from(container.children);
+    if (existing.some(el => el.innerText.includes(message.replace(/^[✅⚠️❌ℹ️📱]\s*/, '')))) {
+      return;
+    }
+
+    // Mantener máximo 2 toasts visibles para no tapar la pantalla
+    while (container.children.length >= 2) {
+      container.removeChild(container.firstChild);
+    }
+
     const toast = document.createElement('div');
     toast.className = 'cd-toast';
     

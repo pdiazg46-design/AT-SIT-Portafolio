@@ -973,17 +973,22 @@
             renderPendingMeseraOrders();
 
             // Escuchar eventos en tiempo real (Nuevos pedidos de Mesera)
+            const notifiedOrderIds = new Set();
+
             POSStore.onRealtimeEvent((data) => {
                 renderPendingMeseraOrders();
 
-                if (data.type === 'NEW_MESERA_ORDER') {
-                    // Notificación discreta
-                    const titleMsg = data.isAddition 
-                        ? `📱 Adición de consumos: ${data.order.tableNum} (#${data.order.orderNum})` 
-                        : `📱 Nuevo Pedido Mesera: ${data.order.tableNum} (#${data.order.orderNum}) - $${data.order.total.toLocaleString('es-CL')}`;
-                    
-                    if (window.showToast) {
-                        showToast(titleMsg, 'info');
+                if (data.type === 'NEW_MESERA_ORDER' && data.order) {
+                    const ordId = data.order.id || (data.order.tableNum + '_' + data.order.orderNum);
+                    if (!notifiedOrderIds.has(ordId)) {
+                        notifiedOrderIds.add(ordId);
+                        const titleMsg = data.isAddition 
+                            ? `📱 Adición de consumos: ${data.order.tableNum} (#${data.order.orderNum})` 
+                            : `📱 Nuevo Pedido Mesera: ${data.order.tableNum} (#${data.order.orderNum}) - $${data.order.total.toLocaleString('es-CL')}`;
+                        
+                        if (window.showToast) {
+                            showToast(titleMsg, 'info');
+                        }
                     }
                 } else if (data.type === 'PRODUCTS_UPDATED') {
                     renderCatCategories();
