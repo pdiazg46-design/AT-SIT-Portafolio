@@ -1,0 +1,17 @@
+{
+  "short_name": "SaborAlPaso",
+  "name": "Sabor Al Paso - MCMplus SpA (Meseras & POS)",
+  "icons": [
+    {
+      "src": "icono_limpio.png",
+      "type": "image/png",
+      "sizes": "192x192 512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "mesera.html",
+  "background_color": "#ffffff",
+  "theme_color": "#0f172a",
+  "display": "standalone",
+  "orientation": "portrait"
+}

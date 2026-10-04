@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sabor Al Paso - Sistema POS & Gestión</title>
+    <link rel="icon" type="image/png" href="icono_limpio.png">
+    <link rel="manifest" href="manifest.json">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0f172a;
+            --accent: #2563eb;
+            --accent-hover: #1d4ed8;
+            --bg: #0b0f17;
+            --card-bg: rgba(23, 32, 51, 0.75);
+            --border: rgba(255, 255, 255, 0.08);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --danger: #ef4444;
+            --success: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px 16px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Ambient Glow */
+        .ambient-glow {
+            position: absolute;
+            top: 15%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(37, 99, 235, 0.18) 0%, rgba(15, 23, 42, 0) 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 440px;
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 32px 28px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .brand-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(37, 99, 235, 0.12);
+            border: 1px solid rgba(37, 99, 235, 0.3);
+            color: #60a5fa;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            padding: 6px 14px;
+            border-radius: 9999px;
+            margin-bottom: 14px;
+        }
+
+        .logo-title {
+            font-size: 1.65rem;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: -0.02em;
+            margin-bottom: 4px;
+        }
+
+        .logo-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #cbd5e1;
+            margin-bottom: 6px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-input {
+            width: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 14px;
+            font-size: 0.95rem;
+            color: #ffffff;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .form-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
+            background: rgba(15, 23, 42, 0.85);
+        }
+
+        .btn-eye {
+            position: absolute;
+            right: 12px;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 4px;
+            line-height: 1;
+        }
+
+        .btn-submit {
+            width: 100%;
+            background: var(--accent);
+            color: #ffffff;
+            border: none;
+            border-radius: 10px;
+            padding: 13px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-submit:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
+        }
+
+        .error-msg {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+            font-size: 0.82rem;
+            padding: 10px 12px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            display: none;
+            text-align: center;
+            animation: fadeIn 0.2s ease;
+        }
+
+        /* Demo Quick Access Badges */
+        .demo-section {
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .demo-title {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .quick-users-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .quick-user-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 10px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s ease;
+            color: var(--text-main);
+        }
+
+        .quick-user-btn:hover {
+            background: rgba(37, 99, 235, 0.1);
+            border-color: rgba(37, 99, 235, 0.4);
+        }
+
+        .quick-user-role {
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: #60a5fa;
+            text-transform: uppercase;
+            margin-bottom: 2px;
+        }
+
+        .quick-user-name {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: #f1f5f9;
+        }
+
+        .footer {
+            margin-top: 24px;
+            text-align: center;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            z-index: 1;
+        }
+
+        .footer a {
+            color: #60a5fa;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="ambient-glow"></div>
+
+    <div class="container">
+        <div class="header">
+            <div class="brand-badge">⚡ Terrapuerto Calama</div>
+            <h1 class="logo-title">Sabor Al Paso</h1>
+            <p class="logo-subtitle">Acceso Unificado al Sistema Gastronómico POS</p>
+        </div>
+
+        <div id="errorAlert" class="error-msg"></div>
+
+        <form id="unifiedLoginForm" onsubmit="handleUnifiedLogin(event)">
+            <div class="form-group">
+                <label class="form-label" for="loginUser">Usuario</label>
+                <div class="input-wrapper">
+                    <input type="text" id="loginUser" class="form-input" placeholder="Ej: admin, cajero, mesera, cocina" required autocomplete="username">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="loginPass">Contraseña</label>
+                <div class="input-wrapper">
+                    <input type="password" id="loginPass" class="form-input" placeholder="••••••••" required autocomplete="current-password">
+                    <button type="button" class="btn-eye" onclick="togglePassVisibility()" title="Ver contraseña">👁️</button>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit" id="btnSubmit">
+                <span>Ingresar al Sistema</span>
+                <span>➔</span>
+            </button>
+        </form>
+
+        <div class="demo-section">
+            <div class="demo-title">Acceso Rápido por Perfil (Demo)</div>
+            <div class="quick-users-grid">
+                <div class="quick-user-btn" onclick="fillAndLogin('admin', '123')">
+                    <div class="quick-user-role">👑 Administración</div>
+                    <div class="quick-user-name">admin (123)</div>
+                </div>
+                <div class="quick-user-btn" onclick="fillAndLogin('cajero', '123')">
+                    <div class="quick-user-role">💵 Caja / Turno</div>
+                    <div class="quick-user-name">cajero (123)</div>
+                </div>
+                <div class="quick-user-btn" onclick="fillAndLogin('mesera', '123')">
+                    <div class="quick-user-role">📱 Garzón / Mesas</div>
+                    <div class="quick-user-name">mesera (123)</div>
+                </div>
+                <div class="quick-user-btn" onclick="fillAndLogin('cocina', '123')">
+                    <div class="quick-user-role">👨‍🍳 Pantalla KDS</div>
+                    <div class="quick-user-name">cocina (123)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        Desarrollado a la medida por <a href="https://atsit.cl" target="_blank">AT-SIT Chile</a> • Soluciones de Alto Rendimiento
+    </div>
+
+    <!-- Cargar Store Centralizado -->
+    <script src="store.js"></script>
+    <script>
+        function togglePassVisibility() {
+            const input = document.getElementById('loginPass');
+            const btn = event.currentTarget;
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.innerText = '🙈';
+            } else {
+                input.type = 'password';
+                btn.innerText = '👁️';
+            }
+        }
+
+        function fillAndLogin(user, pass) {
+            document.getElementById('loginUser').value = user;
+            document.getElementById('loginPass').value = pass;
+            document.getElementById('unifiedLoginForm').dispatchEvent(new Event('submit'));
+        }
+
+        function handleUnifiedLogin(e) {
+            e.preventDefault();
+            const errorAlert = document.getElementById('errorAlert');
+            errorAlert.style.display = 'none';
+
+            const username = document.getElementById('loginUser').value.trim().toLowerCase();
+            const password = document.getElementById('loginPass').value;
+
+            // Obtener usuarios del store
+            const users = POSStore.getUsers();
+            const matchedUser = users.find(u => u.username.toLowerCase() === username && u.password === password && u.active !== false);
+
+            if (!matchedUser) {
+                errorAlert.innerText = '⚠️ Usuario o contraseña incorrectos.';
+                errorAlert.style.display = 'block';
+                return;
+            }
+
+            // Registrar sesión
+            POSStore.setCurrentUser({
+                id: matchedUser.id,
+                username: matchedUser.username,
+                name: matchedUser.name,
+                role: matchedUser.role
+            });
+
+            POSStore.addAuditLog('LOGIN', `Inicio de sesión exitoso de ${matchedUser.name} (${matchedUser.role})`, matchedUser);
+
+            // Redirección quirúrgica según el rol exacto
+            const role = matchedUser.role.toUpperCase();
+            if (role === 'ADMIN') {
+                window.location.href = 'admin.html';
+            } else if (role === 'CAJA') {
+                window.location.href = 'caja.html';
+            } else if (role === 'MESERA') {
+                window.location.href = 'mesera.html';
+            } else if (role === 'COCINA') {
+                window.location.href = 'cocina.html';
+            } else {
+                window.location.href = 'admin.html';
+            }
+        }
+
+        // Si ya tiene una sesión activa y viene directo a la portada, sugerir o redirigir
+        window.addEventListener('DOMContentLoaded', () => {
+            const current = POSStore.getCurrentUser();
+            if (current && current.role) {
+                const role = current.role.toUpperCase();
+                const btnSubmit = document.getElementById('btnSubmit');
+                if (btnSubmit) {
+                    btnSubmit.innerHTML = `<span>Continuar como ${current.name} (${role})</span> <span>➔</span>`;
+                    btnSubmit.onclick = (ev) => {
+                        ev.preventDefault();
+                        if (role === 'ADMIN') window.location.href = 'admin.html';
+                        else if (role === 'CAJA') window.location.href = 'caja.html';
+                        else if (role === 'MESERA') window.location.href = 'mesera.html';
+                        else if (role === 'COCINA') window.location.href = 'cocina.html';
+                    };
+                }
+            }
+        });
+    </script>
+</body>
+</html>

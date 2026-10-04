@@ -1,0 +1,1388 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Sabor Al Paso">
+    <link rel="apple-touch-icon" href="icono_limpio.png">
+    <link rel="icon" type="image/png" href="icono_limpio.png">
+    <link rel="manifest" href="manifest.json">
+    <title>App Meseras - Sabor Al Paso (MCMplus SpA)</title>
+    <style>
+        :root {
+            --primary: #0f172a;
+            --accent: #2563eb;
+            --accent-hover: #1d4ed8;
+            --bg-body: #ffffff;
+            --bg-card: #ffffff;
+            --bg-light: #f8fafc;
+            --border: #e2e8f0;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --success: #16a34a;
+            --warning: #d97706;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #090d16;
+            color: var(--text-dark);
+            margin: 0;
+            padding: 20px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        /* Carcasa física del celular (Smartphone Mockup Frame) */
+        .phone-frame {
+            width: 420px;
+            height: 850px;
+            max-height: calc(100vh - 20px);
+            background: #1e293b;
+            border-radius: 48px;
+            padding: 12px;
+            box-shadow: 
+                0 25px 60px -15px rgba(0, 0, 0, 0.8),
+                0 0 0 2px #334155,
+                inset 0 0 0 2px rgba(255, 255, 255, 0.1);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+        }
+
+        /* Botones físicos laterales */
+        .phone-frame::before {
+            content: '';
+            position: absolute;
+            left: -6px;
+            top: 120px;
+            width: 4px;
+            height: 45px;
+            background: #334155;
+            border-radius: 4px 0 0 4px;
+            box-shadow: 0 65px 0 #334155, 0 120px 0 #334155;
+        }
+        .phone-frame::after {
+            content: '';
+            position: absolute;
+            right: -6px;
+            top: 150px;
+            width: 4px;
+            height: 70px;
+            background: #334155;
+            border-radius: 0 4px 4px 0;
+        }
+
+        /* Pantalla interna del celular */
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            border-radius: 38px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+        }
+
+        /* Isla Dinámica / Notch de cámara */
+        .phone-notch-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 28px;
+            z-index: 999;
+            display: flex;
+            justify-content: center;
+            pointer-events: none;
+        }
+        .phone-notch {
+            width: 110px;
+            height: 22px;
+            background: #000000;
+            border-radius: 0 0 14px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 12px;
+        }
+        .phone-notch-camera {
+            width: 8px;
+            height: 8px;
+            background: #0f172a;
+            border-radius: 50%;
+            border: 2px solid #1e293b;
+        }
+
+        /* Home Indicator inferior iOS */
+        .phone-home-bar {
+            position: absolute;
+            bottom: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 4px;
+            background: #000000;
+            border-radius: 10px;
+            z-index: 999;
+            pointer-events: none;
+            opacity: 0.5;
+        }
+
+        /* Cabecera Fija Superior Sólida */
+        .fixed-top-header {
+            background: #ffffff;
+            z-index: 100;
+            padding-top: 26px; /* Espacio de protección para el notch */
+            border-bottom: 1px solid var(--border);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+            flex-shrink: 0;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        @media (max-width: 480px) {
+            html, body {
+                height: 100%;
+                height: 100dvh;
+                overflow: hidden;
+                margin: 0;
+                padding: 0;
+            }
+            body {
+                background-color: #ffffff;
+                padding: 0;
+                display: flex;
+                flex-direction: column;
+                min-height: auto;
+            }
+            .phone-frame {
+                width: 100%;
+                height: 100%;
+                height: 100dvh;
+                max-height: none;
+                border-radius: 0;
+                padding: 0;
+                background: transparent;
+                box-shadow: none;
+                flex: 1;
+            }
+            .phone-frame::before, .phone-frame::after, .phone-notch-container, .phone-home-bar { display: none; }
+            .phone-screen { border-radius: 0; height: 100%; height: 100dvh; }
+            .fixed-top-header { padding-top: 0; }
+        }
+
+        /* App Header */
+        .app-header {
+            background: #ffffff;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #f1f5f9;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 0;
+            flex: 1;
+        }
+
+        .header-brand img.app-logo {
+            height: 32px;
+            width: auto;
+            object-fit: contain;
+            flex-shrink: 0;
+        }
+
+        .header-title {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .header-title h1 {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: var(--primary);
+            line-height: 1.1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .header-title span {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .badge-client {
+            background: #eff6ff;
+            color: var(--accent);
+            font-size: 0.68rem;
+            font-weight: 700;
+            padding: 3px 6px;
+            border-radius: 10px;
+            border: 1px solid #bfdbfe;
+            flex-shrink: 0;
+        }
+
+        /* Top Bar Selector de Mesa */
+        .table-selector-bar {
+            background: #fffdf5;
+            padding: 6px 10px;
+            border-bottom: 1px solid #fde68a;
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .table-selector-bar label {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .select-input {
+            flex: 1;
+            min-width: 0;
+            padding: 6px 8px;
+            border-radius: 8px;
+            border: 1.5px solid #f59e0b;
+            background: #ffffff;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--primary);
+            outline: none;
+            text-overflow: ellipsis;
+        }
+
+        /* Categorías Deslizables */
+        .categories-slider {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 10px 12px;
+            background: #ffffff;
+            border-bottom: 1px solid var(--border);
+            scrollbar-width: none;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .categories-slider::-webkit-scrollbar { display: none; }
+
+        .cat-btn {
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            background: var(--bg-light);
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            font-weight: 600;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .cat-btn.active {
+            background: var(--primary);
+            color: #ffffff;
+            border-color: var(--primary);
+            box-shadow: 0 2px 6px rgba(15,23,42,0.2);
+        }
+
+        /* Área desplazable de catálogo de productos */
+        .products-scroll-area {
+            flex: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 12px;
+            box-sizing: border-box;
+            width: 100%;
+        }
+
+        /* Grid de Productos Responsivo */
+        .products-container {
+            padding: 10px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .product-card {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            transition: transform 0.15s, box-shadow 0.15s;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .product-card:active {
+            transform: scale(0.98);
+        }
+
+        .product-img {
+            height: 110px;
+            width: 100%;
+            object-fit: cover;
+            background: #f1f5f9;
+        }
+
+        .product-info {
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            justify-content: space-between;
+        }
+
+        .product-code {
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .product-name {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin: 2px 0 6px 0;
+            line-height: 1.2;
+        }
+
+        .product-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 6px;
+        }
+
+        .product-price {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        .btn-add {
+            background: var(--accent);
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            padding: 6px 12px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Bottom Fixed Bar (Anclada SIEMPRE abajo en la pantalla del celular) */
+        .bottom-bar {
+            flex-shrink: 0;
+            width: 100%;
+            background: #ffffff;
+            border-top: 1px solid var(--border);
+            padding: 12px 16px;
+            padding-bottom: max(14px, env(safe-area-inset-bottom, 14px));
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+            z-index: 200;
+            box-sizing: border-box;
+        }
+
+        .cart-summary {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cart-count {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .cart-total {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .btn-order-send {
+            background: var(--success);
+            color: #ffffff;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 20px;
+            font-size: 0.92rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(22,163,74,0.3);
+        }
+        .btn-order-send:disabled {
+            background: #cbd5e1;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        /* Modal Detalle Pedido (Anclado DENTRO de la pantalla del celular) */
+        .modal-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15,23,42,0.65);
+            backdrop-filter: blur(4px);
+            z-index: 300;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-sheet {
+            background: #ffffff;
+            width: 100%;
+            border-radius: 20px 20px 0 0;
+            padding: 18px 16px;
+            max-height: 90%;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            transform: translateY(100%);
+            transition: transform 0.3s cubic-bezier(0.1, 0.9, 0.2, 1);
+            box-sizing: border-box;
+        }
+        .modal-overlay.active .modal-sheet {
+            transform: translateY(0);
+        }
+
+        .sheet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+
+        .sheet-title {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .btn-close {
+            background: var(--bg-light);
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-weight: 700;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+
+        .cart-items-list {
+            flex: 1;
+            min-height: 180px;
+            max-height: 320px;
+            overflow-y: auto;
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 4px 12px;
+            margin: 8px 0 12px 0;
+        }
+
+        .cart-item-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px dashed #cbd5e1;
+        }
+        .cart-item-row:last-child {
+            border-bottom: none;
+        }
+
+        .cart-item-info h4 {
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+        .cart-item-info span {
+            font-size: 0.8rem;
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .qty-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-qty {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--bg-light);
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .order-notes-input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            font-size: 0.85rem;
+            margin-bottom: 16px;
+            resize: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Carcasa Física de Smartphone (Simulador en PC) -->
+    <div class="phone-frame">
+        <div class="phone-screen">
+            
+            <!-- Isla Dinámica / Cámara Superior -->
+            <div class="phone-notch-container">
+                <div class="phone-notch">
+                    <div class="phone-notch-camera"></div>
+                </div>
+            </div>
+
+            <!-- CABECERA FIJA SUPERIOR SÓLIDA -->
+            <div class="fixed-top-header">
+                <!-- Header con Branding corporativo -->
+                <header class="app-header">
+                    <div class="header-brand">
+                        <img src="logo_atsit.png" alt="ATSIT" class="app-logo" onerror="this.onerror=null; this.src='icono_limpio.png';">
+                        <div class="header-title">
+                            <h1>Sabor Al Paso</h1>
+                            <span>App Meseras • Terrapuerto Calama</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                        <span id="meseraActiveUserBadge" style="font-size: 0.7rem; font-weight: 700; color: var(--accent); background: #eff6ff; padding: 2px 6px; border-radius: 6px; border: 1px solid #bfdbfe;">👤 Mesera</span>
+                        <button type="button" onclick="executeLogout()" style="background: #ef4444; color: #ffffff; border: none; padding: 2px 6px; border-radius: 4px; font-weight: 700; font-size: 0.7rem; cursor: pointer;" title="Cerrar sesión">🚪</button>
+                    </div>
+                </header>
+
+                <!-- Bar Selector de Mesa (FIJA SIEMPRE EN CABECERA) -->
+                <div class="table-selector-bar">
+                    <label for="tableSelect">Ubicación:</label>
+                    <select id="tableSelect" class="select-input" style="border: 2px solid #f59e0b; background: #fffdf5;">
+                        <option value="" disabled selected>⚠️ Seleccionar Mesa / Ubicación...</option>
+                        <option value="Mesa 1">Mesa 1 (Salón)</option>
+                        <option value="Mesa 2">Mesa 2 (Salón)</option>
+                        <option value="Mesa 3">Mesa 3 (Salón)</option>
+                        <option value="Mesa 4">Mesa 4 (Salón)</option>
+                        <option value="Mesa 5">Mesa 5 (Salón)</option>
+                        <option value="Mesa 6">Mesa 6 (Terraza)</option>
+                        <option value="Barra 1">Barra Atención 1</option>
+                        <option value="Barra 2">Barra Atención 2</option>
+                    </select>
+                    <span style="font-size: 0.75rem; font-weight: 700; color: #16a34a; background: #dcfce7; padding: 4px 8px; border-radius: 6px; flex-shrink: 0; white-space: nowrap;">Para Servir</span>
+                </div>
+
+                <!-- Categorías deslizable -->
+                <div class="categories-slider" id="categoriesContainer">
+                    <button class="cat-btn active" onclick="filterCategory('Todas')">Todas</button>
+                    <button class="cat-btn" onclick="filterCategory('Combos')">Combos</button>
+                    <button class="cat-btn" onclick="filterCategory('Hamburguesas')">Hamburguesas</button>
+                    <button class="cat-btn" onclick="filterCategory('Acompañamientos')">Acompañamientos</button>
+                    <button class="cat-btn" onclick="filterCategory('Bebidas')">Bebidas</button>
+                    <button class="cat-btn" onclick="filterCategory('Cafetería')">Cafetería</button>
+                </div>
+            </div>
+
+            <!-- ÁREA DESPLAZABLE SOLO PARA PRODUCTOS -->
+            <div class="products-scroll-area">
+                <div class="products-container" id="productsGrid">
+                    <!-- Renderizado dinámico desde JS -->
+                </div>
+            </div>
+
+            <!-- Barra Inferior Flotante Resumen (Anclada en la pantalla del celular) -->
+            <div class="bottom-bar">
+                <div class="cart-summary" onclick="openCartModal()">
+                    <span class="cart-count" id="cartCountText">0 ítems seleccionados</span>
+                    <span class="cart-total" id="cartTotalText">$0 CLP</span>
+                </div>
+                <button class="btn-order-send" id="btnSendOrder" onclick="openCartModal()" disabled>
+                    <span>Ver Pedido</span>
+                    <span style="background: rgba(255,255,255,0.2); padding: 2px 6px; border-radius: 4px; font-size: 0.8rem;" id="cartItemsBadge">0</span>
+                </button>
+            </div>
+
+            <!-- Modal Resumen de Pedido (Anclado en la pantalla del celular) -->
+            <div class="modal-overlay" id="cartModal">
+                <div class="modal-sheet">
+                    <div class="sheet-header">
+                        <div class="sheet-title">Resumen de Pedido (<span id="modalTableName" style="color: #d97706;">⚠️ Indicar Mesa</span>)</div>
+                        <button class="btn-close" onclick="closeCartModal()">✕</button>
+                    </div>
+
+                    <!-- Selección de Mesa Obligatoria en la Comanda -->
+                    <div style="background: #fffdf5; border: 1.5px solid #fde68a; padding: 10px; border-radius: 10px; margin-bottom: 12px;">
+                        <label style="font-size: 0.82rem; font-weight: 800; color: #b45309; display: block; margin-bottom: 4px;">
+                            📍 Indicar Ubicación / Mesa (Requerido):
+                        </label>
+                        <select id="modalTableSelect" class="select-input" style="width: 100%; padding: 10px; border-radius: 8px; border: 2px solid #f59e0b; background: #ffffff; font-size: 0.92rem; font-weight: 800; color: var(--primary);">
+                            <option value="" disabled selected>⚠️ Seleccionar Mesa o Ubicación...</option>
+                            <option value="Mesa 1">Mesa 1 (Salón)</option>
+                            <option value="Mesa 2">Mesa 2 (Salón)</option>
+                            <option value="Mesa 3">Mesa 3 (Salón)</option>
+                            <option value="Mesa 4">Mesa 4 (Salón)</option>
+                            <option value="Mesa 5">Mesa 5 (Salón)</option>
+                            <option value="Mesa 6">Mesa 6 (Terraza)</option>
+                            <option value="Barra 1">Barra Atención 1</option>
+                            <option value="Barra 2">Barra Atención 2</option>
+                        </select>
+                    </div>
+
+                    <div class="cart-items-list" id="cartItemsList">
+                        <!-- Lista de ítems -->
+                    </div>
+
+                    <label style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted); margin-bottom: 4px;">Notas o especificaciones para Cocina / Caja:</label>
+                    <textarea id="orderNotes" class="order-notes-input" rows="2" placeholder="Ej: Sin cebolla, bebida sin hielo, combo mechada con mayonesa aparte..."></textarea>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; background: var(--bg-light); padding: 12px; border-radius: 10px; border: 1px solid var(--border);">
+                        <div>
+                            <div style="font-weight: 800; color: var(--text-dark); font-size: 0.92rem;">TOTAL CONSUMO:</div>
+                            <span style="font-size: 0.72rem; color: #16a34a; font-weight: 700;">+ Propina 10% sugerida en comanda</span>
+                        </div>
+                        <div style="text-align: right;">
+                            <span style="font-size: 1.25rem; font-weight: 800; color: var(--accent);" id="modalTotalAmount">$0 CLP</span>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+                        <button type="button" style="flex: 1; background: #3b82f6; color: #ffffff; border: none; padding: 12px; border-radius: 10px; font-weight: 800; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;" onclick="showPreCuentaModal()">
+                            🧾 Ver Comanda Valorizada / Pre-Cuenta
+                        </button>
+                    </div>
+
+                    <button class="btn-order-send" style="width: 100%; justify-content: center; padding: 14px; font-size: 1rem;" onclick="confirmSendToCaja()">
+                        🚀 ENVIAR PEDIDO A CAJA
+                    </button>
+                </div>
+            </div>
+
+            <!-- Modal Pre-cuenta para Mostrar al Cliente -->
+            <div class="modal-overlay" id="preCuentaModal" style="z-index: 99999;">
+                <div class="modal-sheet" style="max-height: 90vh; background: #ffffff; border-radius: 16px; padding: 16px; overflow-y: auto;">
+                    <div class="sheet-header">
+                        <div class="sheet-title">🧾 Detalle Pre-Cuenta Cliente</div>
+                        <button class="btn-close" onclick="closePreCuentaModal()">✕</button>
+                    </div>
+                    <div id="preCuentaTicketContent" style="background: #fff; padding: 14px; border: 1px dashed #cbd5e1; border-radius: 8px; font-family: monospace; font-size: 0.82rem; color: #0f172a; margin-bottom: 12px;">
+                        <!-- Contenido dinámico pre-cuenta -->
+                    </div>
+                    <button type="button" class="btn-order-send" style="width: 100%; justify-content: center; padding: 12px; background: #2563eb;" onclick="printPreCuenta()">
+                        ✅ Entendido / Cerrar Pre-Cuenta
+                    </button>
+                </div>
+            </div>
+
+            <!-- Modal Personalizar / Modificar Ítem del Pedido (Anclado en la pantalla del celular) -->
+            <div class="modal-overlay" id="customizeModal" style="z-index: 9999;">
+                <div class="modal-sheet" style="max-height: 85vh; overflow-y: auto;">
+                    <div class="sheet-header">
+                        <div class="sheet-title" id="custModalTitle" style="font-size: 0.95rem;">⚙️ Personalizar Producto</div>
+                        <button class="btn-close" onclick="closeCustomizeModal()">✕</button>
+                    </div>
+
+                    <!-- Sección 1: SACAR / QUITAR INSUMOS -->
+                    <div style="margin-bottom: 14px;">
+                        <label style="font-size: 0.82rem; color: #b91c1c; font-weight: 800; display: flex; align-items: center; gap: 4px; margin-bottom: 6px;">
+                            ⛔ QUITAR INSUMOS DE LA RECETA:
+                        </label>
+                        <div id="custRemovalsList" style="display: flex; flex-wrap: wrap; gap: 6px;">
+                            <!-- Chips de exclusión -->
+                        </div>
+                    </div>
+
+                    <!-- Sección 2: SOLICITUDES Y AGREGADOS COMUNES -->
+                    <div style="margin-bottom: 20px;">
+                        <label style="font-size: 0.82rem; color: #1d4ed8; font-weight: 800; display: flex; align-items: center; gap: 4px; margin-bottom: 6px;">
+                            ➕ SOLICITUDES / AGREGADOS COMUNES:
+                        </label>
+                        <div id="custAdditionsList" style="display: flex; flex-wrap: wrap; gap: 6px;">
+                            <!-- Chips de agregados -->
+                        </div>
+                    </div>
+
+                    <button class="btn-order-send" id="btnSaveCustomization" style="width: 100%; justify-content: center; padding: 14px; font-size: 0.95rem; background: #16a34a;" onclick="confirmSaveCustomization()">
+                        ✅ GUARDAR EN EL PEDIDO
+                    </button>
+                </div>
+            </div>
+
+            <!-- Home Bar Inferior simulada -->
+            <div class="phone-home-bar"></div>
+
+        </div>
+    </div>
+
+    <!-- Scripts de Estado -->
+    <script src="store.js?v=5"></script>
+    <script src="ui-modal.js?v=5"></script>
+    <script>
+        let currentCart = {}; // cartKey -> { cartKey, product, qty, removals: [], additions: [] }
+        let selectedCategory = 'Todas';
+        let editingCartKey = null; // null si es nuevo, string si edita existente en carrito
+        let activeCustomizeProductId = null;
+        let selectedRemovals = new Set();
+        let selectedAdditions = new Set();
+
+        function getCartKey(productId, removals = [], additions = []) {
+            const sRem = [...removals].sort().join('|');
+            const sAdd = [...additions].sort().join('|');
+            return productId + (sRem ? '__rem_' + sRem : '') + (sAdd ? '__add_' + sAdd : '');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCategoryButtons();
+            renderProducts();
+            updateCartUI();
+            updateTableStatusBadges();
+
+            const mainSelect = document.getElementById('tableSelect');
+            const modalSelect = document.getElementById('modalTableSelect');
+
+            // Sincronización bidireccional entre selectores de mesa
+            mainSelect.addEventListener('change', (e) => {
+                const val = e.target.value;
+                if (modalSelect) modalSelect.value = val;
+                document.getElementById('modalTableName').innerText = val || '⚠️ Indicar Mesa';
+            });
+
+            if (modalSelect) {
+                modalSelect.addEventListener('change', (e) => {
+                    const val = e.target.value;
+                    if (mainSelect) mainSelect.value = val;
+                    document.getElementById('modalTableName').innerText = val || '⚠️ Indicar Mesa';
+                    modalSelect.style.border = '2px solid #16a34a';
+                });
+            }
+
+            POSStore.onRealtimeEvent((data) => {
+                updateTableStatusBadges();
+                renderCategoryButtons();
+                renderProducts();
+            });
+        });
+
+        function renderCategoryButtons() {
+            const container = document.getElementById('categoriesContainer');
+            if (!container) return;
+            const categories = ['Todas', ...POSStore.getCategories()];
+
+            container.innerHTML = categories.map(cat => `
+                <button class="cat-btn ${cat === selectedCategory ? 'active' : ''}" onclick="filterCategory('${cat}')">${cat}</button>
+            `).join('');
+        }
+
+        function updateTableStatusBadges() {
+            const pendingOrders = POSStore.getPendingOrders();
+            const selects = [document.getElementById('tableSelect'), document.getElementById('modalTableSelect')];
+            
+            selects.forEach(selectEl => {
+                if (!selectEl) return;
+                Array.from(selectEl.options).forEach(opt => {
+                    if (!opt.value) return;
+                    const tableName = opt.value;
+                    const activeOrd = pendingOrders.find(o => o.tableNum === tableName && o.status === 'PENDIENTE_PAGO');
+                    
+                    let cleanText = opt.text.replace(/\s*\(🟡 Pedido #[0-9]+\)/, '');
+                    if (activeOrd) {
+                        opt.text = `${cleanText} (🟡 Pedido #${activeOrd.orderNum})`;
+                    } else {
+                        opt.text = cleanText;
+                    }
+                });
+            });
+        }
+
+        function renderProducts() {
+            const grid = document.getElementById('productsGrid');
+            const products = POSStore.getProducts();
+            grid.innerHTML = '';
+
+            const filtered = selectedCategory === 'Todas' 
+                ? products 
+                : products.filter(p => p.category === selectedCategory);
+
+            filtered.forEach(p => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.innerHTML = `
+                    <img src="${p.image}" alt="${p.name}" class="product-img" onerror="this.onerror=null; this.src='https://via.placeholder.com/300x200?text=Sabor+Al+Paso';">
+                    <div class="product-info">
+                        <div>
+                            <span class="product-code">${p.code} • ${p.category}</span>
+                            <h3 class="product-name">${p.name}</h3>
+                        </div>
+                        <div class="product-footer">
+                            <span class="product-price">$${p.price.toLocaleString('es-CL')}</span>
+                            <button class="btn-add" style="padding: 6px 14px;" onclick="addToCartBase('${p.id}')">+ Agregar</button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function filterCategory(cat) {
+            selectedCategory = cat;
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.innerText === cat);
+            });
+            renderProducts();
+        }
+
+        function addToCartBase(productId) {
+            const products = POSStore.getProducts();
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+
+            const cartKey = getCartKey(productId, [], []);
+            if (currentCart[cartKey]) {
+                currentCart[cartKey].qty += 1;
+            } else {
+                currentCart[cartKey] = {
+                    cartKey: cartKey,
+                    product: product,
+                    qty: 1,
+                    removals: [],
+                    additions: []
+                };
+            }
+            updateCartUI();
+            
+            if (window.UIModal && window.UIModal.toast) {
+                UIModal.toast(`+1 ${product.name} agregado al pedido`, 'info');
+            }
+        }
+
+        function openEditCartItemModal(cartKey) {
+            const item = currentCart[cartKey];
+            if (!item) return;
+
+            editingCartKey = cartKey;
+            activeCustomizeProductId = item.product.id;
+
+            selectedRemovals = new Set(item.removals || []);
+            selectedAdditions = new Set(item.additions || []);
+
+            const titleEl = document.getElementById('custModalTitle');
+            if (titleEl) titleEl.innerText = `⚙️ Modificar: ${item.product.name}`;
+
+            renderCustomizationModalContent(item.product);
+            document.getElementById('customizeModal').classList.add('active');
+        }
+
+        function renderCustomizationModalContent(product) {
+            const removables = POSStore.getRemovableIngredients(product);
+            const additions = POSStore.getCommonAdditions(product);
+
+            const remContainer = document.getElementById('custRemovalsList');
+            const addContainer = document.getElementById('custAdditionsList');
+
+            if (remContainer) {
+                if (removables.length === 0) {
+                    remContainer.innerHTML = '<span style="font-size:0.75rem; color:#64748b;">No hay insumos removibles definidos</span>';
+                } else {
+                    remContainer.innerHTML = removables.map(ing => {
+                        const isRemoved = selectedRemovals.has(ing);
+                        const style = isRemoved
+                            ? 'background: #fef2f2; border: 2px solid #ef4444; color: #dc2626; font-weight: 800; font-size: 0.8rem; padding: 6px 12px; border-radius: 20px; cursor: pointer;'
+                            : 'background: #f8fafc; border: 1.5px solid #cbd5e1; color: #334155; font-weight: 700; font-size: 0.8rem; padding: 6px 12px; border-radius: 20px; cursor: pointer;';
+                        
+                        const label = isRemoved ? `❌ SIN ${ing.toUpperCase()}` : `✔️ Con ${ing}`;
+
+                        return `<button type="button" style="${style}" onclick="toggleRemovalChip('${ing.replace(/'/g, "\\'")}')">${label}</button>`;
+                    }).join('');
+                }
+            }
+
+            if (addContainer) {
+                if (additions.length === 0) {
+                    addContainer.innerHTML = '<span style="font-size:0.75rem; color:#64748b;">No hay agregados comunes</span>';
+                } else {
+                    addContainer.innerHTML = additions.map(add => {
+                        const isAdded = selectedAdditions.has(add);
+                        const style = isAdded
+                            ? 'background: #eff6ff; border: 2px solid #2563eb; color: #1d4ed8; font-weight: 800; font-size: 0.8rem; padding: 6px 12px; border-radius: 20px; cursor: pointer;'
+                            : 'background: #f8fafc; border: 1.5px solid #cbd5e1; color: #475569; font-weight: 700; font-size: 0.8rem; padding: 6px 12px; border-radius: 20px; cursor: pointer;';
+                        
+                        const label = isAdded ? `✅ ➕ ${add.toUpperCase()}` : `➕ ${add}`;
+
+                        return `<button type="button" style="${style}" onclick="toggleAdditionChip('${add.replace(/'/g, "\\'")}')">${label}</button>`;
+                    }).join('');
+                }
+            }
+        }
+
+        function toggleRemovalChip(ing) {
+            if (selectedRemovals.has(ing)) {
+                selectedRemovals.delete(ing);
+            } else {
+                selectedRemovals.add(ing);
+            }
+            const product = POSStore.getProducts().find(p => p.id === activeCustomizeProductId);
+            if (product) renderCustomizationModalContent(product);
+        }
+
+        function toggleAdditionChip(add) {
+            if (selectedAdditions.has(add)) {
+                selectedAdditions.delete(add);
+            } else {
+                selectedAdditions.add(add);
+            }
+            const product = POSStore.getProducts().find(p => p.id === activeCustomizeProductId);
+            if (product) renderCustomizationModalContent(product);
+        }
+
+        function closeCustomizeModal() {
+            document.getElementById('customizeModal').classList.remove('active');
+            editingCartKey = null;
+            activeCustomizeProductId = null;
+            selectedRemovals.clear();
+            selectedAdditions.clear();
+        }
+
+        function confirmSaveCustomization() {
+            if (!activeCustomizeProductId) return;
+            const product = POSStore.getProducts().find(p => p.id === activeCustomizeProductId);
+            if (!product) return;
+
+            const removalsArray = Array.from(selectedRemovals);
+            const additionsArray = Array.from(selectedAdditions);
+
+            if (editingCartKey && currentCart[editingCartKey]) {
+                const currentQty = currentCart[editingCartKey].qty;
+                delete currentCart[editingCartKey];
+
+                const newCartKey = getCartKey(activeCustomizeProductId, removalsArray, additionsArray);
+                if (currentCart[newCartKey]) {
+                    currentCart[newCartKey].qty += currentQty;
+                } else {
+                    currentCart[newCartKey] = {
+                        cartKey: newCartKey,
+                        product: product,
+                        qty: currentQty,
+                        removals: removalsArray,
+                        additions: additionsArray
+                    };
+                }
+            } else {
+                const newCartKey = getCartKey(activeCustomizeProductId, removalsArray, additionsArray);
+                if (currentCart[newCartKey]) {
+                    currentCart[newCartKey].qty += 1;
+                } else {
+                    currentCart[newCartKey] = {
+                        cartKey: newCartKey,
+                        product: product,
+                        qty: 1,
+                        removals: removalsArray,
+                        additions: additionsArray
+                    };
+                }
+            }
+
+            closeCustomizeModal();
+            updateCartUI();
+            renderCartModalList();
+
+            if (window.UIModal && window.UIModal.toast) {
+                UIModal.toast('✓ Cambios guardados en la comanda', 'success');
+            }
+        }
+
+        function changeQty(cartKey, delta) {
+            if (currentCart[cartKey]) {
+                currentCart[cartKey].qty += delta;
+                if (currentCart[cartKey].qty <= 0) {
+                    delete currentCart[cartKey];
+                }
+            }
+            updateCartUI();
+            renderCartModalList();
+        }
+
+        function updateCartUI() {
+            let totalItems = 0;
+            let totalPrice = 0;
+
+            Object.values(currentCart).forEach(item => {
+                totalItems += item.qty;
+                totalPrice += (item.product.price * item.qty);
+            });
+
+            const net = Math.round(totalPrice / 1.19);
+            const tax = totalPrice - net;
+            const suggestedTip = Math.round(totalPrice * 0.10);
+            const totalWithTip = totalPrice + suggestedTip;
+
+            document.getElementById('cartCountText').innerText = `${totalItems} ítem${totalItems !== 1 ? 's' : ''} seleccionado${totalItems !== 1 ? 's' : ''}`;
+            document.getElementById('cartTotalText').innerText = `$${totalPrice.toLocaleString('es-CL')} CLP`;
+
+            if (document.getElementById('modalNetPrice')) document.getElementById('modalNetPrice').innerText = `$${net.toLocaleString('es-CL')} CLP`;
+            if (document.getElementById('modalTaxPrice')) document.getElementById('modalTaxPrice').innerText = `$${tax.toLocaleString('es-CL')} CLP`;
+            if (document.getElementById('modalSubtotalAmount')) document.getElementById('modalSubtotalAmount').innerText = `$${totalPrice.toLocaleString('es-CL')} CLP`;
+            if (document.getElementById('modalSuggestedTip')) document.getElementById('modalSuggestedTip').innerText = `+$${suggestedTip.toLocaleString('es-CL')} CLP`;
+            if (document.getElementById('modalTotalAmount')) document.getElementById('modalTotalAmount').innerText = `$${totalWithTip.toLocaleString('es-CL')} CLP`;
+
+            document.getElementById('cartItemsBadge').innerText = totalItems;
+
+            const btnSend = document.getElementById('btnSendOrder');
+            if (btnSend) btnSend.disabled = (totalItems === 0);
+        }
+
+        function showPreCuentaModal() {
+            if (Object.keys(currentCart).length === 0) return;
+            const mainSelect = document.getElementById('tableSelect');
+            const tableNum = mainSelect && mainSelect.value ? mainSelect.value : 'Mesa Sin Especificar';
+
+            let totalPrice = 0;
+
+            const itemsHtml = Object.values(currentCart).map(item => {
+                const sub = item.product.price * item.qty;
+                totalPrice += sub;
+                let mods = [];
+                if (item.removals && item.removals.length > 0) mods.push(...item.removals.map(r => `SIN ${r.toUpperCase()}`));
+                if (item.additions && item.additions.length > 0) mods.push(...item.additions.map(a => `+ ${a.toUpperCase()}`));
+                const modStr = mods.length > 0 ? `<div style="font-size: 10px; color: #475569; padding-left: 10px;">└ ${mods.join(', ')}</div>` : '';
+
+                return `
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
+                        <span>${item.qty}x ${item.product.name}</span>
+                        <span>$${sub.toLocaleString('es-CL')}</span>
+                    </div>
+                    ${modStr}
+                `;
+            }).join('');
+
+            const net = Math.round(totalPrice / 1.19);
+            const tax = totalPrice - net;
+            const suggestedTip = Math.round(totalPrice * 0.10);
+            const grandTotal = totalPrice + suggestedTip;
+            const now = new Date().toLocaleString('es-CL');
+            const user = POSStore.getCurrentUser();
+            const serverName = user ? user.name : 'Garzón Salón';
+
+            const ticketHTML = `
+                <div style="text-align: center; font-weight: 800; font-size: 15px;">SABOR AL PASO</div>
+                <div style="text-align: center; font-size: 10px; color: #475569;">MCMplus SpA • RUT: 77.492.310-K</div>
+                <div style="text-align: center; font-size: 10px; color: #475569;">Terrapuerto Calama - Local 2</div>
+                <div style="border-bottom: 1px solid #000; margin: 6px 0;"></div>
+                <div style="font-size: 11px; text-align: center; font-weight: 800; color: #b45309;">*** PRE-CUENTA / DETALLE DE COBROS ***</div>
+                <div style="font-size: 10px; margin-top: 4px; line-height: 1.3;">
+                    <div>UBICACIÓN / MESA: <strong>${tableNum}</strong></div>
+                    <div>FECHA / HORA: ${now}</div>
+                    <div>GARZÓN: ${serverName}</div>
+                </div>
+                <div style="border-bottom: 1px dashed #000; margin: 6px 0;"></div>
+                <div style="font-weight: 800; font-size: 11px; margin-bottom: 4px;">DETALLE DE CONSUMO:</div>
+                ${itemsHtml}
+                <div style="border-bottom: 1px solid #000; margin: 6px 0;"></div>
+                <div style="font-size: 11px;">
+                    <div style="display: flex; justify-content: space-between;"><span>Consumo Neto (sin IVA):</span><span>$${net.toLocaleString('es-CL')}</span></div>
+                    <div style="display: flex; justify-content: space-between;"><span>IVA (19% Incluido):</span><span>$${tax.toLocaleString('es-CL')}</span></div>
+                    <div style="display: flex; justify-content: space-between; font-weight: 800;"><span>Subtotal Consumo:</span><span>$${totalPrice.toLocaleString('es-CL')}</span></div>
+                    <div style="display: flex; justify-content: space-between; color: #16a34a; font-weight: 800;"><span>Propina Sugerida (10%):</span><span>+$${suggestedTip.toLocaleString('es-CL')}</span></div>
+                    <div style="border-top: 1.5px solid #000; margin-top: 4px; padding-top: 4px; display: flex; justify-content: space-between; font-size: 13px; font-weight: 800;">
+                        <span>TOTAL CON PROPINA:</span><span>$${grandTotal.toLocaleString('es-CL')} CLP</span>
+                    </div>
+                </div>
+                <div style="border-bottom: 1px dashed #000; margin: 6px 0;"></div>
+                <div style="font-size: 9.5px; text-align: center; color: #334155; font-style: italic; line-height: 1.25;">
+                    * La propina es sugerida (10% Ley N° 20.918) y voluntaria.<br>
+                    Este desglose coincide 100% con su boleta electrónica emitida en Caja.
+                </div>
+            `;
+
+            document.getElementById('preCuentaTicketContent').innerHTML = ticketHTML;
+            document.getElementById('preCuentaModal').classList.add('active');
+        }
+
+        function closePreCuentaModal() {
+            document.getElementById('preCuentaModal').classList.remove('active');
+        }
+
+        function printPreCuenta() {
+            closePreCuentaModal();
+            if (window.UIModal && window.UIModal.toast) {
+                UIModal.toast('🧾 Pre-cuenta desplegada para verificación del cliente', 'success');
+            }
+        }
+
+        function openCartModal() {
+            if (Object.keys(currentCart).length === 0) return;
+            renderCartModalList();
+            document.getElementById('cartModal').classList.add('active');
+        }
+
+        function closeCartModal() {
+            document.getElementById('cartModal').classList.remove('active');
+        }
+
+        function renderCartModalList() {
+            const list = document.getElementById('cartItemsList');
+            list.innerHTML = '';
+
+            Object.values(currentCart).forEach(item => {
+                const row = document.createElement('div');
+                row.className = 'cart-item-row';
+                row.style.display = 'flex';
+                row.style.alignItems = 'center';
+                row.style.justifyContent = 'space-between';
+                row.style.padding = '10px';
+                row.style.borderBottom = '1px solid var(--border)';
+                row.style.background = '#f8fafc';
+                row.style.borderRadius = '8px';
+                row.style.marginBottom = '6px';
+
+                let removalsHtml = '';
+                if (item.removals && item.removals.length > 0) {
+                    removalsHtml = item.removals.map(r => `<span style="display: inline-block; font-size: 0.68rem; color: #dc2626; background: #fef2f2; border: 1px solid #fca5a5; padding: 1px 5px; border-radius: 4px; font-weight: 800; margin-right: 4px; margin-top: 3px;">⛔ SIN ${r.toUpperCase()}</span>`).join('');
+                }
+
+                let additionsHtml = '';
+                if (item.additions && item.additions.length > 0) {
+                    additionsHtml = item.additions.map(a => `<span style="display: inline-block; font-size: 0.68rem; color: #1d4ed8; background: #eff6ff; border: 1px solid #93c5fd; padding: 1px 5px; border-radius: 4px; font-weight: 800; margin-right: 4px; margin-top: 3px;">➕ ${a.toUpperCase()}</span>`).join('');
+                }
+
+                row.innerHTML = `
+                    <div style="flex: 1; min-width: 0; cursor: pointer;" onclick="openEditCartItemModal('${item.cartKey}')" title="Toca para modificar opciones">
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <h4 style="margin: 0; font-size: 0.88rem; font-weight: 800; color: var(--text-dark);">${item.product.name}</h4>
+                            <span style="font-size: 0.68rem; color: #2563eb; background: #eff6ff; padding: 1px 5px; border-radius: 4px; font-weight: 800; border: 1px solid #bfdbfe;">⚙️ Modificar</span>
+                        </div>
+                        <div style="margin-top: 2px;">
+                            ${removalsHtml}
+                            ${additionsHtml}
+                        </div>
+                        <span style="font-size: 0.78rem; color: var(--text-muted); display: block; margin-top: 2px; font-weight: 700;">$${(item.product.price * item.qty).toLocaleString('es-CL')}</span>
+                    </div>
+                    <div class="qty-controls" style="margin-left: 8px;">
+                        <button class="btn-qty" onclick="changeQty('${item.cartKey}', -1)">-</button>
+                        <span style="font-weight: 700; font-size: 0.9rem; padding: 0 4px;">${item.qty}</span>
+                        <button class="btn-qty" onclick="changeQty('${item.cartKey}', 1)">+</button>
+                    </div>
+                `;
+                list.appendChild(row);
+            });
+        }
+
+        function confirmSendToCaja() {
+            const mainSelect = document.getElementById('tableSelect');
+            const modalSelect = document.getElementById('modalTableSelect');
+            const tableNum = mainSelect ? mainSelect.value : '';
+
+            // Validación estricta: No permite enviar si no se ha indicado la mesa
+            if (!tableNum) {
+                if (window.UIModal && window.UIModal.alert) {
+                    UIModal.alert('⚠️ Debe seleccionar una Ubicación / Mesa antes de enviar el pedido a Caja.');
+                } else {
+                    alert('⚠️ Debe seleccionar una Ubicación / Mesa antes de enviar el pedido a Caja.');
+                }
+                if (modalSelect) {
+                    modalSelect.style.border = '2px solid #ef4444';
+                    modalSelect.focus();
+                }
+                return;
+            }
+
+            const notes = document.getElementById('orderNotes').value;
+
+            const itemsArray = Object.values(currentCart).map(item => ({
+                productId: item.product.id,
+                name: item.product.name,
+                price: item.product.price,
+                qty: item.qty,
+                removals: item.removals || [],
+                additions: item.additions || []
+            }));
+
+            let totalAmount = itemsArray.reduce((acc, i) => acc + (i.price * i.qty), 0);
+            const user = POSStore.getCurrentUser();
+            const waiterName = user ? user.name : 'Camila Garzón';
+
+            // Guardar pedido en el store
+            const newOrder = POSStore.createMeseraOrder({
+                tableNum: tableNum,
+                customerName: 'Cliente Salón',
+                items: itemsArray,
+                total: totalAmount,
+                waiterName: waiterName,
+                notes: notes
+            });
+
+            closeCartModal();
+            currentCart = {};
+            document.getElementById('orderNotes').value = '';
+            
+            // RESET OBLIGATORIO DE MESA PARA EL SIGUIENTE PEDIDO
+            mainSelect.value = '';
+            if (modalSelect) {
+                modalSelect.value = '';
+                modalSelect.style.border = '2px solid #f59e0b';
+            }
+            document.getElementById('modalTableName').innerText = '⚠️ Indicar Mesa';
+
+            updateCartUI();
+            updateTableStatusBadges();
+
+            // Notificación visual rápida
+            if (window.UIModal && window.UIModal.toast) {
+                UIModal.toast(`🚀 Pedido ${tableNum} (#${newOrder.orderNum}) transmitido a Caja exitosamente.`, 'success');
+            } else if (window.UIModal && window.UIModal.alert) {
+                UIModal.alert(`🚀 Pedido ${tableNum} (#${newOrder.orderNum}) transmitido a Caja exitosamente.`);
+            } else {
+                alert(`🚀 Pedido ${tableNum} (#${newOrder.orderNum}) transmitido a Caja exitosamente.`);
+            }
+        }
+
+        /* LÓGICA DE AUTENTICACIÓN MESERA CON OJO EN CONTRASEÑA */
+        function checkMeseraAuth() {
+            const user = POSStore.getCurrentUser();
+            const modal = document.getElementById('meseraLoginModal');
+            const badge = document.getElementById('meseraActiveUserBadge');
+
+            if (!user || (user.role !== 'MESERA' && user.role !== 'ADMIN')) {
+                if (modal) modal.style.display = 'flex';
+            } else {
+                if (modal) modal.style.display = 'none';
+                if (badge) badge.innerText = `👤 ${user.name}`;
+            }
+        }
+
+        function toggleMeseraPassVisibility(inputId, btn) {
+            const input = document.getElementById(inputId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.innerText = '🙈';
+            } else {
+                input.type = 'password';
+                btn.innerText = '👁️';
+            }
+        }
+
+        function handleMeseraLoginSubmit(e) {
+            e.preventDefault();
+            const u = document.getElementById('meseraLoginUser').value.trim();
+            const p = document.getElementById('meseraLoginPass').value;
+            const res = POSStore.authenticate(u, p);
+
+            if (res.success) {
+                if (res.user.role === 'MESERA' || res.user.role === 'ADMIN') {
+                    document.getElementById('meseraLoginErrorMsg').style.display = 'none';
+                    checkMeseraAuth();
+                } else {
+                    document.getElementById('meseraLoginErrorMsg').innerText = `⚠️ El usuario ${res.user.username} (${res.user.role}) no tiene perfil de Mesera.`;
+                    document.getElementById('meseraLoginErrorMsg').style.display = 'block';
+                }
+            } else {
+                document.getElementById('meseraLoginErrorMsg').innerText = `⚠️ ${res.message}`;
+                document.getElementById('meseraLoginErrorMsg').style.display = 'block';
+            }
+        }
+
+        function executeLogout() {
+            POSStore.logout();
+            checkMeseraAuth();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            checkMeseraAuth();
+        });
+    </script>
+
+    <!-- Modal de Inicio de Sesión App Meseras con Ojo en Contraseña -->
+    <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(9, 13, 22, 0.95); backdrop-filter: blur(8px); z-index: 99999; display: none; align-items: center; justify-content: center; padding: 20px;" id="meseraLoginModal">
+        <div style="background: #ffffff; color: #0f172a; border-radius: 16px; padding: 26px; width: 100%; max-width: 340px; box-shadow: 0 20px 40px rgba(0,0,0,0.5);">
+            <div style="text-align: center; margin-bottom: 16px;">
+                <img src="icono_limpio.png" style="height: 44px; margin-bottom: 4px;" alt="Logo">
+                <h3 style="font-size: 1.15rem; font-weight: 800; color: #0f172a;">App Meseras</h3>
+                <p style="font-size: 0.75rem; color: #64748b; margin-top: 2px;">Ingrese credenciales de Garzón o Admin</p>
+            </div>
+            <form id="formMeseraLogin" onsubmit="handleMeseraLoginSubmit(event)">
+                <div style="margin-bottom: 12px;">
+                    <label style="font-size: 0.75rem; font-weight: 700; color: #334155; display: block; margin-bottom: 4px;">Usuario:</label>
+                    <input type="text" id="meseraLoginUser" class="select-input" placeholder="Ej: mesera" required autocomplete="username" style="width: 100%; font-weight: 700; border: 1.5px solid #cbd5e1;">
+                </div>
+                <div style="margin-bottom: 14px;">
+                    <label style="font-size: 0.75rem; font-weight: 700; color: #334155; display: block; margin-bottom: 4px;">Contraseña:</label>
+                    <div style="position: relative; display: flex; align-items: center;">
+                        <input type="password" id="meseraLoginPass" class="select-input" placeholder="••••••••" required autocomplete="current-password" style="width: 100%; font-weight: 700; border: 1.5px solid #cbd5e1; padding-right: 40px;">
+                        <button type="button" onclick="toggleMeseraPassVisibility('meseraLoginPass', this)" style="position: absolute; right: 10px; background: transparent; border: none; font-size: 1.1rem; cursor: pointer;" title="Ver u ocultar contraseña">👁️</button>
+                    </div>
+                </div>
+                <div id="meseraLoginErrorMsg" style="color: #dc2626; font-size: 0.72rem; font-weight: 700; margin-bottom: 10px; display: none;"></div>
+                <button type="submit" style="width: 100%; background: #2563eb; color: #ffffff; border: none; padding: 12px; border-radius: 8px; font-weight: 800; font-size: 0.9rem; cursor: pointer;">🔐 Iniciar Sesión</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

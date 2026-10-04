@@ -1,0 +1,2363 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POS Caja Principal - Sabor Al Paso (MCMplus SpA)</title>
+    <link rel="icon" type="image/png" href="icono_limpio.png">
+    <style>
+        :root {
+            --primary: #0f172a;
+            --accent: #2563eb;
+            --accent-hover: #1d4ed8;
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --border: #e2e8f0;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --success: #16a34a;
+            --warning: #d97706;
+            --danger: #dc2626;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+        body { background-color: var(--bg-body); color: var(--text-dark); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+
+        /* Header Ejecutivo ATSIT + MCMplus SpA */
+        .pos-header {
+            background: #ffffff;
+            border-bottom: 2px solid var(--primary);
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .header-brand { display: flex; align-items: center; gap: 14px; }
+        .header-brand img.logo { height: 44px; width: auto; object-fit: contain; }
+        .header-info h1 { font-size: 1.15rem; font-weight: 800; color: var(--primary); line-height: 1.1; }
+        .header-info span { font-size: 0.78rem; color: var(--text-muted); font-weight: 600; }
+        
+        .client-badge-container { display: flex; align-items: center; gap: 10px; }
+        .badge-mcm { background: #eff6ff; color: var(--accent); font-size: 0.75rem; font-weight: 800; padding: 4px 10px; border-radius: 6px; border: 1px solid #bfdbfe; }
+        .badge-live { background: #dcfce7; color: var(--success); font-size: 0.75rem; font-weight: 700; padding: 4px 10px; border-radius: 6px; display: flex; align-items: center; gap: 6px; }
+        .dot-green { width: 8px; height: 8px; background: var(--success); border-radius: 50%; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+
+        /* Layout Principal 2 Columnas */
+        .pos-layout { display: flex; flex: 1; overflow: hidden; }
+
+        /* Columna Izquierda: Catálogo y Pedidos Mesera */
+        .left-panel { flex: 1; display: flex; flex-direction: column; border-right: 1px solid var(--border); background: #ffffff; }
+
+        /* Columna Izquierda 1: Pedidos de Meseras Pendientes (Lista Vertical Descendente) */
+        .pending-sidebar-col {
+            width: 250px;
+            background: #fffdf5;
+            border-right: 1.5px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        .pending-sidebar-header {
+            padding: 12px 14px;
+            background: #fef3c7;
+            border-bottom: 1px solid #fde68a;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .pending-sidebar-header h3 {
+            font-size: 0.82rem;
+            font-weight: 800;
+            color: #92400e;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .pending-badge-count {
+            background: #d97706;
+            color: #ffffff;
+            font-size: 0.75rem;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+
+        .pending-cards-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .pending-card {
+            background: #ffffff;
+            border: 1.5px solid #fde68a;
+            border-radius: 10px;
+            padding: 10px 12px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            user-select: none;
+        }
+
+        .pending-card:hover {
+            border-color: var(--warning);
+            background: #fffbebf1;
+            transform: translateY(-1px);
+        }
+
+        .pending-card.active-card {
+            border-color: var(--accent);
+            background: #eff6ff;
+            box-shadow: 0 0 0 2px rgba(37,99,235,0.25);
+        }
+
+        .pending-card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .pending-card-table {
+            font-size: 0.88rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .pending-card-num {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            background: var(--bg-body);
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+        }
+
+        .pending-card-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-top: 4px;
+        }
+
+        .pending-card-total {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        .pending-card-tag {
+            font-size: 0.68rem;
+            font-weight: 800;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        .pending-card-tag.tag-encobro {
+            background: var(--accent);
+            color: #ffffff;
+        }
+        .pending-card-tag.tag-pendiente {
+            background: #fef3c7;
+            color: #b45309;
+        }
+
+        /* Columna Centro: Catálogo */
+        .left-panel { flex: 1; display: flex; flex-direction: column; border-right: 1px solid var(--border); background: #ffffff; }
+
+        /* Selector Categorías */
+        .categories-bar { display: flex; gap: 8px; padding: 10px 16px; background: var(--bg-body); border-bottom: 1px solid var(--border); overflow-x: auto; }
+        .cat-btn { padding: 6px 14px; border-radius: 6px; border: 1px solid var(--border); background: #ffffff; color: var(--text-muted); font-size: 0.8rem; font-weight: 700; cursor: pointer; }
+        .cat-btn.active { background: var(--primary); color: #ffffff; border-color: var(--primary); }
+
+        /* Grid de Productos con Fotos */
+        .products-grid { flex: 1; padding: 16px; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; align-content: start; }
+        .product-tile {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.02);
+            user-select: none;
+            overflow: hidden;
+        }
+        .product-tile:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(37,99,235,0.12); }
+        .product-tile:active { transform: translateY(0); }
+        .product-tile-img {
+            width: 100%;
+            height: 90px;
+            object-fit: cover;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            background: #f1f5f9;
+            border: 1px solid var(--border);
+        }
+        .product-tile .code { font-size: 0.65rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; }
+        .product-tile .name { font-size: 0.82rem; font-weight: 700; color: var(--text-dark); margin: 2px 0 4px 0; line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 2.5em; }
+        .product-tile .price { font-size: 0.95rem; font-weight: 800; color: var(--accent); }
+
+        /* Columna Derecha: Boleta / Carrito de Cobro */
+        .right-panel { width: 380px; background: #ffffff; display: flex; flex-direction: column; box-shadow: -2px 0 10px rgba(0,0,0,0.03); }
+
+        .cart-header {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-body);
+        }
+        .cart-header h2 { font-size: 0.95rem; font-weight: 800; color: var(--primary); }
+        .service-type-toggle { display: flex; background: #ffffff; border: 1px solid var(--border); border-radius: 6px; padding: 2px; }
+        .toggle-btn { padding: 4px 8px; font-size: 0.72rem; font-weight: 700; border: none; border-radius: 4px; background: transparent; color: var(--text-muted); cursor: pointer; }
+        .toggle-btn.active { background: var(--accent); color: #ffffff; }
+
+        .cart-items-list { flex: 1; overflow-y: auto; padding: 12px 16px; }
+        .cart-item-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); }
+        .cart-item-info h4 { font-size: 0.85rem; font-weight: 700; }
+        .cart-item-info span { font-size: 0.78rem; color: var(--text-muted); }
+        .cart-qty-ctrl { display: flex; align-items: center; gap: 6px; }
+        .btn-qty { width: 24px; height: 24px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg-body); font-weight: 700; cursor: pointer; }
+
+        /* Totales y Botones de Cobro */
+        .cart-footer { padding: 14px 16px; border-top: 1px solid var(--border); background: var(--bg-body); }
+        .totals-summary { margin-bottom: 12px; }
+        .totals-row { display: flex; justify-content: space-between; font-size: 0.85rem; padding: 3px 0; }
+        .totals-row.grand { font-size: 1.25rem; font-weight: 800; color: var(--primary); border-top: 1.5px solid var(--border); padding-top: 6px; margin-top: 4px; }
+
+        .pay-buttons-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .btn-pay { padding: 12px; border-radius: 8px; border: none; font-size: 0.85rem; font-weight: 800; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; }
+        .btn-pay.getnet-debito { background: #1e3a8a; color: #ffffff; }
+        .btn-pay.getnet-credito { background: #2563eb; color: #ffffff; }
+        .btn-pay.efectivo { background: #16a34a; color: #ffffff; grid-column: span 2; }
+        .btn-pay:hover { opacity: 0.95; }
+        .btn-pay:disabled { background: #cbd5e1; cursor: not-allowed; }
+
+        /* Modal Cobro Getnet Santander */
+        .payment-modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15,23,42,0.7); backdrop-filter: blur(4px);
+            z-index: 500; display: flex; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.2s;
+        }
+        .payment-modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .payment-modal {
+            background: #ffffff; border-radius: 12px; width: 90%; max-width: 440px; padding: 24px; text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .payment-spinner { width: 44px; height: 44px; border: 4px solid #e2e8f0; border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 16px auto; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* Modal Elegante Vista Previa Recibo en Pantalla */
+        .receipt-modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(6px);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 1000000;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.25s ease;
+        }
+        .receipt-modal-overlay.active {
+            opacity: 1; pointer-events: auto;
+        }
+        .receipt-modal-card {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px -15px rgba(0,0,0,0.3);
+            width: 92%; max-width: 410px;
+            max-height: 88vh;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+            animation: popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes popIn {
+            0% { transform: scale(0.92) translateY(10px); opacity: 0; }
+            100% { transform: scale(1) translateY(0); opacity: 1; }
+        }
+        .receipt-modal-header {
+            padding: 14px 18px;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex; align-items: center; justify-content: space-between;
+            flex-shrink: 0;
+        }
+        .receipt-close-btn {
+            background: transparent; border: none; font-size: 1.1rem; color: #64748b; cursor: pointer;
+            width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        }
+        .receipt-close-btn:hover { background: #e2e8f0; color: #0f172a; }
+        .receipt-paper-wrapper {
+            padding: 20px 16px;
+            background: #cbd5e1;
+            overflow-y: auto;
+            flex: 1;
+            box-sizing: border-box;
+        }
+        .receipt-paper-wrapper::-webkit-scrollbar {
+            width: 6px;
+        }
+        .receipt-paper-wrapper::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 4px;
+        }
+        .receipt-paper {
+            background: #ffffff;
+            width: 100%;
+            max-width: 320px;
+            margin: 0 auto;
+            padding: 22px 18px;
+            border-radius: 4px;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.15);
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 13px;
+            line-height: 1.35;
+            color: #000000;
+            box-sizing: border-box;
+            border-top: 4px solid #000000;
+            border-bottom: 4px dashed #94a3b8;
+        }
+        .receipt-modal-footer {
+            padding: 12px 16px;
+            background: #ffffff;
+            border-top: 1px solid #e2e8f0;
+            display: flex; align-items: center; justify-content: space-between; gap: 8px;
+            flex-wrap: wrap;
+            flex-shrink: 0;
+        }
+        .receipt-sim-badge {
+            font-size: 0.72rem; font-weight: 700; color: #0284c7; background: #e0f2fe;
+            padding: 4px 8px; border-radius: 20px;
+        }
+        .btn-print-now {
+            background: #2563eb; color: #ffffff; border: none; padding: 7px 12px;
+            border-radius: 8px; font-weight: 700; font-size: 0.8rem; cursor: pointer;
+            transition: background 0.15s ease;
+        }
+        .btn-print-now:hover { background: #1d4ed8; }
+        .btn-close-receipt {
+            background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 7px 12px;
+            border-radius: 8px; font-weight: 700; font-size: 0.8rem; cursor: pointer;
+        }
+        .btn-close-receipt:hover { background: #e2e8f0; }
+
+        /* ESTILOS DE TICKET TÉRMICO (Disponibles tanto en pantalla como en impresión) */
+        .t-center { text-align: center; }
+        .t-bold { font-weight: bold; }
+        .t-banner {
+            background: #000000;
+            color: #ffffff;
+            padding: 5px;
+            font-size: 15px;
+            font-weight: bold;
+            text-align: center;
+            margin: 4px 0;
+            border-radius: 2px;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        .t-table-box {
+            border: 2px solid #000000;
+            padding: 6px;
+            text-align: center;
+            margin: 6px 0;
+        }
+        .t-table-title {
+            font-size: 20px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        .t-order-info {
+            font-size: 12px;
+            margin-top: 2px;
+        }
+        .t-divider {
+            border-top: 1.5px dashed #000000;
+            margin: 6px 0;
+        }
+        .t-divider-solid {
+            border-top: 2px solid #000000;
+            margin: 6px 0;
+        }
+        .t-item-row {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin: 6px 0;
+            padding: 2px 0;
+        }
+        .t-qty {
+            font-size: 16px;
+            font-weight: bold;
+            min-width: 38px;
+            display: inline-block;
+        }
+        .t-name {
+            font-size: 14px;
+            font-weight: bold;
+            flex: 1;
+            text-transform: uppercase;
+        }
+        .t-price {
+            font-size: 13px;
+            font-weight: bold;
+            text-align: right;
+        }
+        .t-notes-box {
+            border: 1px solid #000000;
+            padding: 5px;
+            margin: 6px 0;
+            font-size: 12px;
+            font-weight: bold;
+            background: #f8fafc;
+        }
+        .t-footer {
+            text-align: center;
+            font-size: 11px;
+            margin-top: 8px;
+            padding-top: 4px;
+        }
+
+        /* CONFIGURACIÓN DE IMPRESIÓN FÍSICA 80mm */
+        @media print {
+            @page {
+                size: 80mm auto;
+                margin: 0;
+            }
+            html, body {
+                width: 80mm;
+                margin: 0;
+                padding: 0;
+                background: #ffffff;
+                color: #000000;
+            }
+            body * {
+                visibility: hidden;
+            }
+            #printableTicket, #printableTicket * {
+                visibility: visible;
+            }
+            #printableTicket {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 76mm;
+                padding: 2mm 3mm;
+                font-family: 'Courier New', Courier, monospace;
+                font-size: 13px;
+                line-height: 1.35;
+                color: #000000;
+                background: #ffffff;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Corporativo ATSIT + MCMplus SpA -->
+    <header class="pos-header">
+        <div class="header-brand">
+            <img src="logo_atsit.png" alt="ATSIT" class="logo" onerror="this.onerror=null; this.src='icono_limpio.png';">
+            <div class="header-info">
+                <h1>Sabor Al Paso - Caja POS</h1>
+                <span>MCMplus SpA • Terrapuerto Calama</span>
+            </div>
+        </div>
+        <div class="client-badge-container">
+            <button type="button" onclick="openShiftCloseModal()" style="background: #1e293b; color: #f59e0b; border: 1.5px solid #f59e0b; padding: 5px 12px; border-radius: 6px; font-weight: 800; font-size: 0.78rem; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);" title="Generar arqueo, conteo y cierre de turno de caja">
+                🔒 Cierre de Turno
+            </button>
+            <button type="button" onclick="openWaitstaffShiftCloseModal()" style="background: #1e293b; color: #38bdf8; border: 1.5px solid #38bdf8; padding: 5px 12px; border-radius: 6px; font-weight: 800; font-size: 0.78rem; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);" title="Ver e imprimir el cierre de turno y rendimiento por mesera/garzón">
+                👩‍🍳 Cierre Meseras
+            </button>
+            <span id="cajaActiveUserBadge" style="font-size: 0.78rem; font-weight: 800; color: var(--accent); background: #eff6ff; padding: 4px 10px; border-radius: 6px; border: 1px solid #bfdbfe;">👤 Cajero</span>
+            <button type="button" onclick="executeLogout()" style="background: #ef4444; color: #ffffff; border: none; padding: 4px 8px; border-radius: 6px; font-weight: 700; font-size: 0.75rem; cursor: pointer;">🚪 Salir</button>
+            <a href="admin.html" id="cajaAdminBtn" style="display: none; text-decoration: none; color: var(--accent); font-size: 0.8rem; font-weight: 700; margin-left: 6px;">⚙️ Admin</a>
+            <div class="badge-mcm">MCMplus SpA</div>
+            <div class="badge-live"><div class="dot-green"></div> En Línea</div>
+        </div>
+    </header>
+
+    <!-- Layout 3 Columnas: 1. Combos/Catálogo + 2. Pedidos Pendientes (Vertical Descendente) + 3. Detalle de Venta -->
+    <div class="pos-layout">
+
+        <!-- Columna 1 (Izquierda): Catálogo de Productos / Combos -->
+        <div class="left-panel">
+            <!-- Categorías -->
+            <div class="categories-bar" id="categoriesBar">
+                <button class="cat-btn active" onclick="filterCat('Todas')">Todas</button>
+                <button class="cat-btn" onclick="filterCat('Combos')">Combos</button>
+                <button class="cat-btn" onclick="filterCat('Hamburguesas')">Hamburguesas</button>
+                <button class="cat-btn" onclick="filterCat('Acompañamientos')">Acompañamientos</button>
+                <button class="cat-btn" onclick="filterCat('Bebidas')">Bebidas</button>
+                <button class="cat-btn" onclick="filterCat('Cafetería')">Cafetería</button>
+            </div>
+
+            <!-- Grid Productos -->
+            <div class="products-grid" id="productsGrid">
+                <!-- Carga desde JS -->
+            </div>
+        </div>
+
+        <!-- Columna 2 (Centro): Pedidos de Meseras Pendientes (Lista Vertical Descendente) -->
+        <div class="pending-sidebar-col">
+            <div class="pending-sidebar-header">
+                <h3>📱 Mesas Pendientes</h3>
+                <span class="pending-badge-count" id="pendingCountBadge">0</span>
+            </div>
+            <div class="pending-cards-scroll" id="pendingOrdersChips">
+                <span style="font-size: 0.78rem; color: var(--text-muted); text-align: center; padding: 12px;">No hay pedidos pendientes</span>
+            </div>
+        </div>
+
+        <!-- Columna 3 (Derecha): Detalle de Venta / Carrito -->
+        <div class="right-panel">
+            <div class="cart-header">
+                <h2>Detalle de Venta</h2>
+                <div class="service-type-toggle">
+                    <button class="toggle-btn active" id="btnTypeLlevar" onclick="setServiceType('Para Llevar')">Para Llevar</button>
+                    <button class="toggle-btn" id="btnTypeServir" onclick="setServiceType('Para Servir')">Para Servir</button>
+                </div>
+            </div>
+
+            <div style="padding: 6px 16px; background: #fffbebf1; font-size: 0.75rem; color: #b45309; display: flex; justify-content: space-between;" id="currentOrderRef">
+                <span>Orden: <strong>Venta Directa Caja</strong></span>
+                <span id="currentTableTag">Para Llevar</span>
+            </div>
+
+            <!-- Ítems seleccionados -->
+            <div class="cart-items-list" id="cartItemsList">
+                <!-- Render dinámico -->
+            </div>
+
+            <!-- Totales y Medios de Pago -->
+            <div class="cart-footer">
+                <div class="totals-summary">
+                    <div class="totals-row">
+                        <span>Consumo Neto (sin IVA):</span>
+                        <span id="txtSubtotal">$0 CLP</span>
+                    </div>
+                    <div class="totals-row">
+                        <span>IVA (19% Incluido):</span>
+                        <span id="txtTax">$0 CLP</span>
+                    </div>
+                    <div class="totals-row" style="font-weight: 700; color: var(--primary);">
+                        <span>Subtotal Consumo:</span>
+                        <span id="txtConsumptionTotal">$0 CLP</span>
+                    </div>
+                    <div class="totals-row" style="color: var(--success); font-weight: 700;">
+                        <span>Propina Sugerida (10%):</span>
+                        <span id="txtSuggestedTip">$0 CLP</span>
+                    </div>
+                    <div class="totals-row grand">
+                        <span>TOTAL CON PROPINA:</span>
+                        <span id="txtTotal">$0 CLP</span>
+                    </div>
+                </div>
+
+                <!-- Botones de Pago Getnet Santander / Efectivo -->
+                <div class="pay-buttons-grid">
+                    <button class="btn-pay getnet-debito" id="btnPayGetnetDebito" onclick="promptTipModal('Getnet Santander (Débito)')" disabled>
+                        <span>💳 Getnet Débito</span>
+                        <span style="font-size: 0.65rem; opacity: 0.8;">Tasa 1.49% + IVA</span>
+                    </button>
+                    <button class="btn-pay getnet-credito" id="btnPayGetnetCredito" onclick="promptTipModal('Getnet Santander (Crédito)')" disabled>
+                        <span>💳 Getnet Crédito</span>
+                        <span style="font-size: 0.65rem; opacity: 0.8;">Tasa 2.19% + IVA</span>
+                    </button>
+                    <button class="btn-pay efectivo" id="btnPayEfectivo" onclick="promptTipModal('Efectivo en Caja')" disabled>
+                        <span>💵 Cobro Efectivo (Auto-Impresión)</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Modal Prompt 10% Propina Voluntaria -->
+    <div class="payment-modal-overlay" id="tipPromptModal">
+        <div class="payment-modal" style="max-width: 420px; text-align: center; background: #ffffff; border-radius: 16px; padding: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.4);">
+            <div style="font-size: 2.2rem; margin-bottom: 4px;">🪙</div>
+            <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--primary);">Consulta Propina Voluntaria</h3>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">Mesa / Consumo: <strong id="tipModalConsumptionTotal" style="color: var(--primary);">$0 CLP</strong></p>
+
+            <div style="background: #f8fafc; border: 1.5px solid var(--border); border-radius: 12px; padding: 14px; margin: 14px 0;">
+                <div style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Propina Sugerida 10% (Garzón/Servicio):</div>
+                <div id="tipModalSuggestedAmount" style="font-size: 1.6rem; font-weight: 800; color: var(--success); margin: 4px 0;">+$0 CLP</div>
+                <small style="font-size: 0.72rem; color: var(--text-muted); display: block;">¿El cliente autoriza incorporar el 10% de propina sugerida?</small>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <button type="button" class="btn-pay" style="background: var(--success); color: #ffffff; padding: 12px; font-size: 0.9rem; font-weight: 800; border-radius: 10px;" onclick="confirmTipSelection(true)">
+                    🟢 Sí, Incluir 10% Propina (<span id="tipModalBtnTotalWithTip">$0 CLP</span>)
+                </button>
+                <button type="button" class="btn-pay" style="background: #64748b; color: #ffffff; padding: 10px; font-size: 0.85rem; border-radius: 10px;" onclick="confirmTipSelection(false)">
+                    ⚪ Pagar Solo Consumo (<span id="tipModalBtnTotalNoTip">$0 CLP</span>)
+                </button>
+
+                <!-- Selección Rápida de Monto Fijo -->
+                <div style="margin-top: 6px; padding-top: 10px; border-top: 1px dashed var(--border);">
+                    <div style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); margin-bottom: 8px;">O Seleccione Monto Fijo / Personalizado:</div>
+                    <div style="display: flex; gap: 6px; justify-content: center; flex-wrap: wrap;">
+                        <button type="button" style="background: #eff6ff; color: #2563eb; border: 1.5px solid #93c5fd; padding: 6px 12px; border-radius: 8px; font-size: 0.78rem; font-weight: 800; cursor: pointer;" onclick="selectFixedTipAmount(500)">+$500</button>
+                        <button type="button" style="background: #eff6ff; color: #2563eb; border: 1.5px solid #93c5fd; padding: 6px 12px; border-radius: 8px; font-size: 0.78rem; font-weight: 800; cursor: pointer;" onclick="selectFixedTipAmount(1000)">+$1.000</button>
+                        <button type="button" style="background: #eff6ff; color: #2563eb; border: 1.5px solid #93c5fd; padding: 6px 12px; border-radius: 8px; font-size: 0.78rem; font-weight: 800; cursor: pointer;" onclick="selectFixedTipAmount(2000)">+$2.000</button>
+                        <button type="button" style="background: #f8fafc; color: #334155; border: 1.5px solid #cbd5e1; padding: 6px 12px; border-radius: 8px; font-size: 0.78rem; font-weight: 800; cursor: pointer;" onclick="promptCustomTip()">✏️ Otro Monto</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Procesamiento Getnet Santander -->
+    <div class="payment-modal-overlay" id="getnetModal">
+        <div class="payment-modal">
+            <h3 style="font-size: 1.1rem; color: var(--primary);" id="getnetModalTitle">Conectando Terminal Getnet...</h3>
+            <div class="payment-spinner"></div>
+            <p style="font-size: 0.85rem; color: var(--text-muted);" id="getnetModalStatus">Acerque o inserte la tarjeta en la terminal Getnet Santander...</p>
+            <div style="font-size: 1.4rem; font-weight: 800; color: var(--accent); margin-top: 10px;" id="getnetModalAmount">$0 CLP</div>
+            
+            <div style="margin-top: 20px; display: flex; gap: 8px; justify-content: center;">
+                <button style="padding: 8px 16px; border-radius: 6px; border: 1px solid var(--border); background: #ffffff; font-weight: 700; cursor: pointer;" onclick="cancelGetnetPayment()">Cancelar</button>
+                <button style="padding: 8px 16px; border-radius: 6px; border: none; background: var(--success); color: #ffffff; font-weight: 700; cursor: pointer;" onclick="simulateGetnetSuccess()">✓ Simular Aprobado (POS)</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Elegante de Vista Previa de Recibo (Simulación en Pantalla) -->
+    <div class="receipt-modal-overlay" id="receiptModal">
+        <div class="receipt-modal-card">
+            <div class="receipt-modal-header">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 1.2rem;">🧾</span>
+                    <span style="font-weight: 700; color: #1e293b; font-size: 0.95rem;" id="receiptModalTitle">Vista Previa de Recibo</span>
+                </div>
+                <button type="button" class="receipt-close-btn" onclick="closeReceiptModal()" title="Cerrar">✕</button>
+            </div>
+            
+            <div class="receipt-paper-wrapper">
+                <div id="receiptModalContent" class="receipt-paper">
+                    <!-- Inyección de contenido de ticket -->
+                </div>
+            </div>
+
+            <div class="receipt-modal-footer">
+                <span class="receipt-sim-badge">✨ Simulación en Pantalla</span>
+                <div style="display: flex; gap: 6px;">
+                    <button type="button" class="btn-print-now" onclick="forcePhysicalPrint()">
+                        🖨️ Probar Papel
+                    </button>
+                    <button type="button" class="btn-close-receipt" onclick="closeReceiptModal()">
+                        Cerrar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Cierre de Turno y Arqueo de Caja -->
+    <div class="payment-modal-overlay" id="shiftCloseModal" style="z-index: 99999;">
+        <div class="payment-modal" style="max-width: 680px; text-align: left; background: #ffffff; border-radius: 16px; padding: 24px; max-height: 92vh; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--primary); padding-bottom: 10px; margin-bottom: 16px;">
+                <div>
+                    <h2 style="font-size: 1.2rem; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 8px;">
+                        🔒 Cierre de Turno & Arqueo de Caja
+                    </h2>
+                    <span style="font-size: 0.78rem; color: var(--text-muted); font-weight: 600;" id="shiftModalDateUser">---</span>
+                </div>
+                <button type="button" onclick="closeShiftCloseModal()" style="background: var(--bg-body); border: none; width: 32px; height: 32px; border-radius: 50%; font-weight: 700; cursor: pointer;">✕</button>
+            </div>
+
+            <!-- 1. RESUMEN DE VENTAS EN PANTALLA (TARJETAS VS EFECTIVO) -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px;">
+                <!-- Tarjetas Getnet -->
+                <div style="background: #eff6ff; border: 1.5px solid #bfdbfe; border-radius: 12px; padding: 14px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <h3 style="font-size: 0.92rem; font-weight: 800; color: #1e40af;">💳 Pagos Tarjeta (Getnet)</h3>
+                        <span style="font-size: 0.72rem; background: #2563eb; color: #fff; font-weight: 800; padding: 2px 8px; border-radius: 12px;" id="shiftCardValesCount">0 vales</span>
+                    </div>
+                    <div style="font-size: 0.8rem; color: #3b82f6; display: flex; flex-direction: column; gap: 4px;">
+                        <div style="display: flex; justify-content: space-between;"><span>Consumo Neto:</span><strong id="shiftCardNet">$0 CLP</strong></div>
+                        <div style="display: flex; justify-content: space-between;"><span>IVA (19%):</span><strong id="shiftCardTax">$0 CLP</strong></div>
+                        <div style="display: flex; justify-content: space-between; border-top: 1px dashed #93c5fd; padding-top: 4px; font-weight: 800; color: #1e3a8a;"><span>Subtotal Consumo:</span><strong id="shiftCardGross">$0 CLP</strong></div>
+                        <div style="display: flex; justify-content: space-between; color: #16a34a; font-weight: 800;"><span>Propinas Tarjeta:</span><strong id="shiftCardTips">+$0 CLP</strong></div>
+                        <div style="display: flex; justify-content: space-between; border-top: 1.5px solid #2563eb; padding-top: 4px; font-size: 0.95rem; font-weight: 800; color: #1e3a8a;"><span>TOTAL TARJETAS:</span><strong id="shiftCardTotal">$0 CLP</strong></div>
+                    </div>
+                </div>
+
+                <!-- Efectivo en Caja -->
+                <div style="background: #f0fdf4; border: 1.5px solid #bbf7d0; border-radius: 12px; padding: 14px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <h3 style="font-size: 0.92rem; font-weight: 800; color: #166534;">💵 Pagos Efectivo</h3>
+                        <span style="font-size: 0.72rem; background: #16a34a; color: #fff; font-weight: 800; padding: 2px 8px; border-radius: 12px;" id="shiftCashValesCount">0 vales</span>
+                    </div>
+                    <div style="font-size: 0.8rem; color: #15803d; display: flex; flex-direction: column; gap: 4px;">
+                        <div style="display: flex; justify-content: space-between;"><span>Consumo Neto:</span><strong id="shiftCashNet">$0 CLP</strong></div>
+                        <div style="display: flex; justify-content: space-between;"><span>IVA (19%):</span><strong id="shiftCashTax">$0 CLP</strong></div>
+                        <div style="display: flex; justify-content: space-between; border-top: 1px dashed #86efac; padding-top: 4px; font-weight: 800; color: #14532d;"><span>Subtotal Consumo:</span><strong id="shiftCashGross">$0 CLP</strong></div>
+                        <div style="display: flex; justify-content: space-between; color: #16a34a; font-weight: 800;"><span>Propinas Efectivo:</span><strong id="shiftCashTips">+$0 CLP</strong></div>
+                        <div style="display: flex; justify-content: space-between; border-top: 1.5px solid #16a34a; padding-top: 4px; font-size: 0.95rem; font-weight: 800; color: #14532d;"><span>TOTAL EFECTIVO:</span><strong id="shiftCashTotal">$0 CLP</strong></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TOTAL GENERAL DEL TURNO -->
+            <div style="background: #1e293b; color: #ffffff; border-radius: 12px; padding: 14px; margin-bottom: 16px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; font-weight: 800;">
+                    <span>📊 TOTAL RECAUDACIÓN TURNO (<span id="shiftTotalValesAll">0 vales</span>):</span>
+                    <span style="font-size: 1.3rem; color: #38bdf8;" id="shiftGrandTotal">$0 CLP</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: #94a3b8; margin-top: 4px;">
+                    <span>Neto: <strong id="shiftTotalNetAll" style="color:#fff">$0</strong> | IVA: <strong id="shiftTotalTaxAll" style="color:#fff">$0</strong> | Consumo Bruto: <strong id="shiftTotalGrossAll" style="color:#fff">$0</strong></span>
+                    <span>Propinas Totales: <strong id="shiftTotalTipsAll" style="color:#4ade80">+$0</strong></span>
+                </div>
+            </div>
+
+            <!-- 2. CONTEO Y ARQUEO DECLARADO POR CAJERO -->
+            <div style="background: #fffdf5; border: 1.5px solid #fde68a; border-radius: 12px; padding: 14px; margin-bottom: 16px;">
+                <h3 style="font-size: 0.88rem; font-weight: 800; color: #92400e; margin-bottom: 10px;">
+                    🔎 Conteo Físico Declarado (Entrega de Turno):
+                </h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                    <div>
+                        <label style="font-size: 0.75rem; font-weight: 800; color: #78350f; display: block; margin-bottom: 4px;">💳 Total Vouchers Getnet Contados ($):</label>
+                        <input type="text" id="inputDeclaredCards" class="select-input" placeholder="0" oninput="formatCurrencyInput(this); validateShiftAudit();" style="width: 100%; border: 1.5px solid #cbd5e1; font-weight: 800;">
+                    </div>
+                    <div>
+                        <label style="font-size: 0.75rem; font-weight: 800; color: #78350f; display: block; margin-bottom: 4px;">💵 Efectivo Físico en Gaveta Contado ($):</label>
+                        <input type="text" id="inputDeclaredCash" class="select-input" placeholder="0" oninput="formatCurrencyInput(this); validateShiftAudit();" style="width: 100%; border: 1.5px solid #cbd5e1; font-weight: 800;">
+                    </div>
+                </div>
+
+                <!-- Panel Estado del Cuadre -->
+                <div id="shiftAuditStatusBox" style="padding: 10px; border-radius: 8px; background: #ffffff; border: 1px solid #e2e8f0; text-align: center; font-weight: 800; font-size: 0.85rem;">
+                    Ingrese los valores contados para validar el cuadre de caja.
+                </div>
+            </div>
+
+            <!-- 3. DETALLE DESGLOSADO SI HAY DIFERENCIAS -->
+            <div id="shiftDiscrepancyDetailBox" style="display: none; background: #fef2f2; border: 1.5px solid #fca5a5; border-radius: 12px; padding: 12px; margin-bottom: 16px;">
+                <div style="font-size: 0.85rem; font-weight: 800; color: #b91c1c; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between;">
+                    <span>⚠️ Detalle Auditoría Boleta a Boleta del Turno:</span>
+                    <span style="font-size: 0.72rem; color: #991b1b; font-weight: 700;">Revise transacciones del día</span>
+                </div>
+                <div style="max-height: 180px; overflow-y: auto; background: #ffffff; border: 1px solid #fca5a5; border-radius: 8px; padding: 6px;" id="shiftSalesAuditTable">
+                    <!-- Lista desglosada -->
+                </div>
+                <div style="margin-top: 8px;">
+                    <label style="font-size: 0.75rem; font-weight: 700; color: #991b1b; display: block; margin-bottom: 2px;">Justificación de Diferencia (Requerido):</label>
+                    <input type="text" id="shiftDiffReason" placeholder="Ej: Error de vuelto a cliente en Mesa 3, voucher duplicado..." style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #fca5a5; font-size: 0.8rem;">
+                </div>
+            </div>
+
+            <!-- BOTONES DE ACCIÓN -->
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button type="button" onclick="openWaitstaffShiftCloseModal()" style="flex: 1; background: #0f172a; color: #38bdf8; border: 1.5px solid #38bdf8; padding: 12px; border-radius: 8px; font-weight: 800; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    👩‍🍳 Ver Cierre Meseras
+                </button>
+                <button type="button" onclick="printShiftCloseTicket()" style="flex: 1; background: #2563eb; color: #ffffff; border: none; padding: 12px; border-radius: 8px; font-weight: 800; font-size: 0.88rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    🖨️ Imprimir Ticket Cierre (Z)
+                </button>
+                <button type="button" id="btnConfirmShiftClose" onclick="confirmShiftCloseAction()" style="flex: 1.2; background: #16a34a; color: #ffffff; border: none; padding: 12px; border-radius: 8px; font-weight: 800; font-size: 0.92rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    🔒 Confirmar & Cerrar Turno
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Cierre de Turno de Meseras / Garzones (Rendimiento, Propinas y Vales) -->
+    <div class="payment-modal-overlay" id="waitstaffShiftCloseModal" style="z-index: 99999;">
+        <div class="payment-modal" style="max-width: 650px; width: 95%; text-align: left; background: #ffffff; border-radius: 16px; padding: 20px; max-height: 92vh; overflow-y: auto; display: flex; flex-direction: column;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--primary); padding-bottom: 10px; margin-bottom: 14px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 1.5rem;">👩‍🍳</span>
+                    <div>
+                        <h2 style="font-size: 1.1rem; font-weight: 800; color: var(--primary); margin: 0;">
+                            Cierre de Turno — Rendimiento de Meseras
+                        </h2>
+                        <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">
+                            Seleccione una mesera/garzón para auditar sus vales, ventas netas y propinas del turno.
+                        </span>
+                    </div>
+                </div>
+                <button type="button" onclick="closeWaitstaffShiftCloseModal()" style="background: var(--bg-body); border: none; width: 32px; height: 32px; border-radius: 50%; font-weight: 700; cursor: pointer;">✕</button>
+            </div>
+
+            <!-- Selector de Mesera/Garzón -->
+            <div style="background: #f8fafc; border: 1.5px solid var(--border); border-radius: 12px; padding: 12px 16px; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
+                <div style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 240px;">
+                    <label style="font-size: 0.85rem; font-weight: 800; color: var(--primary); white-space: nowrap;">👤 Seleccionar Mesera / Garzón:</label>
+                    <select id="selectWaitstaffMember" onchange="renderWaitstaffShiftDetails()" style="flex: 1; padding: 8px 12px; border-radius: 8px; border: 2px solid var(--accent); font-size: 0.9rem; font-weight: 800; color: var(--primary); outline: none; background: #ffffff; cursor: pointer;">
+                        <!-- Opciones dinámicas -->
+                    </select>
+                </div>
+                <span id="waitstaffValesBadge" style="background: var(--accent); color: #ffffff; font-size: 0.8rem; font-weight: 800; padding: 4px 12px; border-radius: 12px;">0 vales</span>
+            </div>
+
+            <!-- KPIs Principales -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 14px;">
+                <div style="background: #ffffff; border: 1px solid var(--border); border-radius: 10px; padding: 12px; text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,0.02);">
+                    <div style="font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">📋 Vales Atendidos</div>
+                    <div id="wsKpiVales" style="font-size: 1.4rem; font-weight: 800; color: var(--primary); margin-top: 2px;">0</div>
+                </div>
+                <div style="background: #ffffff; border: 1px solid var(--border); border-radius: 10px; padding: 12px; text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,0.02);">
+                    <div style="font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">💲 Ventas Netas</div>
+                    <div id="wsKpiNet" style="font-size: 1.15rem; font-weight: 800; color: var(--accent); margin-top: 4px;">$0</div>
+                </div>
+                <div style="background: #ffffff; border: 1px solid var(--border); border-radius: 10px; padding: 12px; text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,0.02);">
+                    <div style="font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">🧾 Subtotal Consumo</div>
+                    <div id="wsKpiGross" style="font-size: 1.15rem; font-weight: 800; color: var(--primary); margin-top: 4px;">$0</div>
+                </div>
+                <div style="background: #f0fdf4; border: 1.5px solid #bbf7d0; border-radius: 10px; padding: 12px; text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,0.02);">
+                    <div style="font-size: 0.7rem; font-weight: 800; color: #166534; text-transform: uppercase;">💚 Propinas Generadas</div>
+                    <div id="wsKpiTips" style="font-size: 1.25rem; font-weight: 800; color: #15803d; margin-top: 2px;">+$0</div>
+                </div>
+            </div>
+
+            <!-- Desglose por Medio de Pago -->
+            <div style="background: #ffffff; border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px; margin-bottom: 14px;">
+                <div style="font-size: 0.82rem; font-weight: 800; color: var(--primary); margin-bottom: 8px; border-bottom: 1px solid var(--border); padding-bottom: 6px; display: flex; justify-content: space-between; align-items: center;">
+                    <span>💳 Desglose por Medio de Pago:</span>
+                    <span id="wsGrandTotalSum" style="font-size: 0.9rem; font-weight: 800; color: var(--accent);">Total: $0 CLP</span>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.8rem;">
+                    <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 10px;">
+                        <div style="font-weight: 800; color: #1e40af; margin-bottom: 4px;">💳 Ventas Tarjeta (Getnet)</div>
+                        <div style="display: flex; justify-content: space-between;"><span>Consumo:</span><strong id="wsCardGross">$0</strong></div>
+                        <div style="display: flex; justify-content: space-between; color: #15803d;"><span>Propina:</span><strong id="wsCardTips">+$0</strong></div>
+                        <div style="border-top: 1px solid #bfdbfe; margin-top: 4px; padding-top: 4px; font-weight: 800; color: #1e3a8a; display: flex; justify-content: space-between;"><span>Total Tarjeta:</span><span id="wsCardTotal">$0</span></div>
+                    </div>
+                    <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 10px;">
+                        <div style="font-weight: 800; color: #166534; margin-bottom: 4px;">💵 Ventas Efectivo</div>
+                        <div style="display: flex; justify-content: space-between;"><span>Consumo:</span><strong id="wsCashGross">$0</strong></div>
+                        <div style="display: flex; justify-content: space-between; color: #15803d;"><span>Propina:</span><strong id="wsCashTips">+$0</strong></div>
+                        <div style="border-top: 1px solid #bbf7d0; margin-top: 4px; padding-top: 4px; font-weight: 800; color: #14532d; display: flex; justify-content: space-between;"><span>Total Efectivo:</span><span id="wsCashTotal">$0</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabla de Vales de la Mesera -->
+            <div style="background: #ffffff; border: 1px solid var(--border); border-radius: 12px; padding: 12px; margin-bottom: 14px;">
+                <div style="font-size: 0.82rem; font-weight: 800; color: var(--primary); margin-bottom: 8px;">📋 Detalle de Vales Atendidos en el Turno:</div>
+                <div id="wsSalesListContainer" style="max-height: 180px; overflow-y: auto;">
+                    <!-- Tabla cargada dinámicamente -->
+                </div>
+            </div>
+
+            <!-- Botones de Acción -->
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button type="button" onclick="printWaitstaffShiftReceipt()" style="flex: 1; background: #16a34a; color: #ffffff; border: none; padding: 12px; border-radius: 8px; font-weight: 800; font-size: 0.88rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    🖨️ Imprimir Cierre de Mesera (80mm)
+                </button>
+                <button type="button" onclick="closeWaitstaffShiftCloseModal()" style="padding: 12px 20px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-body); font-weight: 700; font-size: 0.85rem; cursor: pointer;">
+                    ✕ Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Personalizar / Modificar Ítem en Caja -->
+    <div class="payment-modal-overlay" id="customizeModal">
+        <div class="payment-modal" style="max-width: 440px; text-align: left; padding: 22px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 8px;">
+                <h3 id="custModalTitle" style="font-size: 1.05rem; font-weight: 800; color: var(--primary);">⚙️ Personalizar Producto</h3>
+                <button type="button" style="background: transparent; border: none; font-size: 1.2rem; cursor: pointer; color: var(--text-muted);" onclick="closeCustomizeModal()">✕</button>
+            </div>
+
+            <!-- Sección 1: SACAR / QUITAR INSUMOS -->
+            <div style="margin-bottom: 14px;">
+                <label style="font-size: 0.82rem; color: #b91c1c; font-weight: 800; display: flex; align-items: center; gap: 4px; margin-bottom: 6px;">
+                    ⛔ QUITAR INSUMOS DE LA RECETA:
+                </label>
+                <div id="custRemovalsList" style="display: flex; flex-wrap: wrap; gap: 6px;">
+                    <!-- Chips de exclusión -->
+                </div>
+            </div>
+
+            <!-- Sección 2: SOLICITUDES Y AGREGADOS COMUNES -->
+            <div style="margin-bottom: 20px;">
+                <label style="font-size: 0.82rem; color: #1d4ed8; font-weight: 800; display: flex; align-items: center; gap: 4px; margin-bottom: 6px;">
+                    ➕ SOLICITUDES / AGREGADOS COMUNES:
+                </label>
+                <div id="custAdditionsList" style="display: flex; flex-wrap: wrap; gap: 6px;">
+                    <!-- Chips de agregados -->
+                </div>
+            </div>
+
+            <button type="button" class="btn-pay" style="width: 100%; justify-content: center; padding: 12px; font-size: 0.95rem; background: var(--success); color: #ffffff;" onclick="confirmSaveCustomization()">
+                ✅ GUARDAR CAMBIOS EN EL PEDIDO
+            </button>
+        </div>
+    </div>
+
+    <!-- ÁREA DE IMPRESIÓN TÉRMICA ESC/POS (OCULTA HASTA IMPRIMIR) -->
+    <div id="printableTicket" style="display: none;"></div>
+
+    <!-- Scripts de Estado -->
+    <script src="store.js?v=5"></script>
+    <script src="ui-modal.js?v=5"></script>
+    <script>
+        let currentCart = {}; // productId -> { product, qty }
+        let currentServiceType = 'Para Llevar';
+        let currentActiveCat = 'Todas';
+        let loadedPendingOrderId = null;
+        let activePaymentType = '';
+
+        // MODO SIMULACIÓN DE IMPRESIÓN
+        // true: Muestra un recibo elegante en pantalla y evita la ventana emergente de Chrome mientras se configura la red del local.
+        // false: Ejecuta la impresión física real (window.print()).
+        let SIMULATE_PRINTING = true;
+
+        function executePrint(ticketTitle, htmlContent) {
+            // 1. Inyectar en contenedor de impresión física
+            const printable = document.getElementById('printableTicket');
+            if (printable) {
+                printable.innerHTML = htmlContent;
+                printable.style.display = 'block';
+            }
+
+            // 2. Inyectar en modal de vista previa elegante en pantalla
+            const modalTitle = document.getElementById('receiptModalTitle');
+            const modalContent = document.getElementById('receiptModalContent');
+            const receiptModal = document.getElementById('receiptModal');
+
+            if (modalTitle) modalTitle.innerText = ticketTitle;
+            if (modalContent) modalContent.innerHTML = htmlContent;
+            if (receiptModal) receiptModal.classList.add('active');
+
+            // 3. Si no es simulación, invocar impresión física nativa
+            if (!SIMULATE_PRINTING) {
+                window.print();
+                setTimeout(() => { 
+                    if (printable) printable.style.display = 'none'; 
+                }, 500);
+            } else {
+                console.log(`🖨️ [SIMULACIÓN] Recibo "${ticketTitle}" desplegado en pantalla.`);
+                if (window.showToast) {
+                    showToast(`🧾 ${ticketTitle} listo en pantalla`, 'info');
+                }
+            }
+        }
+
+        function closeReceiptModal() {
+            const receiptModal = document.getElementById('receiptModal');
+            if (receiptModal) receiptModal.classList.remove('active');
+            const printable = document.getElementById('printableTicket');
+            if (printable) printable.style.display = 'none';
+        }
+
+        function forcePhysicalPrint() {
+            window.print();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCatCategories();
+            renderCatGrid();
+            updateCart();
+            renderPendingMeseraOrders();
+
+            // Escuchar eventos en tiempo real (Nuevos pedidos de Mesera)
+            POSStore.onRealtimeEvent((data) => {
+                renderPendingMeseraOrders();
+
+                if (data.type === 'NEW_MESERA_ORDER') {
+                    // Notificación discreta
+                    const titleMsg = data.isAddition 
+                        ? `📱 Adición de consumos: ${data.order.tableNum} (#${data.order.orderNum})` 
+                        : `📱 Nuevo Pedido Mesera: ${data.order.tableNum} (#${data.order.orderNum}) - $${data.order.total.toLocaleString('es-CL')}`;
+                    
+                    if (window.showToast) {
+                        showToast(titleMsg, 'info');
+                    }
+                } else if (data.type === 'PRODUCTS_UPDATED') {
+                    renderCatCategories();
+                    renderCatGrid();
+                }
+            });
+
+            // Polling de respaldo cada 3 segundos en Caja para garantizar sincronización imperecedera
+            setInterval(() => {
+                fetch('/api/state')
+                    .then(r => r.json())
+                    .then(state => {
+                        if (state && Array.isArray(state.orders)) {
+                            localStorage.setItem('mcm_pos_orders_v2', JSON.stringify(state.orders));
+                            renderPendingMeseraOrders();
+                        }
+                    }).catch(() => {});
+            }, 3000);
+        });
+
+        function renderCatCategories() {
+            const bar = document.getElementById('categoriesBar');
+            if (!bar) return;
+
+            const storeCats = POSStore.getCategories();
+            const categories = ['Todas', ...storeCats];
+
+            bar.innerHTML = categories.map(cat => {
+                const isActive = cat === currentActiveCat;
+                return `<button class="cat-btn ${isActive ? 'active' : ''}" onclick="filterCat('${cat}')">${cat}</button>`;
+            }).join('');
+        }
+
+        function renderCatGrid() {
+            const grid = document.getElementById('productsGrid');
+            const products = POSStore.getProducts();
+            grid.innerHTML = '';
+
+            const filtered = currentActiveCat === 'Todas' ? products : products.filter(p => p.category === currentActiveCat);
+
+            filtered.forEach(p => {
+                const imgUrl = p.image || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400';
+                const tile = document.createElement('div');
+                tile.className = 'product-tile';
+                tile.onclick = () => addToCart(p.id);
+                tile.innerHTML = `
+                    <img src="${imgUrl}" class="product-tile-img" alt="${p.name}" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400';">
+                    <div>
+                        <span class="code">${p.code}</span>
+                        <div class="name">${p.name}</div>
+                    </div>
+                    <span class="price">$${p.price.toLocaleString('es-CL')}</span>
+                `;
+                grid.appendChild(tile);
+            });
+        }
+
+        function filterCat(cat) {
+            currentActiveCat = cat;
+            document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.toggle('active', btn.innerText === cat));
+            renderCatGrid();
+        }
+
+        let editingCartKey = null;
+        let activeCustomizeProductId = null;
+        let selectedRemovals = new Set();
+        let selectedAdditions = new Set();
+
+        function getCartKey(productId, removals = [], additions = []) {
+            const sRem = [...removals].sort().join('|');
+            const sAdd = [...additions].sort().join('|');
+            return productId + (sRem ? '__rem_' + sRem : '') + (sAdd ? '__add_' + sAdd : '');
+        }
+
+        function addToCart(productId) {
+            const products = POSStore.getProducts();
+            const prod = products.find(p => p.id === productId);
+            if (!prod) return;
+
+            const cartKey = getCartKey(productId, [], []);
+            if (currentCart[cartKey]) {
+                currentCart[cartKey].qty += 1;
+            } else {
+                currentCart[cartKey] = {
+                    cartKey: cartKey,
+                    product: prod,
+                    qty: 1,
+                    removals: [],
+                    additions: []
+                };
+            }
+            updateCart();
+        }
+
+        function changeQty(cartKey, delta) {
+            if (currentCart[cartKey]) {
+                currentCart[cartKey].qty += delta;
+                if (currentCart[cartKey].qty <= 0) {
+                    delete currentCart[cartKey];
+                }
+            }
+            updateCart();
+        }
+
+        function openEditCartItemModal(cartKey) {
+            const item = currentCart[cartKey];
+            if (!item) return;
+
+            editingCartKey = cartKey;
+            activeCustomizeProductId = item.product.id;
+
+            selectedRemovals = new Set(item.removals || []);
+            selectedAdditions = new Set(item.additions || []);
+
+            const titleEl = document.getElementById('custModalTitle');
+            if (titleEl) titleEl.innerText = `⚙️ Modificar: ${item.product.name}`;
+
+            renderCustomizationModalContent(item.product);
+            document.getElementById('customizeModal').classList.add('active');
+        }
+
+        function renderCustomizationModalContent(product) {
+            const removables = POSStore.getRemovableIngredients(product);
+            const additions = POSStore.getCommonAdditions(product);
+
+            const remContainer = document.getElementById('custRemovalsList');
+            const addContainer = document.getElementById('custAdditionsList');
+
+            if (remContainer) {
+                if (removables.length === 0) {
+                    remContainer.innerHTML = '<span style="font-size:0.75rem; color:#64748b;">No hay insumos removibles definidos</span>';
+                } else {
+                    remContainer.innerHTML = removables.map(ing => {
+                        const isRemoved = selectedRemovals.has(ing);
+                        const style = isRemoved
+                            ? 'background: #fef2f2; border: 2px solid #ef4444; color: #dc2626; font-weight: 800; font-size: 0.8rem; padding: 6px 12px; border-radius: 20px; cursor: pointer;'
+                            : 'background: #f8fafc; border: 1.5px solid #cbd5e1; color: #334155; font-weight: 700; font-size: 0.8rem; padding: 6px 12px; border-radius: 20px; cursor: pointer;';
+                        
+                        const label = isRemoved ? `❌ SIN ${ing.toUpperCase()}` : `✔️ Con ${ing}`;
+
+                        return `<button type="button" style="${style}" onclick="toggleRemovalChip('${ing.replace(/'/g, "\\'")}')">${label}</button>`;
+                    }).join('');
+                }
+            }
+
+            if (addContainer) {
+                if (additions.length === 0) {
+                    addContainer.innerHTML = '<span style="font-size:0.75rem; color:#64748b;">No hay agregados comunes</span>';
+                } else {
+                    addContainer.innerHTML = additions.map(add => {
+                        const isAdded = selectedAdditions.has(add);
+                        const style = isAdded
+                            ? 'background: #eff6ff; border: 2px solid #2563eb; color: #1d4ed8; font-weight: 800; font-size: 0.8rem; padding: 6px 12px; border-radius: 20px; cursor: pointer;'
+                            : 'background: #f8fafc; border: 1.5px solid #cbd5e1; color: #475569; font-weight: 700; font-size: 0.8rem; padding: 6px 12px; border-radius: 20px; cursor: pointer;';
+                        
+                        const label = isAdded ? `✅ ➕ ${add.toUpperCase()}` : `➕ ${add}`;
+
+                        return `<button type="button" style="${style}" onclick="toggleAdditionChip('${add.replace(/'/g, "\\'")}')">${label}</button>`;
+                    }).join('');
+                }
+            }
+        }
+
+        function toggleRemovalChip(ing) {
+            if (selectedRemovals.has(ing)) {
+                selectedRemovals.delete(ing);
+            } else {
+                selectedRemovals.add(ing);
+            }
+            const product = POSStore.getProducts().find(p => p.id === activeCustomizeProductId) || { id: activeCustomizeProductId, name: 'Producto' };
+            renderCustomizationModalContent(product);
+        }
+
+        function toggleAdditionChip(add) {
+            if (selectedAdditions.has(add)) {
+                selectedAdditions.delete(add);
+            } else {
+                selectedAdditions.add(add);
+            }
+            const product = POSStore.getProducts().find(p => p.id === activeCustomizeProductId) || { id: activeCustomizeProductId, name: 'Producto' };
+            renderCustomizationModalContent(product);
+        }
+
+        function closeCustomizeModal() {
+            document.getElementById('customizeModal').classList.remove('active');
+            editingCartKey = null;
+            activeCustomizeProductId = null;
+            selectedRemovals.clear();
+            selectedAdditions.clear();
+        }
+
+        function confirmSaveCustomization() {
+            if (!activeCustomizeProductId || !editingCartKey || !currentCart[editingCartKey]) return;
+            const item = currentCart[editingCartKey];
+            const product = item.product;
+
+            const removalsArray = Array.from(selectedRemovals);
+            const additionsArray = Array.from(selectedAdditions);
+
+            const currentQty = item.qty;
+            delete currentCart[editingCartKey];
+
+            const newCartKey = getCartKey(activeCustomizeProductId, removalsArray, additionsArray);
+            if (currentCart[newCartKey]) {
+                currentCart[newCartKey].qty += currentQty;
+            } else {
+                currentCart[newCartKey] = {
+                    cartKey: newCartKey,
+                    product: product,
+                    qty: currentQty,
+                    removals: removalsArray,
+                    additions: additionsArray
+                };
+            }
+
+            closeCustomizeModal();
+            updateCart();
+
+            if (window.showToast) {
+                showToast('✓ Modificación guardada en el detalle de venta', 'success');
+            }
+        }
+
+        function setServiceType(type) {
+            currentServiceType = type;
+            document.getElementById('btnTypeLlevar').classList.toggle('active', type === 'Para Llevar');
+            document.getElementById('btnTypeServir').classList.toggle('active', type === 'Para Servir');
+            document.getElementById('currentTableTag').innerText = type;
+        }
+
+        function updateCart() {
+            const list = document.getElementById('cartItemsList');
+            list.innerHTML = '';
+            let total = 0;
+
+            Object.values(currentCart).forEach(item => {
+                const sub = item.product.price * item.qty;
+                total += sub;
+
+                let removalsHtml = '';
+                if (Array.isArray(item.removals) && item.removals.length > 0) {
+                    removalsHtml = item.removals.map(r => `<span style="display: inline-block; font-size: 0.68rem; color: #dc2626; background: #fef2f2; border: 1px solid #fca5a5; padding: 1px 5px; border-radius: 4px; font-weight: 800; margin-right: 4px; margin-top: 3px;">⛔ SIN ${r.toUpperCase()}</span>`).join('');
+                }
+
+                let additionsHtml = '';
+                if (Array.isArray(item.additions) && item.additions.length > 0) {
+                    additionsHtml = item.additions.map(a => `<span style="display: inline-block; font-size: 0.68rem; color: #1d4ed8; background: #eff6ff; border: 1px solid #93c5fd; padding: 1px 5px; border-radius: 4px; font-weight: 800; margin-right: 4px; margin-top: 3px;">➕ ${a.toUpperCase()}</span>`).join('');
+                }
+
+                const itemKey = item.cartKey || item.product.id;
+                const row = document.createElement('div');
+                row.className = 'cart-item-row';
+                row.style.display = 'flex';
+                row.style.alignItems = 'center';
+                row.style.justifyContent = 'space-between';
+                row.style.padding = '8px 0';
+                row.style.borderBottom = '1px solid var(--border)';
+
+                row.innerHTML = `
+                    <div class="cart-item-info" onclick="openEditCartItemModal('${itemKey}')" style="cursor: pointer; flex: 1; min-width: 0;" title="Toca para modificar opciones">
+                        <div style="display: flex; align-items: center; justify-content: space-between; padding-right: 6px;">
+                            <h4 style="margin: 0; font-size: 0.85rem; font-weight: 800; color: var(--primary);">${item.product.name}</h4>
+                            <span style="font-size: 0.68rem; color: #2563eb; background: #eff6ff; padding: 1px 5px; border-radius: 4px; font-weight: 800; border: 1px solid #bfdbfe;">⚙️ Modificar</span>
+                        </div>
+                        <div style="margin-top: 2px;">
+                            ${removalsHtml}
+                            ${additionsHtml}
+                        </div>
+                        <span style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-top: 2px;">$${item.product.price.toLocaleString('es-CL')} c/u</span>
+                    </div>
+                    <div class="cart-qty-ctrl" onclick="event.stopPropagation()">
+                        <button class="btn-qty" onclick="changeQty('${itemKey}', -1)">-</button>
+                        <span style="font-weight: 700; font-size: 0.85rem;">${item.qty}</span>
+                        <button class="btn-qty" onclick="changeQty('${itemKey}', 1)">+</button>
+                    </div>
+                `;
+                list.appendChild(row);
+            });
+
+            const net = Math.round(total / 1.19);
+            const tax = total - net;
+            const suggestedTip = Math.round(total * 0.10);
+            const grandTotal = total + suggestedTip;
+
+            if (document.getElementById('txtSubtotal')) document.getElementById('txtSubtotal').innerText = `$${net.toLocaleString('es-CL')} CLP`;
+            if (document.getElementById('txtTax')) document.getElementById('txtTax').innerText = `$${tax.toLocaleString('es-CL')} CLP`;
+            if (document.getElementById('txtConsumptionTotal')) document.getElementById('txtConsumptionTotal').innerText = `$${total.toLocaleString('es-CL')} CLP`;
+            if (document.getElementById('txtSuggestedTip')) document.getElementById('txtSuggestedTip').innerText = `+$${suggestedTip.toLocaleString('es-CL')} CLP`;
+            if (document.getElementById('txtTotal')) document.getElementById('txtTotal').innerText = `$${grandTotal.toLocaleString('es-CL')} CLP`;
+
+            const disabled = total === 0;
+            document.getElementById('btnPayGetnetDebito').disabled = disabled;
+            document.getElementById('btnPayGetnetCredito').disabled = disabled;
+            document.getElementById('btnPayEfectivo').disabled = disabled;
+        }
+
+        function renderPendingMeseraOrders() {
+            const container = document.getElementById('pendingOrdersChips');
+            const badgeEl = document.getElementById('pendingCountBadge');
+            const orders = POSStore.getPendingOrders();
+
+            if (badgeEl) {
+                badgeEl.innerText = orders.length;
+            }
+
+            if (orders.length === 0) {
+                container.innerHTML = '<span style="font-size: 0.78rem; color: var(--text-muted); text-align: center; padding: 12px;">No hay pedidos pendientes</span>';
+                return;
+            }
+
+            // Orden FIFO estricto por fecha/hora de creación (First-In, First-Out: el más antiguo arriba)
+            orders.sort((a, b) => new Date(a.createdAt || 0) - new Date(b.createdAt || 0));
+
+            container.innerHTML = '';
+            orders.forEach(ord => {
+                const isSelected = (loadedPendingOrderId === ord.id);
+                const card = document.createElement('div');
+                card.className = 'pending-card' + (isSelected ? ' active-card' : '');
+                
+                card.onclick = () => {
+                    if (isSelected) {
+                        returnOrderToPending();
+                    } else {
+                        loadMeseraOrderToCart(ord);
+                    }
+                };
+
+                const timeStr = ord.createdAt ? new Date(ord.createdAt).toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' }) : '';
+
+                const itemsSummary = (ord.items || []).map(i => {
+                    let mods = [];
+                    if (i.removals && i.removals.length > 0) mods.push(...i.removals.map(r => `<span style="color:#ef4444; font-weight:800;">SIN ${r.toUpperCase()}</span>`));
+                    if (i.additions && i.additions.length > 0) mods.push(...i.additions.map(a => `<span style="color:#2563eb; font-weight:800;">+ ${a.toUpperCase()}</span>`));
+                    const modStr = mods.length > 0 ? ` <small>(${mods.join(', ')})</small>` : '';
+                    return `<div style="font-size: 0.72rem; color: #475569;">• ${i.qty}x ${i.name}${modStr}</div>`;
+                }).join('');
+
+                card.innerHTML = `
+                    <div class="pending-card-top">
+                        <span class="pending-card-table">🍽️ ${ord.tableNum}</span>
+                        <span class="pending-card-num">#${ord.orderNum} ${timeStr ? '• ' + timeStr : ''}</span>
+                    </div>
+                    <div style="margin: 4px 0;">
+                        ${itemsSummary}
+                    </div>
+                    <div class="pending-card-bottom">
+                        <span class="pending-card-total">$${ord.total.toLocaleString('es-CL')}</span>
+                        <span class="pending-card-tag ${isSelected ? 'tag-encobro' : 'tag-pendiente'}">
+                            ${isSelected ? 'En Cobro ↩️' : 'Pendiente'}
+                        </span>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function loadMeseraOrderToCart(order) {
+            loadedPendingOrderId = order.id;
+            currentCart = {};
+            
+            order.items.forEach((i, idx) => {
+                const key = (i.productId || i.name) + '_' + idx;
+                currentCart[key] = {
+                    cartKey: key,
+                    product: { id: i.productId || i.name, name: i.name, price: i.price },
+                    qty: i.qty,
+                    removals: i.removals || [],
+                    additions: i.additions || []
+                };
+            });
+
+            setServiceType(order.serviceType || 'Para Servir');
+            renderCurrentOrderHeader(order);
+            updateCart();
+            renderPendingMeseraOrders();
+        }
+
+        function renderCurrentOrderHeader(order) {
+            const refDiv = document.getElementById('currentOrderRef');
+            if (!refDiv) return;
+
+            if (order) {
+                refDiv.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span>Orden Mesera: <strong>#${order.orderNum} (${order.tableNum})</strong></span>
+                        <span style="font-size: 0.7rem; background: #fef3c7; color: #b45309; padding: 2px 6px; border-radius: 4px; font-weight: 700;">EN COBRO</span>
+                    </div>
+                    <div style="display: flex; gap: 6px; align-items: center;">
+                        <button type="button" onclick="printCurrentKitchenComanda()" style="background: #2563eb; color: #ffffff; border: none; border-radius: 6px; padding: 4px 8px; font-size: 0.75rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);" title="Imprimir comanda para armado en cocina">
+                            🖨️ Comanda Cocina
+                        </button>
+                    </div>
+                `;
+            } else {
+                refDiv.innerHTML = `
+                    <span>Orden: <strong>Venta Directa Caja</strong></span>
+                    <span id="currentTableTag">${currentServiceType}</span>
+                `;
+            }
+        }
+
+        function printCurrentKitchenComanda() {
+            if (!loadedPendingOrderId) return;
+            const orders = POSStore.getPendingOrders();
+            const ord = orders.find(o => o.id === loadedPendingOrderId);
+            if (ord) {
+                autoPrintKitchenComanda(ord);
+            }
+        }
+
+        function returnOrderToPending() {
+            if (loadedPendingOrderId) {
+                const orders = POSStore.getPendingOrders();
+                const existingOrder = orders.find(o => o.id === loadedPendingOrderId);
+                POSStore.revertToPending(loadedPendingOrderId);
+
+                const tableName = existingOrder ? existingOrder.tableNum : 'Mesa';
+                const orderNum = existingOrder ? existingOrder.orderNum : '';
+
+                loadedPendingOrderId = null;
+                currentCart = {};
+                renderCurrentOrderHeader(null);
+                updateCart();
+                renderPendingMeseraOrders();
+
+                if (window.showToast) {
+                    showToast(`↩️ ${tableName} (#${orderNum}) desmarcada de cobro. Permanece PENDIENTE.`, 'warning');
+                } else if (window.UIModal) {
+                    UIModal.alert({
+                        title: '↩️ Mesa Devuelta a Pendiente',
+                        message: `El pedido de la ${tableName} (#${orderNum}) se desmarcó de cobro y volvió al estado PENDIENTE DE PAGO. La mesa continúa abierta para recibir más consumos.`
+                    });
+                }
+            } else {
+                currentCart = {};
+                updateCart();
+            }
+        }
+
+        /* AUTO-IMPRESIÓN AUTOMÁTICA DE COMANDA DE COCINA AL RECIBIR PEDIDO DE MESERA */
+        function generateKitchenComandaHTML(order, isAddition = false) {
+            const items = order.items || [];
+            let totalConsumo = order.total || items.reduce((acc, i) => acc + ((i.price || 0) * i.qty), 0);
+
+            const itemsHtml = items.map(i => {
+                let removalsTxt = '';
+                if (Array.isArray(i.removals) && i.removals.length > 0) {
+                    removalsTxt = i.removals.map(r => `<div style="font-size: 11px; font-weight: 800; color: #dc2626; padding-left: 12px;">└ ⛔ SIN ${r.toUpperCase()}</div>`).join('');
+                }
+                let additionsTxt = '';
+                if (Array.isArray(i.additions) && i.additions.length > 0) {
+                    additionsTxt = i.additions.map(a => `<div style="font-size: 11px; font-weight: 800; color: #2563eb; padding-left: 12px;">└ ➕ ${a.toUpperCase()}</div>`).join('');
+                }
+                const subtotalItem = (i.price || 0) * i.qty;
+                const priceTxt = subtotalItem > 0 ? `$${subtotalItem.toLocaleString('es-CL')}` : '';
+
+                return `
+                    <div class="t-item-row" style="flex-direction: column; align-items: flex-start; margin-bottom: 4px;">
+                        <div style="display: flex; justify-content: space-between; width: 100%; font-size: 13px; font-weight: 800;">
+                            <div style="display: flex; gap: 6px; min-width: 0;">
+                                <span class="t-qty">[${i.qty}x]</span>
+                                <span class="t-name">${i.name}</span>
+                            </div>
+                            ${priceTxt ? `<span class="t-price" style="font-size: 13px; font-weight: 800; white-space: nowrap; margin-left: 8px;">${priceTxt}</span>` : ''}
+                        </div>
+                        ${removalsTxt}
+                        ${additionsTxt}
+                    </div>
+                `;
+            }).join('');
+
+            const title = isAddition ? '*** ADICIÓN COMANDA COCINA ***' : '*** VALE DE COMANDA (VALORIZADO) ***';
+            const timeStr = order.paidAt ? new Date(order.paidAt).toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : new Date().toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const tableStr = (order.tableNum || 'Caja Directa').toUpperCase();
+            const orderNumStr = order.orderNum || order.receiptNum || '---';
+            const serviceTypeStr = (order.serviceType || 'Para Llevar').toUpperCase();
+
+            const net = Math.round(totalConsumo / 1.19);
+            const tax = totalConsumo - net;
+            const suggestedTip = Math.round(totalConsumo * 0.10);
+            const grandTotalWithTip = totalConsumo + suggestedTip;
+
+            return `
+                <div class="t-banner">${title}</div>
+                <div class="t-center t-bold" style="font-size: 11px;">SABOR AL PASO • TERRAPUERTO CALAMA</div>
+                
+                <div class="t-table-box">
+                    <div class="t-table-title">${tableStr}</div>
+                    <div class="t-order-info">ORDEN N°: <strong>#${orderNumStr}</strong> | TIPO: <strong>${serviceTypeStr}</strong></div>
+                    <div style="font-size: 11px; margin-top: 2px;">HORA: ${timeStr}</div>
+                </div>
+
+                <div class="t-divider-solid"></div>
+                <div class="t-bold" style="font-size: 12px; margin-bottom: 4px;">PRODUCTOS / COMANDA VALORIZADA:</div>
+                <div class="t-divider"></div>
+
+                <div>${itemsHtml}</div>
+
+                ${order.notes ? `
+                    <div class="t-divider"></div>
+                    <div class="t-notes-box">
+                        ⚠️ NOTAS COCINA: ${order.notes}
+                    </div>
+                ` : ''}
+
+                <div class="t-divider-solid"></div>
+
+                <!-- RESUMEN FINANCIERO DE LA COMANDA / PRE-CUENTA -->
+                <div style="font-size: 11.5px; line-height: 1.35; padding: 2px 0;">
+                    <div style="display: flex; justify-content: space-between;"><span>Consumo Neto (sin IVA):</span><span>$${net.toLocaleString('es-CL')}</span></div>
+                    <div style="display: flex; justify-content: space-between;"><span>IVA (19% Incluido):</span><span>$${tax.toLocaleString('es-CL')}</span></div>
+                    <div style="display: flex; justify-content: space-between; font-weight: bold;"><span>Subtotal Consumo:</span><span>$${totalConsumo.toLocaleString('es-CL')}</span></div>
+                    <div style="display: flex; justify-content: space-between; color: #16a34a; font-weight: bold;"><span>Propina Sugerida (10%):</span><span>+$${suggestedTip.toLocaleString('es-CL')}</span></div>
+                    <div style="border-top: 1.5px solid #000; margin-top: 4px; padding-top: 4px; display: flex; justify-content: space-between; font-size: 13px; font-weight: bold;">
+                        <span>TOTAL ESTIMADO CON PROPINA:</span><span>$${grandTotalWithTip.toLocaleString('es-CL')} CLP</span>
+                    </div>
+                </div>
+
+                <div class="t-divider-solid"></div>
+                <div class="t-footer">
+                    --- DETALLE DE COMANDA VALORIZADA ---
+                </div>
+            `;
+        }
+
+        /* AUTO-IMPRESIÓN AUTOMÁTICA DE COMANDA DE COCINA AL RECIBIR PEDIDO DE MESERA */
+        function autoPrintKitchenComanda(order, itemsToPrint = null, isAddition = false) {
+            const ticketHTML = generateKitchenComandaHTML(order, isAddition);
+            executePrint(isAddition ? 'Adición Comanda Cocina' : 'Comanda Cocina', ticketHTML);
+        }
+
+        /* LÓGICA DE PROPINAS Y PROCESO DE PAGO GETNET / EFECTIVO */
+        let pendingPaymentMethod = '';
+        let currentSelectedTip = 0;
+
+        function promptTipModal(paymentMethod) {
+            const consumptionTotal = calculateTotal();
+            if (consumptionTotal === 0) return;
+
+            pendingPaymentMethod = paymentMethod;
+            const suggestedTip = Math.round(consumptionTotal * 0.10);
+
+            const elConsumption = document.getElementById('tipModalConsumptionTotal');
+            const elSuggested = document.getElementById('tipModalSuggestedAmount');
+            const elBtnWithTip = document.getElementById('tipModalBtnTotalWithTip');
+            const elBtnNoTip = document.getElementById('tipModalBtnTotalNoTip');
+
+            if (elConsumption) elConsumption.innerText = `$${consumptionTotal.toLocaleString('es-CL')} CLP`;
+            if (elSuggested) elSuggested.innerText = `+$${suggestedTip.toLocaleString('es-CL')} CLP`;
+            if (elBtnWithTip) elBtnWithTip.innerText = `$${(consumptionTotal + suggestedTip).toLocaleString('es-CL')} CLP`;
+            if (elBtnNoTip) elBtnNoTip.innerText = `$${consumptionTotal.toLocaleString('es-CL')} CLP`;
+
+            const modal = document.getElementById('tipPromptModal');
+            if (modal) modal.classList.add('active');
+        }
+
+        function confirmTipSelection(includeTip) {
+            const consumptionTotal = calculateTotal();
+            const tipAmount = includeTip ? Math.round(consumptionTotal * 0.10) : 0;
+
+            const modal = document.getElementById('tipPromptModal');
+            if (modal) modal.classList.remove('active');
+
+            if (pendingPaymentMethod.includes('Getnet')) {
+                executeGetnetPaymentWithTip(pendingPaymentMethod, tipAmount);
+            } else {
+                executeCashPaymentWithTip(tipAmount);
+            }
+        }
+
+        function selectFixedTipAmount(amount) {
+            const modal = document.getElementById('tipPromptModal');
+            if (modal) modal.classList.remove('active');
+
+            if (pendingPaymentMethod.includes('Getnet')) {
+                executeGetnetPaymentWithTip(pendingPaymentMethod, amount);
+            } else {
+                executeCashPaymentWithTip(amount);
+            }
+        }
+
+        async function promptCustomTip() {
+            let customTip = 0;
+            if (window.UIModal && window.UIModal.prompt) {
+                const val = await UIModal.prompt({
+                    title: '🪙 Monto de Propina Voluntaria',
+                    message: 'Ingrese el valor de la propina voluntaria a agregar ($ CLP):',
+                    defaultValue: '1000',
+                    placeholder: 'Ej: 1000',
+                    confirmText: 'Aplicar Propina',
+                    cancelText: 'Cancelar'
+                });
+                if (val === null) return;
+                customTip = parseInt(val, 10) || 0;
+            } else {
+                const val = prompt('Ingrese el monto de propina voluntaria en $ CLP:', '1000');
+                if (val === null) return;
+                customTip = parseInt(val, 10) || 0;
+            }
+
+            const modal = document.getElementById('tipPromptModal');
+            if (modal) modal.classList.remove('active');
+
+            if (pendingPaymentMethod.includes('Getnet')) {
+                executeGetnetPaymentWithTip(pendingPaymentMethod, customTip);
+            } else {
+                executeCashPaymentWithTip(customTip);
+            }
+        }
+
+        function executeGetnetPaymentWithTip(paymentMethod, tipAmount) {
+            activePaymentType = paymentMethod;
+            currentSelectedTip = tipAmount;
+            const consumptionTotal = calculateTotal();
+            const grandTotal = consumptionTotal + tipAmount;
+
+            document.getElementById('getnetModalTitle').innerText = `Procesando en Terminal ${paymentMethod}...`;
+            document.getElementById('getnetModalAmount').innerText = `$${grandTotal.toLocaleString('es-CL')} CLP (${tipAmount > 0 ? 'Consumo $' + consumptionTotal.toLocaleString('es-CL') + ' + Propina $' + tipAmount.toLocaleString('es-CL') : 'Sin propina'})`;
+            document.getElementById('getnetModalStatus').innerText = `Conectando con Terminal Getnet Santander... Por favor pase o acerque la tarjeta en el POS.`;
+            document.getElementById('getnetModal').classList.add('active');
+        }
+
+        function executeCashPaymentWithTip(tipAmount) {
+            currentSelectedTip = tipAmount;
+            finalizeSale('Efectivo');
+        }
+
+        function cancelGetnetPayment() {
+            document.getElementById('getnetModal').classList.remove('active');
+        }
+
+        function simulateGetnetSuccess() {
+            document.getElementById('getnetModalStatus').innerText = `✓ Transacción Aprobada en Getnet Santander. Emitiendo comprobantes...`;
+            setTimeout(() => {
+                document.getElementById('getnetModal').classList.remove('active');
+                finalizeSale(activePaymentType);
+            }, 600);
+        }
+
+        function calculateTotal() {
+            return Object.values(currentCart).reduce((acc, i) => acc + (i.product.price * i.qty), 0);
+        }
+
+        function finalizeSale(paymentMethod) {
+            const consumptionTotal = calculateTotal();
+            if (consumptionTotal === 0) return;
+            const tip = currentSelectedTip || 0;
+            const grandTotal = consumptionTotal + tip;
+
+            const itemsArray = Object.values(currentCart).map(i => ({
+                productId: i.product.id,
+                name: i.product.name,
+                price: i.product.price,
+                qty: i.qty,
+                removals: i.removals || [],
+                additions: i.additions || []
+            }));
+
+            const sale = POSStore.processSale({
+                subtotal: consumptionTotal,
+                tipAmount: tip,
+                total: grandTotal,
+                serviceType: currentServiceType,
+                paymentMethod: paymentMethod,
+                items: itemsArray,
+                pendingOrderId: loadedPendingOrderId
+            });
+
+            currentCart = {};
+            currentSelectedTip = 0;
+            loadedPendingOrderId = null;
+            renderCurrentOrderHeader(null);
+            updateCart();
+            renderPendingMeseraOrders();
+
+            if (window.showToast) {
+                showToast(`✅ Venta N° ${sale.receiptNum} procesada ($${sale.total.toLocaleString('es-CL')})`, 'success');
+            }
+
+            setTimeout(() => {
+                printBothVouchers(sale);
+            }, 300);
+        }
+
+        function generateClientVoucherHTML(sale) {
+            const itemsHtml = sale.items.map(i => `
+                <div class="t-item-row">
+                    <span class="t-qty" style="font-size: 13px;">${i.qty}x</span>
+                    <span class="t-name" style="font-size: 12px; text-transform: none;">${i.name}</span>
+                    <span class="t-price">$${(i.price * i.qty).toLocaleString('es-CL')}</span>
+                </div>
+            `).join('');
+
+            const net = Math.round((sale.subtotal || sale.total) / 1.19);
+            const tax = (sale.subtotal || sale.total) - net;
+            const tip = sale.tipAmount || 0;
+
+            return `
+                <div class="t-center t-bold" style="font-size: 16px;">SABOR AL PASO</div>
+                <div class="t-center" style="font-size: 12px; font-weight: bold;">MCMplus SpA • RUT: 77.492.310-K</div>
+                <div class="t-center" style="font-size: 11px;">Terrapuerto Calama - Local 2</div>
+                
+                <div class="t-divider-solid"></div>
+                
+                <div style="font-size: 12px;">
+                    <div><strong>BOLETA / VOUCHER N°:</strong> ${sale.receiptNum}</div>
+                    <div><strong>FECHA:</strong> ${new Date(sale.paidAt).toLocaleString('es-CL')}</div>
+                    <div><strong>MEDIO PAGO:</strong> ${sale.paymentMethod}</div>
+                    <div><strong>MESA / SERVICIO:</strong> ${sale.tableNum} (${sale.serviceType})</div>
+                    <div><strong>ESTADO DTE SII:</strong> ${sale.siiStatus === 'TRANSMITIDO_TERCERO_SII' ? 'Transmitido SII (Contrato DTE Cash)' : 'Emitido Getnet Santander'}</div>
+                </div>
+
+                <div class="t-divider"></div>
+                <div class="t-bold" style="font-size: 12px;">DETALLE DE CONSUMO:</div>
+                <div class="t-divider"></div>
+
+                <div>${itemsHtml}</div>
+
+                <div class="t-divider-solid"></div>
+
+                <div style="font-size: 12px;">
+                    <div style="display: flex; justify-content: space-between;"><span>Consumo Neto:</span><span>$${net.toLocaleString('es-CL')}</span></div>
+                    <div style="display: flex; justify-content: space-between;"><span>IVA (19%):</span><span>$${tax.toLocaleString('es-CL')}</span></div>
+                    <div style="display: flex; justify-content: space-between; font-weight: bold;"><span>Subtotal Consumo:</span><span>$${(sale.subtotal || sale.total).toLocaleString('es-CL')}</span></div>
+                    ${tip > 0 ? `<div style="display: flex; justify-content: space-between; color: #15803d; font-weight: bold;"><span>Propina Voluntaria (10%):</span><span>+$${tip.toLocaleString('es-CL')}</span></div>` : ''}
+                    <div style="display: flex; justify-content: space-between; font-size: 15px; font-weight: bold; margin-top: 4px; border-top: 1px solid #000; padding-top: 4px;">
+                        <span>TOTAL PAGADO:</span><span>$${sale.total.toLocaleString('es-CL')} CLP</span>
+                    </div>
+                </div>
+
+                <div class="t-divider-solid"></div>
+                <div class="t-footer">
+                    <div class="t-bold" style="font-size: 12px;">¡Muchas Gracias por su Compra!</div>
+                    <div style="font-size: 10px; color: #444; margin-top: 2px;">Sistema POS ATSIT (pdiaz@atsit.cl)</div>
+                </div>
+            `;
+        }
+
+        function printClientVoucher(sale) {
+            const ticketHTML = generateClientVoucherHTML(sale);
+            executePrint(`Boleta N° ${sale.receiptNum}`, ticketHTML);
+        }
+
+        /* IMPRESIÓN CONJUNTA DE AMBOS VALES (VALE COCINA + BOLETA CLIENTE) TRAS EL PAGO */
+        function printBothVouchers(sale) {
+            const kitchenHTML = generateKitchenComandaHTML(sale);
+            const clientHTML = generateClientVoucherHTML(sale);
+
+            const combinedHTML = `
+                <div class="voucher-section kitchen-voucher">
+                    ${kitchenHTML}
+                </div>
+                
+                <div style="page-break-before: always; break-before: page; margin: 18px 0 14px 0; border-top: 2px dashed #000000; padding-top: 8px; text-align: center; font-weight: bold; font-size: 11px; font-family: monospace; white-space: nowrap; overflow: hidden;">
+                    ✂️ --- CORTE DE TICKET --- ✂️
+                </div>
+
+                <div class="voucher-section client-voucher">
+                    ${clientHTML}
+                </div>
+            `;
+
+            executePrint(`Venta N° ${sale.receiptNum} - (Vale Cocina + Boleta Cliente)`, combinedHTML);
+        }
+
+        /* LÓGICA DE ARQUEO Y CIERRE DE TURNO DE CAJA */
+        let currentShiftCalculations = null;
+
+        function formatCurrencyInput(inputEl) {
+            if (!inputEl) return;
+            const rawDigits = inputEl.value.replace(/\D/g, '');
+            if (rawDigits) {
+                inputEl.value = parseInt(rawDigits, 10).toLocaleString('es-CL');
+            } else {
+                inputEl.value = '';
+            }
+        }
+
+        function parseCurrencyInputValue(inputEl) {
+            if (!inputEl) return 0;
+            const rawDigits = (inputEl.value || '').replace(/\D/g, '');
+            return parseInt(rawDigits, 10) || 0;
+        }
+
+        function openShiftCloseModal() {
+            const user = POSStore.getCurrentUser() || { name: 'Cajero Principal', role: 'CAJA' };
+            const dateStr = new Date().toLocaleString('es-CL');
+            const headerEl = document.getElementById('shiftModalDateUser');
+            if (headerEl) headerEl.innerText = `Turno: ${dateStr} • Operador: ${user.name} (${user.role})`;
+
+            // Cargar ventas activas de hoy/turno
+            const shiftSales = POSStore.loadSales().filter(s => s.status !== 'ANULADA');
+
+            const cardSales = shiftSales.filter(s => (s.paymentMethod || '').includes('Getnet') || (s.paymentMethod || '').includes('Tarjeta'));
+            const cashSales = shiftSales.filter(s => (s.paymentMethod || '').includes('Efectivo'));
+
+            const cardCount = cardSales.length;
+            const cardGross = cardSales.reduce((acc, s) => acc + (s.subtotal || s.total), 0);
+            const cardNet = Math.round(cardGross / 1.19);
+            const cardTax = cardGross - cardNet;
+            const cardTips = cardSales.reduce((acc, s) => acc + (s.tipAmount || 0), 0);
+            const cardTotalWithTips = cardGross + cardTips;
+
+            const cashCount = cashSales.length;
+            const cashGross = cashSales.reduce((acc, s) => acc + (s.subtotal || s.total), 0);
+            const cashNet = Math.round(cashGross / 1.19);
+            const cashTax = cashGross - cashNet;
+            const cashTips = cashSales.reduce((acc, s) => acc + (s.tipAmount || 0), 0);
+            const cashTotalWithTips = cashGross + cashTips;
+
+            const totalVales = cardCount + cashCount;
+            const totalNet = cardNet + cashNet;
+            const totalTax = cardTax + cashTax;
+            const totalGross = cardGross + cashGross;
+            const totalTips = cardTips + cashTips;
+            const grandTotal = cardTotalWithTips + cashTotalWithTips;
+
+            currentShiftCalculations = {
+                shiftSales,
+                cardSales, cashSales,
+                cardCount, cardGross, cardNet, cardTax, cardTips, cardTotalWithTips,
+                cashCount, cashGross, cashNet, cashTax, cashTips, cashTotalWithTips,
+                totalVales, totalNet, totalTax, totalGross, totalTips, grandTotal,
+                closedAt: new Date().toISOString(),
+                cashier: user.name
+            };
+
+            // Actualizar DOM
+            document.getElementById('shiftCardValesCount').innerText = `${cardCount} vale${cardCount !== 1 ? 's' : ''}`;
+            document.getElementById('shiftCardNet').innerText = `$${cardNet.toLocaleString('es-CL')} CLP`;
+            document.getElementById('shiftCardTax').innerText = `$${cardTax.toLocaleString('es-CL')} CLP`;
+            document.getElementById('shiftCardGross').innerText = `$${cardGross.toLocaleString('es-CL')} CLP`;
+            document.getElementById('shiftCardTips').innerText = `+$${cardTips.toLocaleString('es-CL')} CLP`;
+            document.getElementById('shiftCardTotal').innerText = `$${cardTotalWithTips.toLocaleString('es-CL')} CLP`;
+
+            document.getElementById('shiftCashValesCount').innerText = `${cashCount} vale${cashCount !== 1 ? 's' : ''}`;
+            document.getElementById('shiftCashNet').innerText = `$${cashNet.toLocaleString('es-CL')} CLP`;
+            document.getElementById('shiftCashTax').innerText = `$${cashTax.toLocaleString('es-CL')} CLP`;
+            document.getElementById('shiftCashGross').innerText = `$${cashGross.toLocaleString('es-CL')} CLP`;
+            document.getElementById('shiftCashTips').innerText = `+$${cashTips.toLocaleString('es-CL')} CLP`;
+            document.getElementById('shiftCashTotal').innerText = `$${cashTotalWithTips.toLocaleString('es-CL')} CLP`;
+
+            document.getElementById('shiftTotalValesAll').innerText = `${totalVales} vale${totalVales !== 1 ? 's' : ''}`;
+            document.getElementById('shiftGrandTotal').innerText = `$${grandTotal.toLocaleString('es-CL')} CLP`;
+            document.getElementById('shiftTotalNetAll').innerText = `$${totalNet.toLocaleString('es-CL')}`;
+            document.getElementById('shiftTotalTaxAll').innerText = `$${totalTax.toLocaleString('es-CL')}`;
+            document.getElementById('shiftTotalGrossAll').innerText = `$${totalGross.toLocaleString('es-CL')}`;
+            document.getElementById('shiftTotalTipsAll').innerText = `+$${totalTips.toLocaleString('es-CL')}`;
+
+            // Pre-llenar conteos con los montos del sistema por defecto
+            document.getElementById('inputDeclaredCards').value = cardTotalWithTips > 0 ? cardTotalWithTips.toLocaleString('es-CL') : '0';
+            document.getElementById('inputDeclaredCash').value = cashTotalWithTips > 0 ? cashTotalWithTips.toLocaleString('es-CL') : '0';
+
+            renderShiftAuditSalesList(shiftSales);
+            validateShiftAudit();
+
+            document.getElementById('shiftCloseModal').classList.add('active');
+        }
+
+        function closeShiftCloseModal() {
+            document.getElementById('shiftCloseModal').classList.remove('active');
+        }
+
+        function renderShiftAuditSalesList(sales) {
+            const listEl = document.getElementById('shiftSalesAuditTable');
+            if (!listEl) return;
+
+            if (!sales || sales.length === 0) {
+                listEl.innerHTML = '<div style="font-size:0.75rem; color:#64748b; text-align:center; padding:10px;">No hay ventas registradas en este turno</div>';
+                return;
+            }
+
+            listEl.innerHTML = sales.map(s => {
+                const timeStr = s.paidAt ? new Date(s.paidAt).toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' }) : '';
+                const tipTxt = s.tipAmount > 0 ? ` (+Propina $${s.tipAmount.toLocaleString('es-CL')})` : '';
+                return `
+                    <div style="display: flex; justify-content: space-between; font-size: 0.75rem; border-bottom: 1px solid #fee2e2; padding: 4px 0;">
+                        <div>
+                            <strong>#${s.receiptNum}</strong> (${s.tableNum}) - ${timeStr} [${s.paymentMethod}]
+                            <div style="color: #64748b; font-size: 0.7rem;">${(s.items || []).map(i => i.qty + 'x ' + i.name).join(', ')}</div>
+                        </div>
+                        <div style="text-align: right; font-weight: 800; color: #991b1b;">
+                            $${s.total.toLocaleString('es-CL')}${tipTxt}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function validateShiftAudit() {
+            if (!currentShiftCalculations) return;
+
+            const declCards = parseCurrencyInputValue(document.getElementById('inputDeclaredCards'));
+            const declCash = parseCurrencyInputValue(document.getElementById('inputDeclaredCash'));
+
+            const diffCards = declCards - currentShiftCalculations.cardTotalWithTips;
+            const diffCash = declCash - currentShiftCalculations.cashTotalWithTips;
+
+            const statusBox = document.getElementById('shiftAuditStatusBox');
+            const detailBox = document.getElementById('shiftDiscrepancyDetailBox');
+            const confirmBtn = document.getElementById('btnConfirmShiftClose');
+
+            if (diffCards === 0 && diffCash === 0) {
+                statusBox.style.background = '#dcfce7';
+                statusBox.style.border = '1.5px solid #22c55e';
+                statusBox.style.color = '#15803d';
+                statusBox.innerHTML = `✅ CAJA CUADRADA CONFORME — Las tarjetas ($${declCards.toLocaleString('es-CL')}) y el efectivo ($${declCash.toLocaleString('es-CL')}) coinciden sin diferencias.`;
+                if (detailBox) detailBox.style.display = 'none';
+                if (confirmBtn) {
+                    confirmBtn.innerText = '🔒 Confirmar & Cerrar Turno';
+                    confirmBtn.style.background = '#16a34a';
+                }
+            } else {
+                statusBox.style.background = '#fef2f2';
+                statusBox.style.border = '1.5px solid #ef4444';
+                statusBox.style.color = '#b91c1c';
+                
+                let msg = `⚠️ DIFERENCIA DETECTADA EN CAJA: `;
+                if (diffCards !== 0) {
+                    msg += `Tarjetas ${diffCards > 0 ? '+' : ''}$${diffCards.toLocaleString('es-CL')} CLP `;
+                }
+                if (diffCash !== 0) {
+                    msg += `| Efectivo ${diffCash > 0 ? '+' : ''}$${diffCash.toLocaleString('es-CL')} CLP`;
+                }
+                statusBox.innerText = msg;
+
+                if (detailBox) detailBox.style.display = 'block';
+                if (confirmBtn) {
+                    confirmBtn.innerText = '⚠️ Cerrar Turno con Justificación';
+                    confirmBtn.style.background = '#d97706';
+                }
+            }
+        }
+
+        function generateShiftCloseTicketHTML(calc, declCards, declCash, reason) {
+            const diffCards = declCards - calc.cardTotalWithTips;
+            const diffCash = declCash - calc.cashTotalWithTips;
+            const totalDiff = diffCards + diffCash;
+
+            const diffStatusTxt = (diffCards === 0 && diffCash === 0)
+                ? '✅ CAJA CUADRADA CONFORME (SIN DIFERENCIAS)'
+                : `⚠️ DIFERENCIA DETECTADA (${totalDiff > 0 ? '+' : ''}$${totalDiff.toLocaleString('es-CL')} CLP)`;
+
+            return `
+                <div class="t-banner">*** INFORME CIERRE DE TURNO (Z) ***</div>
+                <div class="t-center t-bold" style="font-size: 12px;">SABOR AL PASO • TERRAPUERTO CALAMA</div>
+                <div class="t-center" style="font-size: 10px; color: #444;">MCMplus SpA • RUT: 77.492.310-K</div>
+                
+                <div class="t-divider-solid"></div>
+                <div style="font-size: 11px; line-height: 1.3;">
+                    <div>FECHA/HORA CIERRE: <strong>${new Date(calc.closedAt).toLocaleString('es-CL')}</strong></div>
+                    <div>CAJERO / OPERADOR: <strong>${calc.cashier}</strong></div>
+                </div>
+
+                <div class="t-divider"></div>
+                <div class="t-bold" style="font-size: 12px;">💳 RESUMEN PAGOS TARJETA (GETNET):</div>
+                <div class="t-divider"></div>
+
+                <div style="font-size: 11px;">
+                    <div style="display: flex; justify-content: space-between;"><span>Vouchers Tarjeta:</span><span>${calc.cardCount} vales</span></div>
+                    <div style="display: flex; justify-content: space-between;"><span>Consumo Neto:</span><span>$${calc.cardNet.toLocaleString('es-CL')}</span></div>
+                    <div style="display: flex; justify-content: space-between;"><span>IVA (19%):</span><span>$${calc.cardTax.toLocaleString('es-CL')}</span></div>
+                    <div style="display: flex; justify-content: space-between;"><span>Subtotal Consumo:</span><span>$${calc.cardGross.toLocaleString('es-CL')}</span></div>
+                    <div style="display: flex; justify-content: space-between;"><span>Propinas Tarjeta:</span><span>+$${calc.cardTips.toLocaleString('es-CL')}</span></div>
+                    <div style="display: flex; justify-content: space-between; font-weight: bold; border-top: 1px solid #000; padding-top: 2px;">
+                        <span>TOTAL RECAUDADO TARJETA:</span><span>$${calc.cardTotalWithTips.toLocaleString('es-CL')} CLP</span>
+                    </div>
+                </div>
+
+                <div class="t-divider"></div>
+                <div class="t-bold" style="font-size: 12px;">💵 RESUMEN PAGOS EFECTIVO:</div>
+                <div class="t-divider"></div>
+
+                <div style="font-size: 11px;">
+                    <div style="display: flex; justify-content: space-between;"><span>Boletas Efectivo:</span><span>${calc.cashCount} vales</span></div>
+                    <div style="display: flex; justify-content: space-between;"><span>Consumo Neto:</span><span>$${calc.cashNet.toLocaleString('es-CL')}</span></div>
+                    <div style="display: flex; justify-content: space-between;"><span>IVA (19%):</span><span>$${calc.cashTax.toLocaleString('es-CL')}</span></div>
+                    <div style="display: flex; justify-content: space-between;"><span>Subtotal Consumo:</span><span>$${calc.cashGross.toLocaleString('es-CL')}</span></div>
+                    <div style="display: flex; justify-content: space-between;"><span>Propinas Efectivo:</span><span>+$${calc.cashTips.toLocaleString('es-CL')}</span></div>
+                    <div style="display: flex; justify-content: space-between; font-weight: bold; border-top: 1px solid #000; padding-top: 2px;">
+                        <span>TOTAL RECAUDADO EFECTIVO:</span><span>$${calc.cashTotalWithTips.toLocaleString('es-CL')} CLP</span>
+                    </div>
+                </div>
+
+                <div class="t-divider-solid"></div>
+                <div class="t-bold" style="font-size: 12px;">📊 RECAUDACIÓN TOTAL DEL TURNO:</div>
+                <div class="t-divider"></div>
+
+                <div style="font-size: 11px;">
+                    <div style="display: flex; justify-content: space-between;"><span>Total Vales Emitidos:</span><span>${calc.totalVales} vales</span></div>
+                    <div style="display: flex; justify-content: space-between;"><span>Total Consumo Neto:</span><span>$${calc.totalNet.toLocaleString('es-CL')}</span></div>
+                    <div style="display: flex; justify-content: space-between;"><span>Total IVA (19%):</span><span>$${calc.totalTax.toLocaleString('es-CL')}</span></div>
+                    <div style="display: flex; justify-content: space-between;"><span>Total Consumo Bruto:</span><span>$${calc.totalGross.toLocaleString('es-CL')}</span></div>
+                    <div style="display: flex; justify-content: space-between;"><span>Total Propinas:</span><span>+$${calc.totalTips.toLocaleString('es-CL')}</span></div>
+                    <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: bold; border-top: 1.5px solid #000; padding-top: 4px; margin-top: 2px;">
+                        <span>TOTAL RECAUDADO:</span><span>$${calc.grandTotal.toLocaleString('es-CL')} CLP</span>
+                    </div>
+                </div>
+
+                <div class="t-divider-solid"></div>
+                <div class="t-bold" style="font-size: 12px;">🔎 CONTEO DECLARADO & AUDITORÍA:</div>
+                <div class="t-divider"></div>
+
+                <div style="font-size: 11px;">
+                    <div style="display: flex; justify-content: space-between;"><span>Vouchers Tarjeta Contados:</span><span>$${declCards.toLocaleString('es-CL')}</span></div>
+                    <div style="display: flex; justify-content: space-between;"><span>Efectivo Contado en Caja:</span><span>$${declCash.toLocaleString('es-CL')}</span></div>
+                    <div style="display: flex; justify-content: space-between; font-weight: bold; margin-top: 4px;"><span>Estado Cuadre:</span><span>${diffStatusTxt}</span></div>
+                    ${reason ? `<div style="font-size: 10px; color: #991b1b; margin-top: 4px;"><strong>Nota / Justificación:</strong> ${reason}</div>` : ''}
+                </div>
+
+                <div class="t-divider-solid"></div>
+                <div style="margin-top: 24px; display: flex; justify-content: space-between; font-size: 10px; text-align: center;">
+                    <div style="border-top: 1px solid #000; width: 45%; padding-top: 4px;">FIRMA CAJERO</div>
+                    <div style="border-top: 1px solid #000; width: 45%; padding-top: 4px;">FIRMA SUPERVISOR</div>
+                </div>
+
+                <div class="t-divider"></div>
+                <div class="t-footer">
+                    --- INFORME AUDITADO DE ENTREGA DE TURNO (Z) ---
+                </div>
+            `;
+        }
+
+        function printShiftCloseTicket() {
+            if (!currentShiftCalculations) return;
+            const declCards = parseCurrencyInputValue(document.getElementById('inputDeclaredCards'));
+            const declCash = parseCurrencyInputValue(document.getElementById('inputDeclaredCash'));
+            const reason = (document.getElementById('shiftDiffReason') || {}).value || '';
+
+            const html = generateShiftCloseTicketHTML(currentShiftCalculations, declCards, declCash, reason);
+            executePrint(`Cierre de Turno Z - ${currentShiftCalculations.cashier}`, html);
+        }
+
+        function confirmShiftCloseAction() {
+            if (!currentShiftCalculations) return;
+            const declCards = parseCurrencyInputValue(document.getElementById('inputDeclaredCards'));
+            const declCash = parseCurrencyInputValue(document.getElementById('inputDeclaredCash'));
+            const reason = (document.getElementById('shiftDiffReason') || {}).value || '';
+
+            const diffCards = declCards - currentShiftCalculations.cardTotalWithTips;
+            const diffCash = declCash - currentShiftCalculations.cashTotalWithTips;
+            const totalDiff = diffCards + diffCash;
+
+            if (totalDiff !== 0 && !reason.trim()) {
+                if (window.UIModal && window.UIModal.alert) {
+                    UIModal.alert('⚠️ Debe ingresar una justificación para la diferencia detectada en caja antes de cerrar el turno.');
+                } else {
+                    alert('⚠️ Debe ingresar una justificación para la diferencia detectada en caja antes de cerrar el turno.');
+                }
+                const reasonInput = document.getElementById('shiftDiffReason');
+                if (reasonInput) reasonInput.focus();
+                return;
+            }
+
+            // Registrar cierre de turno en la bitácora de auditoría
+            POSStore.addAuditLog(
+                'CIERRE_TURNO',
+                `Cierre de Turno Z auditado. Total $${currentShiftCalculations.grandTotal.toLocaleString('es-CL')} CLP (${currentShiftCalculations.totalVales} vales). ` +
+                `Efectivo $${declCash.toLocaleString('es-CL')}, Tarjetas $${declCards.toLocaleString('es-CL')}. ` +
+                `Diferencia: $${totalDiff.toLocaleString('es-CL')} CLP. ${reason ? 'Justificación: ' + reason : ''}`
+            );
+
+            // Auto-imprimir ticket para adjuntar con el dinero/vouchers
+            printShiftCloseTicket();
+
+            closeShiftCloseModal();
+
+            if (window.showToast) {
+                showToast('🔒 Turno cerrado exitosamente. Ticket impreso para entrega.', 'success');
+            }
+        }
+
+        /* LÓGICA DE CIERRE DE TURNO Y DESGLOSE POR MESERAS / GARZONES */
+        let currentWaitstaffCalculations = null;
+
+        function openWaitstaffShiftCloseModal() {
+            const users = POSStore.getUsers();
+            // Filtrar ESTRICTAMENTE usuarios con rol 'MESERA'
+            const meserasFromUsers = users.filter(u => u.role === 'MESERA').map(u => u.name);
+
+            let uniqueMeseras = Array.from(new Set(meserasFromUsers));
+            if (uniqueMeseras.length === 0) {
+                uniqueMeseras = ['Camila Garzón'];
+            }
+
+            const selectEl = document.getElementById('selectWaitstaffMember');
+            if (selectEl) {
+                selectEl.innerHTML = uniqueMeseras.map(name => `<option value="${name}">${name}</option>`).join('');
+                
+                const activeUser = POSStore.getCurrentUser();
+                if (activeUser && uniqueMeseras.includes(activeUser.name)) {
+                    selectEl.value = activeUser.name;
+                }
+            }
+
+            renderWaitstaffShiftDetails();
+            document.getElementById('waitstaffShiftCloseModal').classList.add('active');
+        }
+
+        function closeWaitstaffShiftCloseModal() {
+            document.getElementById('waitstaffShiftCloseModal').classList.remove('active');
+        }
+
+        function renderWaitstaffShiftDetails() {
+            const selectEl = document.getElementById('selectWaitstaffMember');
+            if (!selectEl) return;
+            const selectedMesera = selectEl.value || 'Camila Garzón';
+
+            const allSales = POSStore.loadSales().filter(s => s.status !== 'ANULADA');
+            
+            const meseraSales = allSales.filter(s => {
+                if (s.waiterName) {
+                    return s.waiterName === selectedMesera;
+                }
+                if (selectedMesera === 'Camila Garzón') {
+                    return (s.tableNum && s.tableNum.toLowerCase().includes('mesa')) || s.serviceType === 'Para Servir';
+                }
+                return false;
+            });
+
+            const valesCount = meseraSales.length;
+            const totalGrossConsumo = meseraSales.reduce((acc, s) => acc + (s.subtotal || (s.total - (s.tipAmount || 0))), 0);
+            const totalNet = Math.round(totalGrossConsumo / 1.19);
+            const totalTax = totalGrossConsumo - totalNet;
+            const totalTips = meseraSales.reduce((acc, s) => acc + (s.tipAmount || 0), 0);
+            const grandTotal = totalGrossConsumo + totalTips;
+
+            const cardSales = meseraSales.filter(s => (s.paymentMethod || '').includes('Getnet') || (s.paymentMethod || '').includes('Tarjeta'));
+            const cashSales = meseraSales.filter(s => (s.paymentMethod || '').includes('Efectivo'));
+
+            const cardGross = cardSales.reduce((acc, s) => acc + (s.subtotal || (s.total - (s.tipAmount || 0))), 0);
+            const cardTips = cardSales.reduce((acc, s) => acc + (s.tipAmount || 0), 0);
+            const cardTotal = cardGross + cardTips;
+
+            const cashGross = cashSales.reduce((acc, s) => acc + (s.subtotal || (s.total - (s.tipAmount || 0))), 0);
+            const cashTips = cashSales.reduce((acc, s) => acc + (s.tipAmount || 0), 0);
+            const cashTotal = cashGross + cashTips;
+
+            currentWaitstaffCalculations = {
+                meseraName: selectedMesera,
+                sales: meseraSales,
+                valesCount,
+                totalNet,
+                totalTax,
+                totalGrossConsumo,
+                totalTips,
+                grandTotal,
+                cardGross, cardTips, cardTotal,
+                cashGross, cashTips, cashTotal,
+                closedAt: new Date().toISOString()
+            };
+
+            const badgeVales = document.getElementById('waitstaffValesBadge');
+            if (badgeVales) badgeVales.innerText = `${valesCount} vale${valesCount !== 1 ? 's' : ''}`;
+            
+            if (document.getElementById('wsKpiVales')) document.getElementById('wsKpiVales').innerText = valesCount;
+            if (document.getElementById('wsKpiNet')) document.getElementById('wsKpiNet').innerText = `$${totalNet.toLocaleString('es-CL')} CLP`;
+            if (document.getElementById('wsKpiGross')) document.getElementById('wsKpiGross').innerText = `$${totalGrossConsumo.toLocaleString('es-CL')} CLP`;
+            if (document.getElementById('wsKpiTips')) document.getElementById('wsKpiTips').innerText = `+$${totalTips.toLocaleString('es-CL')} CLP`;
+            if (document.getElementById('wsGrandTotalSum')) document.getElementById('wsGrandTotalSum').innerText = `Total General: $${grandTotal.toLocaleString('es-CL')} CLP`;
+
+            if (document.getElementById('wsCardGross')) document.getElementById('wsCardGross').innerText = `$${cardGross.toLocaleString('es-CL')}`;
+            if (document.getElementById('wsCardTips')) document.getElementById('wsCardTips').innerText = `+$${cardTips.toLocaleString('es-CL')}`;
+            if (document.getElementById('wsCardTotal')) document.getElementById('wsCardTotal').innerText = `$${cardTotal.toLocaleString('es-CL')}`;
+
+            if (document.getElementById('wsCashGross')) document.getElementById('wsCashGross').innerText = `$${cashGross.toLocaleString('es-CL')}`;
+            if (document.getElementById('wsCashTips')) document.getElementById('wsCashTips').innerText = `+$${cashTips.toLocaleString('es-CL')}`;
+            if (document.getElementById('wsCashTotal')) document.getElementById('wsCashTotal').innerText = `$${cashTotal.toLocaleString('es-CL')}`;
+
+            const listContainer = document.getElementById('wsSalesListContainer');
+            if (listContainer) {
+                if (meseraSales.length === 0) {
+                    listContainer.innerHTML = `<div style="font-size: 0.78rem; color: #64748b; text-align: center; padding: 14px;">No hay vales o pedidos registrados para <strong>${selectedMesera}</strong> en este turno.</div>`;
+                } else {
+                    listContainer.innerHTML = `
+                        <table style="width: 100%; border-collapse: collapse; font-size: 0.78rem;">
+                            <thead>
+                                <tr style="background: #f1f5f9; color: #0f172a; font-weight: 800; text-align: left;">
+                                    <th style="padding: 6px;">Vale #</th>
+                                    <th style="padding: 6px;">Hora</th>
+                                    <th style="padding: 6px;">Ubicación</th>
+                                    <th style="padding: 6px;">Pago</th>
+                                    <th style="padding: 6px; text-align: right;">Consumo</th>
+                                    <th style="padding: 6px; text-align: right; color: #15803d;">Propina</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${meseraSales.map(s => `
+                                    <tr style="border-bottom: 1px solid #e2e8f0;">
+                                        <td style="padding: 6px; font-weight: 800;">#${s.receiptNum}</td>
+                                        <td style="padding: 6px; color: #64748b;">${new Date(s.paidAt).toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' })}</td>
+                                        <td style="padding: 6px;">${s.tableNum}</td>
+                                        <td style="padding: 6px;"><span class="stock-badge" style="background:#eff6ff; color:#2563eb; font-size:0.68rem;">${s.paymentMethod}</span></td>
+                                        <td style="padding: 6px; text-align: right; font-weight: 800;">$${(s.subtotal || (s.total - (s.tipAmount || 0))).toLocaleString('es-CL')}</td>
+                                        <td style="padding: 6px; text-align: right; font-weight: 800; color: #15803d;">${s.tipAmount > 0 ? '+$' + s.tipAmount.toLocaleString('es-CL') : '$0'}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    `;
+                }
+            }
+        }
+
+        function generateWaitstaffReceiptHTML(data) {
+            if (!data) return '';
+
+            const dateStr = new Date(data.closedAt).toLocaleString('es-CL');
+            const user = POSStore.getCurrentUser() || { name: 'María Cajera', role: 'CAJA' };
+
+            const valesRowsHtml = data.sales.map(s => `
+                <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 2px;">
+                    <span>#${s.receiptNum} (${s.tableNum}) - ${new Date(s.paidAt).toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' })}</span>
+                    <span>$${(s.subtotal || (s.total - (s.tipAmount||0))).toLocaleString('es-CL')}${s.tipAmount > 0 ? ' (P:+$' + s.tipAmount.toLocaleString('es-CL') + ')' : ''}</span>
+                </div>
+            `).join('');
+
+            return `
+                <div class="t-banner">*** CIERRE TURNO MESERA / GARZÓN ***</div>
+                <div class="t-center t-bold" style="font-size: 15px;">SABOR AL PASO</div>
+                <div class="t-center" style="font-size: 11px; font-weight: bold;">MCMplus SpA • RUT: 77.492.310-K</div>
+                <div class="t-center" style="font-size: 10px;">Terrapuerto Calama - Local 2</div>
+                
+                <div class="t-divider-solid"></div>
+                
+                <div style="font-size: 11.5px; line-height: 1.35;">
+                    <div>GARZÓN / MESERA: <strong>${data.meseraName.toUpperCase()}</strong></div>
+                    <div>FECHA / HORA CIERRE: ${dateStr}</div>
+                    <div>EMITIDO POR CAJA: ${user.name}</div>
+                </div>
+
+                <div class="t-divider-solid"></div>
+                <div class="t-bold" style="font-size: 12px;">RESUMEN DE ATENCIÓN Y RECAUDACIÓN:</div>
+                <div class="t-divider"></div>
+
+                <div style="font-size: 12px; line-height: 1.4;">
+                    <div style="display: flex; justify-content: space-between;"><span>Vales / Atenciones:</span><strong>${data.valesCount} vales</strong></div>
+                    <div style="display: flex; justify-content: space-between;"><span>Ventas Netas (sin IVA):</span><strong>$${data.totalNet.toLocaleString('es-CL')}</strong></div>
+                    <div style="display: flex; justify-content: space-between;"><span>IVA (19% Incluido):</span><strong>$${data.totalTax.toLocaleString('es-CL')}</strong></div>
+                    <div style="display: flex; justify-content: space-between; font-weight: bold; border-top: 1px solid #000; margin-top: 2px; padding-top: 2px;">
+                        <span>SUB-TOTAL CONSUMO:</span><span>$${data.totalGrossConsumo.toLocaleString('es-CL')} CLP</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; color: #15803d; font-weight: bold;">
+                        <span>PROPINAS GENERADAS (10%):</span><span>+$${data.totalTips.toLocaleString('es-CL')} CLP</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 14px; font-weight: bold; border-top: 1.5px solid #000; margin-top: 4px; padding-top: 4px;">
+                        <span>TOTAL GENERAL RECAUDADO:</span><span>$${data.grandTotal.toLocaleString('es-CL')} CLP</span>
+                    </div>
+                </div>
+
+                <div class="t-divider-solid"></div>
+                <div class="t-bold" style="font-size: 11.5px;">DESGLOSE POR MEDIO DE PAGO:</div>
+                <div class="t-divider"></div>
+
+                <div style="font-size: 11.5px; line-height: 1.35;">
+                    <div style="display: flex; justify-content: space-between;"><span>💳 Tarjeta Getnet:</span><span>$${data.cardTotal.toLocaleString('es-CL')} (Prop: +$${data.cardTips.toLocaleString('es-CL')})</span></div>
+                    <div style="display: flex; justify-content: space-between;"><span>💵 Efectivo en Caja:</span><span>$${data.cashTotal.toLocaleString('es-CL')} (Prop: +$${data.cashTips.toLocaleString('es-CL')})</span></div>
+                </div>
+
+                <div class="t-divider-solid"></div>
+                <div class="t-bold" style="font-size: 11px;">DETALLE DE VALES ATENDIDOS:</div>
+                <div class="t-divider"></div>
+
+                <div>${valesRowsHtml || '<div style="font-size:10px; font-style:italic;">Sin vales en este turno.</div>'}</div>
+
+                <div class="t-divider-solid"></div>
+                <div style="margin-top: 22px; display: flex; justify-content: space-around; font-size: 10px; text-align: center;">
+                    <div>
+                        ___________________________<br>
+                        Firma Garzón / Mesera
+                    </div>
+                    <div>
+                        ___________________________<br>
+                        Firma Operador Caja
+                    </div>
+                </div>
+
+                <div class="t-footer" style="margin-top: 14px;">
+                    *** COMPROBANTE CIERRE TURNO GARZÓN ***<br>
+                    Sistema POS ATSIT (pdiaz@atsit.cl)
+                </div>
+            `;
+        }
+
+        function printWaitstaffShiftReceipt() {
+            if (!currentWaitstaffCalculations) return;
+            const html = generateWaitstaffReceiptHTML(currentWaitstaffCalculations);
+            executePrint(`Cierre Turno Mesera ${currentWaitstaffCalculations.meseraName}`, html);
+        }
+
+        /* LÓGICA DE AUTENTICACIÓN CAJA CON OJO PARA CONTRASEÑA */
+        function checkCajaAuth() {
+            const user = POSStore.getCurrentUser();
+            const modal = document.getElementById('cajaLoginModal');
+            const badge = document.getElementById('cajaActiveUserBadge');
+            const adminBtn = document.getElementById('cajaAdminBtn');
+
+            if (!user || (user.role !== 'CAJA' && user.role !== 'ADMIN')) {
+                if (modal) modal.style.display = 'flex';
+                if (adminBtn) adminBtn.style.display = 'none';
+            } else {
+                if (modal) modal.style.display = 'none';
+                if (badge) badge.innerText = `👤 ${user.name} (${user.role})`;
+                if (adminBtn) {
+                    adminBtn.style.display = (user.role === 'ADMIN') ? 'inline-block' : 'none';
+                }
+            }
+        }
+
+        function toggleCajaPassVisibility(inputId, btn) {
+            const input = document.getElementById(inputId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.innerText = '🙈';
+            } else {
+                input.type = 'password';
+                btn.innerText = '👁️';
+            }
+        }
+
+        function handleCajaLoginSubmit(e) {
+            e.preventDefault();
+            const u = document.getElementById('cajaLoginUser').value.trim();
+            const p = document.getElementById('cajaLoginPass').value;
+            const res = POSStore.authenticate(u, p);
+
+            if (res.success) {
+                if (res.user.role === 'CAJA' || res.user.role === 'ADMIN') {
+                    document.getElementById('cajaLoginErrorMsg').style.display = 'none';
+                    checkCajaAuth();
+                } else {
+                    document.getElementById('cajaLoginErrorMsg').innerText = `⚠️ El usuario ${res.user.username} (${res.user.role}) no tiene permisos para operar la Caja POS.`;
+                    document.getElementById('cajaLoginErrorMsg').style.display = 'block';
+                }
+            } else {
+                document.getElementById('cajaLoginErrorMsg').innerText = `⚠️ ${res.message}`;
+                document.getElementById('cajaLoginErrorMsg').style.display = 'block';
+            }
+        }
+
+        function executeLogout() {
+            POSStore.logout();
+            checkCajaAuth();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            checkCajaAuth();
+        });
+    </script>
+
+    <!-- Modal de Inicio de Sesión Caja POS con Ojo en Contraseña -->
+    <div class="payment-modal-overlay" id="cajaLoginModal" style="display: none; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(8px); z-index: 99999;">
+        <div class="payment-modal" style="max-width: 380px; text-align: left; background: #ffffff; border-radius: 16px; padding: 26px;">
+            <div style="text-align: center; margin-bottom: 16px;">
+                <img src="icono_limpio.png" style="height: 48px; margin-bottom: 6px;" alt="Logo">
+                <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--primary);">Acceso POS Caja</h3>
+                <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">Ingrese credenciales de Cajero o Administrador</p>
+            </div>
+            <form id="formCajaLogin" onsubmit="handleCajaLoginSubmit(event)">
+                <div style="margin-bottom: 12px;">
+                    <label style="font-size: 0.78rem; font-weight: 700; color: var(--text-dark); display: block; margin-bottom: 4px;">Usuario:</label>
+                    <input type="text" id="cajaLoginUser" class="form-control" placeholder="Ej: cajero" required autocomplete="username" style="font-weight: 700;">
+                </div>
+                <div style="margin-bottom: 14px;">
+                    <label style="font-size: 0.78rem; font-weight: 700; color: var(--text-dark); display: block; margin-bottom: 4px;">Contraseña:</label>
+                    <div style="position: relative; display: flex; align-items: center;">
+                        <input type="password" id="cajaLoginPass" class="form-control" placeholder="••••••••" required autocomplete="current-password" style="font-weight: 700; padding-right: 40px;">
+                        <button type="button" onclick="toggleCajaPassVisibility('cajaLoginPass', this)" style="position: absolute; right: 10px; background: transparent; border: none; font-size: 1.1rem; cursor: pointer;" title="Ver u ocultar contraseña">👁️</button>
+                    </div>
+                </div>
+                <div id="cajaLoginErrorMsg" style="color: #dc2626; font-size: 0.75rem; font-weight: 700; margin-bottom: 10px; display: none;"></div>
+                <button type="submit" class="btn-pay" style="width: 100%; background: var(--accent); color: #ffffff; padding: 12px; font-weight: 800; border-radius: 8px;">🔐 Iniciar Sesión en Caja</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

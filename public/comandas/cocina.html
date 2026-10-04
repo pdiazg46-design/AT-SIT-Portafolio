@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pantalla de Cocina (KDS) - Sabor Al Paso</title>
+    <link rel="icon" type="image/png" href="icono_limpio.png">
+    <style>
+        :root {
+            --primary: #0f172a;
+            --accent: #2563eb;
+            --bg-body: #0f172a;
+            --bg-card: #1e293b;
+            --border: #334155;
+            --text-light: #f8fafc;
+            --text-muted: #94a3b8;
+            --success: #16a34a;
+            --warning: #d97706;
+            --danger: #dc2626;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+        body { background-color: var(--bg-body); color: var(--text-light); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+        .kds-header {
+            background: #1e293b;
+            border-bottom: 2px solid var(--accent);
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-brand { display: flex; align-items: center; gap: 12px; }
+        .header-brand img { height: 38px; }
+        .header-title h1 { font-size: 1.15rem; font-weight: 800; color: #ffffff; }
+        .header-title span { font-size: 0.75rem; color: var(--text-muted); }
+
+        .user-session-bar { display: flex; align-items: center; gap: 12px; }
+        .user-badge { background: #334155; color: #60a5fa; padding: 6px 12px; border-radius: 8px; font-weight: 700; font-size: 0.82rem; border: 1px solid #475569; }
+        .btn-logout { background: #ef4444; color: #ffffff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 0.8rem; cursor: pointer; }
+
+        /* Grid de Comandas Cocina */
+        .kds-grid {
+            flex: 1;
+            padding: 16px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+            overflow-y: auto;
+            align-content: start;
+        }
+
+        .comanda-card {
+            background: #1e293b;
+            border: 2px solid #334155;
+            border-radius: 12px;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            transition: transform 0.15s ease;
+        }
+
+        .comanda-card.status-prep { border-color: #f59e0b; background: #1e1b18; }
+        .comanda-card.status-ready { border-color: #22c55e; opacity: 0.75; }
+
+        .comanda-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+        .comanda-table { font-size: 1.1rem; font-weight: 800; color: #ffffff; }
+        .comanda-num { font-size: 0.8rem; font-weight: 800; background: #334155; padding: 2px 8px; border-radius: 4px; color: #60a5fa; }
+        .comanda-time { font-size: 0.72rem; color: #f59e0b; font-weight: 700; margin-top: 2px; }
+
+        .comanda-items { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; flex: 1; }
+        .item-row { display: flex; align-items: center; gap: 10px; font-size: 0.95rem; font-weight: 700; color: #f1f5f9; background: #0f172a; padding: 8px 10px; border-radius: 6px; border-left: 4px solid var(--accent); }
+        .item-qty { background: var(--accent); color: #ffffff; padding: 2px 8px; border-radius: 4px; font-size: 0.88rem; font-weight: 800; }
+
+        .comanda-notes { background: #451a03; border: 1px solid #78350f; color: #fde68a; padding: 8px; border-radius: 6px; font-size: 0.78rem; font-weight: 700; margin-bottom: 12px; }
+
+        .comanda-actions { display: flex; gap: 8px; }
+        .btn-kds { flex: 1; padding: 8px; border: none; border-radius: 6px; font-weight: 800; font-size: 0.82rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; }
+        .btn-prep { background: #d97706; color: #ffffff; }
+        .btn-ready { background: #16a34a; color: #ffffff; }
+
+        /* Modal Overlay de Login con Ojo para Contraseña */
+        .login-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(8px);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .login-box {
+            background: #ffffff;
+            color: #0f172a;
+            border-radius: 16px;
+            padding: 28px;
+            width: 100%;
+            max-width: 380px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .login-header { text-align: center; }
+        .login-header h2 { font-size: 1.25rem; font-weight: 800; color: var(--primary); }
+        .login-header p { font-size: 0.78rem; color: #64748b; margin-top: 4px; }
+
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        .form-group label { font-size: 0.78rem; font-weight: 700; color: #334155; }
+        .input-wrapper { position: relative; display: flex; align-items: center; }
+        .form-input {
+            width: 100%;
+            padding: 10px 40px 10px 12px;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            outline: none;
+        }
+        .form-input:focus { border-color: var(--accent); }
+        .eye-toggle-btn {
+            position: absolute;
+            right: 10px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            color: #64748b;
+            padding: 4px;
+            user-select: none;
+        }
+
+        .btn-login-submit {
+            background: var(--accent);
+            color: #ffffff;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 800;
+            font-size: 0.95rem;
+            cursor: pointer;
+            margin-top: 6px;
+        }
+        .btn-login-submit:hover { background: #1d4ed8; }
+
+        .empty-kds { text-align: center; padding: 40px; color: var(--text-muted); font-size: 0.95rem; font-weight: 700; grid-column: 1 / -1; }
+    </style>
+</head>
+<body>
+
+    <header class="kds-header">
+        <div class="header-brand">
+            <img src="icono_limpio.png" alt="Sabor Al Paso">
+            <div class="header-title">
+                <h1>👨‍🍳 Pantalla de Cocina & Armado (KDS)</h1>
+                <span>Sabor Al Paso • Terrapuerto Calama</span>
+            </div>
+        </div>
+        <div class="user-session-bar" id="sessionBar">
+            <div class="user-badge" id="lblActiveUser">👤 Chef Carlos (COCINA)</div>
+            <button class="btn-logout" onclick="executeLogout()">🚪 Cerrar Sesión</button>
+        </div>
+    </header>
+
+    <div class="kds-grid" id="kdsGrid">
+        <div class="empty-kds" style="background: #1e293b; border: 2px dashed #3b82f6; border-radius: 12px; padding: 40px 20px; max-width: 600px; margin: 40px auto; color: #f8fafc;">
+            <div style="font-size: 3rem; margin-bottom: 12px;">🖨️</div>
+            <h2 style="font-size: 1.25rem; font-weight: 800; color: #60a5fa; margin-bottom: 10px;">Flujo Operacional Mediante Vales Impresos</h2>
+            <p style="font-size: 0.9rem; color: #94a3b8; line-height: 1.5; margin-bottom: 20px;">
+                En este proyecto la Pantalla Digital (KDS) de Cocina no está activa en el flujo de trabajo. 
+                El armado de las comandas se realiza de forma física mediante el <strong>Vale para Preparar (Cocina)</strong> emitido de manera automática por la impresora de Caja al realizar cada cobro.
+            </p>
+            <a href="caja.html" style="display: inline-block; background: #2563eb; color: #ffffff; text-decoration: none; font-weight: 800; font-size: 0.9rem; padding: 10px 20px; border-radius: 8px;">
+                Ir a Caja POS (Impresión & Cobro)
+            </a>
+        </div>
+    </div>
+
+    <!-- Modal de Inicio de Sesión / Autenticación de Usuario con Ojo en Contraseña -->
+    <div class="login-overlay" id="loginModal" style="display: none;">
+        <div class="login-box">
+            <div class="login-header">
+                <img src="icono_limpio.png" style="height: 48px; margin-bottom: 8px;" alt="Logo">
+                <h2>Acceso Zonas de Trabajo</h2>
+                <p>Ingrese sus credenciales (Perfil Cocina / Admin)</p>
+            </div>
+            <form id="formLogin" onsubmit="handleLoginSubmit(event)">
+                <div class="form-group">
+                    <label>Nombre de Usuario:</label>
+                    <input type="text" id="loginUser" class="form-input" placeholder="Ej: cocina" required autocomplete="username">
+                </div>
+                <div class="form-group" style="margin-top: 10px;">
+                    <label>Contraseña:</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="loginPass" class="form-input" placeholder="••••••••" required autocomplete="current-password">
+                        <button type="button" class="eye-toggle-btn" onclick="togglePassVisibility('loginPass', this)" title="Ver u ocultar contraseña">👁️</button>
+                    </div>
+                </div>
+                <div id="loginErrorMsg" style="color: #dc2626; font-size: 0.75rem; font-weight: 700; margin-top: 6px; display: none;"></div>
+                <button type="submit" class="btn-login-submit">🔐 Iniciar Sesión</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="store.js?v=6"></script>
+    <script>
+        let orderStates = {}; // orderId -> 'PENDIENTE' | 'PREPARANDO' | 'LISTO'
+
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuthRequirement();
+            renderComandas();
+
+            POSStore.onRealtimeEvent((data) => {
+                renderComandas();
+            });
+        });
+
+        function checkAuthRequirement() {
+            const user = POSStore.getCurrentUser();
+            const modal = document.getElementById('loginModal');
+            const lblUser = document.getElementById('lblActiveUser');
+
+            if (!user || (user.role !== 'COCINA' && user.role !== 'ADMIN')) {
+                modal.style.display = 'flex';
+            } else {
+                modal.style.display = 'none';
+                if (lblUser) lblUser.innerText = `👤 ${user.name} (${user.role})`;
+            }
+        }
+
+        function togglePassVisibility(inputId, btn) {
+            const input = document.getElementById(inputId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.innerText = '🙈';
+            } else {
+                input.type = 'password';
+                btn.innerText = '👁️';
+            }
+        }
+
+        function handleLoginSubmit(e) {
+            e.preventDefault();
+            const u = document.getElementById('loginUser').value.trim();
+            const p = document.getElementById('loginPass').value;
+            const res = POSStore.authenticate(u, p);
+
+            if (res.success) {
+                if (res.user.role === 'COCINA' || res.user.role === 'ADMIN') {
+                    document.getElementById('loginErrorMsg').style.display = 'none';
+                    checkAuthRequirement();
+                    renderComandas();
+                } else {
+                    document.getElementById('loginErrorMsg').innerText = `⚠️ El usuario ${res.user.username} no tiene acceso a la pantalla de Cocina (Rol: ${res.user.role}).`;
+                    document.getElementById('loginErrorMsg').style.display = 'block';
+                }
+            } else {
+                document.getElementById('loginErrorMsg').innerText = `⚠️ ${res.message}`;
+                document.getElementById('loginErrorMsg').style.display = 'block';
+            }
+        }
+
+        function executeLogout() {
+            POSStore.logout();
+            checkAuthRequirement();
+        }
+
+        function renderComandas() {
+            const grid = document.getElementById('kdsGrid');
+            const orders = POSStore.getPendingOrders();
+
+            if (orders.length === 0) {
+                grid.innerHTML = '<div class="empty-kds">🔥 No hay comandas pendientes en cocina. Esperando pedidos de Meseras...</div>';
+                return;
+            }
+
+            orders.sort((a, b) => new Date(a.createdAt || 0) - new Date(b.createdAt || 0));
+
+            grid.innerHTML = '';
+            orders.forEach(ord => {
+                const currentState = orderStates[ord.id] || 'PENDIENTE';
+                const card = document.createElement('div');
+                card.className = 'comanda-card' + (currentState === 'PREPARANDO' ? ' status-prep' : (currentState === 'LISTO' ? ' status-ready' : ''));
+
+                const itemsHtml = ord.items.map(i => {
+                    let removalsHtml = '';
+                    if (Array.isArray(i.removals) && i.removals.length > 0) {
+                        removalsHtml = i.removals.map(r => `<span style="background: #7f1d1d; color: #fca5a5; font-size: 0.72rem; font-weight: 800; padding: 2px 6px; border-radius: 4px; border: 1px solid #ef4444;">⛔ SIN ${r.toUpperCase()}</span>`).join('');
+                    }
+                    let additionsHtml = '';
+                    if (Array.isArray(i.additions) && i.additions.length > 0) {
+                        additionsHtml = i.additions.map(a => `<span style="background: #1e3a8a; color: #93c5fd; font-size: 0.72rem; font-weight: 800; padding: 2px 6px; border-radius: 4px; border: 1px solid #3b82f6;">➕ ${a.toUpperCase()}</span>`).join('');
+                    }
+                    return `
+                        <div class="item-row" style="flex-direction: column; align-items: flex-start;">
+                            <div style="display: flex; align-items: center; gap: 10px; width: 100%;">
+                                <span class="item-qty">${i.qty}x</span>
+                                <span style="font-weight: 800; color: #ffffff;">${i.name}</span>
+                            </div>
+                            ${(removalsHtml || additionsHtml) ? `<div style="display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px;">${removalsHtml}${additionsHtml}</div>` : ''}
+                        </div>
+                    `;
+                }).join('');
+
+                const timeStr = ord.createdAt ? new Date(ord.createdAt).toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' }) : '';
+
+                card.innerHTML = `
+                    <div>
+                        <div class="comanda-header">
+                            <div>
+                                <div class="comanda-table">🍽️ ${ord.tableNum}</div>
+                                <div class="comanda-time">⏰ Hora: ${timeStr}</div>
+                            </div>
+                            <span class="comanda-num">#${ord.orderNum}</span>
+                        </div>
+                        <div class="comanda-items">
+                            ${itemsHtml}
+                        </div>
+                        ${ord.notes ? `<div class="comanda-notes">⚠️ NOTA: ${ord.notes}</div>` : ''}
+                    </div>
+                    <div class="comanda-actions">
+                        <button class="btn-kds btn-prep" onclick="setOrderState('${ord.id}', 'PREPARANDO')">
+                            ${currentState === 'PREPARANDO' ? '🔥 En Marcha' : '👨‍🍳 Marchar'}
+                        </button>
+                        <button class="btn-kds btn-ready" onclick="setOrderState('${ord.id}', 'LISTO')">
+                            🟢 Despachar
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function setOrderState(orderId, state) {
+            orderStates[orderId] = state;
+            const orders = POSStore.getPendingOrders();
+            const ord = orders.find(o => o.id === orderId);
+            const user = POSStore.getCurrentUser();
+            if (ord) {
+                POSStore.addAuditLog('CAMBIO_ESTADO_COCINA', `Pedido #${ord.orderNum} (${ord.tableNum}) marcado como ${state}`, user);
+            }
+            renderComandas();
+        }
+    </script>
+</body>
+</html>
