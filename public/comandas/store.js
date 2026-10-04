@@ -225,65 +225,60 @@
         notifyListeners(data);
     }
 
-    // Iniciar conexión SSE con el servidor HTTP para sincronización multicelular en la red local
+    // Sincronización Global en la Nube con la API de ATSIT (/api/comandas)
+    let lastCloudVersion = 0;
+    let isCloudPushing = false;
+
+    function pushStateToCloud() {
+        if (isCloudPushing) return;
+        isCloudPushing = true;
+        const payload = {
+            orders: loadData(STORAGE_KEY_ORDERS, []),
+            sales: loadData(STORAGE_KEY_SALES, []),
+            inventory: loadData(STORAGE_KEY_INVENTORY, []),
+            products: loadData(STORAGE_KEY_PRODUCTS, []),
+            categories: loadData(STORAGE_KEY_CATEGORIES, []),
+            suppliers: loadData(STORAGE_KEY_SUPPLIERS, []),
+            purchases: loadData(STORAGE_KEY_PURCHASES, [])
+        };
+        fetch('/api/comandas', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'SYNC', state: payload })
+        })
+        .then(r => r.json())
+        .then(res => {
+            if (res && res.version) lastCloudVersion = res.version;
+        })
+        .catch(() => {})
+        .finally(() => { isCloudPushing = false; });
+    }
+
+    function pullStateFromCloud() {
+        fetch('/api/comandas')
+            .then(r => r.json())
+            .then(res => {
+                if (res && res.success && res.state && res.version && res.version !== lastCloudVersion) {
+                    lastCloudVersion = res.version;
+                    const st = res.state;
+                    if (Array.isArray(st.orders)) saveData(STORAGE_KEY_ORDERS, st.orders);
+                    if (Array.isArray(st.sales)) saveData(STORAGE_KEY_SALES, st.sales);
+                    if (Array.isArray(st.inventory)) saveData(STORAGE_KEY_INVENTORY, st.inventory);
+                    if (Array.isArray(st.products)) saveData(STORAGE_KEY_PRODUCTS, st.products);
+                    if (Array.isArray(st.categories)) saveData(STORAGE_KEY_CATEGORIES, st.categories);
+                    if (Array.isArray(st.suppliers)) saveData(STORAGE_KEY_SUPPLIERS, st.suppliers);
+                    if (Array.isArray(st.purchases)) saveData(STORAGE_KEY_PURCHASES, st.purchases);
+                    notifyListeners({ type: 'SERVER_STATE_SYNCED' });
+                }
+            })
+            .catch(() => {});
+    }
+
     function initServerSync() {
         if (typeof window !== 'undefined') {
-            if (window.EventSource) {
-                try {
-                    const evtSource = new EventSource('/api/events');
-                    evtSource.onmessage = (event) => {
-                        try {
-                            const data = JSON.parse(event.data);
-                            handleIncomingServerEvent(data);
-                        } catch (e) {}
-                    };
-                } catch (e) {}
-            }
-
-            fetch('/api/state')
-                .then(r => r.json())
-                .then(state => {
-                    const localOrders = loadData(STORAGE_KEY_ORDERS, []);
-                    
-                    // Subir automáticamente al servidor cualquier pedido pendiente que estuviera guardado localmente
-                    if (Array.isArray(localOrders) && localOrders.length > 0) {
-                        localOrders.forEach(localOrd => {
-                            if (localOrd && localOrd.status === 'PENDIENTE_PAGO') {
-                                const serverHasIt = state.orders && state.orders.some(sOrd => sOrd.id === localOrd.id);
-                                if (!serverHasIt) {
-                                    fetch('/api/orders', {
-                                        method: 'POST',
-                                        headers: { 'Content-Type': 'application/json' },
-                                        body: JSON.stringify(localOrd)
-                                    }).catch(() => {});
-                                }
-                            }
-                        });
-                    }
-
-                    if (state.orders && state.orders.length > 0) {
-                        const mergedOrders = [...state.orders];
-                        if (Array.isArray(localOrders)) {
-                            localOrders.forEach(lo => {
-                                if (lo.status === 'PENDIENTE_PAGO' && !mergedOrders.some(mo => mo.id === lo.id)) {
-                                    mergedOrders.unshift(lo);
-                                }
-                            });
-                        }
-                        saveData(STORAGE_KEY_ORDERS, mergedOrders);
-                    } else if (localOrders.length > 0) {
-                        saveData(STORAGE_KEY_ORDERS, localOrders);
-                    }
-
-                    if (state.sales && state.sales.length > 0) saveData(STORAGE_KEY_SALES, state.sales);
-                    if (state.inventory && state.inventory.length > 0) saveData(STORAGE_KEY_INVENTORY, state.inventory);
-                    if (state.products && state.products.length > 0) saveData(STORAGE_KEY_PRODUCTS, state.products);
-                    if (state.categories && state.categories.length > 0) saveData(STORAGE_KEY_CATEGORIES, state.categories);
-                    if (state.suppliers && state.suppliers.length > 0) saveData(STORAGE_KEY_SUPPLIERS, state.suppliers);
-                    if (state.purchases && state.purchases.length > 0) saveData(STORAGE_KEY_PURCHASES, state.purchases);
-                    notifyListeners({ type: 'SERVER_STATE_SYNCED' });
-                })
-                .catch(() => {});
+            // Pull inicial y luego cada 1.8 segundos para sincronización en vivo multidispositivo
+            pullStateFromCloud();
+            setInterval(pullStateFromCloud, 1800);
         }
     }
 
@@ -306,7 +301,7 @@
             paymentMethod: 'Getnet Crédito',
             cashReceived: 28460,
             changeGiven: 0,
-            paidAt: '2026-10-01T00:22:23.865Z',
+            paidAt: new Date(Date.now() - 3600000 * 2).toISOString(),
             cashier: 'María Cajera',
             waiterName: 'Camila Garzón',
             siiStatus: 'EMITIDO_GETNET_SII'
@@ -327,7 +322,7 @@
             paymentMethod: 'Getnet Débito',
             cashReceived: 19780,
             changeGiven: 0,
-            paidAt: '2026-10-01T00:16:06.061Z',
+            paidAt: new Date(Date.now() - 3600000 * 4).toISOString(),
             cashier: 'María Cajera',
             waiterName: 'Camila Garzón',
             siiStatus: 'EMITIDO_GETNET_SII'
@@ -348,7 +343,7 @@
             paymentMethod: 'Efectivo en Caja',
             cashReceived: 11000,
             changeGiven: 520,
-            paidAt: '2026-10-01T00:08:09.666Z',
+            paidAt: new Date(Date.now() - 3600000 * 6).toISOString(),
             cashier: 'María Cajera',
             waiterName: 'Camila Garzón',
             siiStatus: 'TRANSMITIDO_TERCERO_SII'
@@ -805,12 +800,8 @@
                 `Pedido #${finalOrder.orderNum} (${finalOrder.tableNum}) - Total: $${finalOrder.total.toLocaleString('es-CL')} CLP`
             );
 
-            // Enviar a la API del servidor para sincronizar todos los celulares y la Caja en la red
-            fetch('/api/orders', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(finalOrder)
-            }).catch(e => console.warn('[POSStore] Servidor offline, guardado en modo local:', e));
+            // Subir inmediatamente a la nube para sincronización instantánea con Caja y Admin
+            pushStateToCloud();
 
             return finalOrder;
         },
@@ -891,11 +882,8 @@
                 pendingOrderId: saleData.pendingOrderId
             });
 
-            fetch('/api/sales', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ...newSale, pendingOrderId: saleData.pendingOrderId })
-            }).catch(e => console.warn('[POSStore] Servidor offline:', e));
+            // Subir inmediatamente a la nube para que el Admin y la Mesera reflejen la venta al instante
+            pushStateToCloud();
 
             return newSale;
         },
