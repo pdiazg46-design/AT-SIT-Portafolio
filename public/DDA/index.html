@@ -808,6 +808,94 @@
       padding: 12px 4px;
       font-size: 13px;
     }
+
+    /* OPTIMIZACIÓN HEADER & TOOLBARS EN PANTALLAS MÓVILES (AHORRO MÁXIMO DE ESPACIO VERTICAL) */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-container {
+      padding: 4px 6px;
+      gap: 3px;
+    }
+
+    .brand {
+      gap: 5px;
+    }
+
+    .badge-tag {
+      font-size: 9px;
+      padding: 2px 5px;
+    }
+
+    .brand-title {
+      font-size: 12px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .header-status-badge {
+      font-size: 9px !important;
+      padding: 2px 5px !important;
+    }
+
+    .nav-tabs {
+      gap: 2px;
+      padding: 1px;
+      margin-top: 1px;
+    }
+
+    .nav-btn {
+      padding: 5px 2px;
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    /* TOOLBARS NO STICKY EN MÓVIL: No bloquean la pantalla verticalmente */
+    .terreno-toolbar, .pallets-toolbar {
+      position: static !important;
+      top: auto !important;
+      padding: 6px 8px;
+      margin-bottom: 8px;
+      gap: 6px;
+      box-shadow: none;
+    }
+
+    .discipline-tabs {
+      gap: 4px;
+      padding-bottom: 2px;
+    }
+
+    .disc-btn {
+      padding: 5px 8px;
+      font-size: 11px;
+    }
+
+    .mesas-potencia-bar, .solar-filter-bar {
+      padding: 5px 6px;
+      gap: 5px;
+    }
+
+    .btn-toggle-filters {
+      display: inline-flex !important;
+    }
+  }
+
+  .btn-toggle-filters {
+    display: none;
+    padding: 3px 8px;
+    font-size: 10px;
+    font-weight: 800;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: #f1f5f9;
+    color: var(--text-muted);
+    cursor: pointer;
+    align-items: center;
+    gap: 4px;
   }
 </style>
 </head>
@@ -815,19 +903,19 @@
 
 <header>
   <div class="header-container">
-    <div class="brand">
-      <span class="badge-tag">TERRACON</span>
-      <div class="brand-title">Diego de Almagro &bull; Cabina 1.10</div>
+    <div style="display:flex; align-items:center; justify-content:space-between; width:100%; gap:4px;">
+      <div class="brand">
+        <span class="badge-tag">TERRACON</span>
+        <div class="brand-title">Diego de Almagro &bull; Cabina 1.10</div>
+      </div>
+      <span class="header-status-badge" style="font-size:10px; font-weight:700; color:#16a34a; background:#dcfce7; padding:2px 6px; border-radius:5px; display:inline-flex; align-items:center; gap:3px; white-space:nowrap;">
+        <span style="width:5px; height:5px; border-radius:50%; background:#16a34a;"></span> Guardado
+      </span>
     </div>
     <div class="nav-tabs">
-      <button class="nav-btn active" onclick="switchTab('ejecutivo', event)">📊 Resumen Ejecutivo</button>
-      <button class="nav-btn" onclick="switchTab('terreno', event)">📋 Matriz de Campo</button>
-      <button class="nav-btn" onclick="switchTab('pallets', event)">📦 Ubicación de Pallets (219)</button>
-    </div>
-    <div style="display:flex; align-items:center; gap:6px;">
-      <span style="font-size:11px; font-weight:700; color:#16a34a; background:#dcfce7; padding:4px 8px; border-radius:6px; display:inline-flex; align-items:center; gap:4px;">
-        <span style="width:6px; height:6px; border-radius:50%; background:#16a34a; display:inline-block;"></span> Autoguardado
-      </span>
+      <button class="nav-btn active" onclick="switchTab('ejecutivo', event)">📊 Resumen</button>
+      <button class="nav-btn" onclick="switchTab('terreno', event)">📋 Campo</button>
+      <button class="nav-btn" onclick="switchTab('pallets', event)">📦 Pallets (219)</button>
     </div>
   </div>
 </header>
@@ -893,31 +981,36 @@
   <div id="tab-terreno" class="page-view">
 
     <div class="terreno-toolbar">
-      <div class="discipline-tabs">
-        <button class="disc-btn active" onclick="filtrarDisciplina('mesas', event)">Montaje Mesas (151)</button>
-        <button class="disc-btn" onclick="filtrarDisciplina('solar', event)">☀️ Cable Solar en Campo (302)</button>
-        <button class="disc-btn" onclick="filtrarDisciplina('zanjas_solar', event)">Zanjas Solar (28)</button>
-        <button class="disc-btn" onclick="filtrarDisciplina('zanjas_bt', event)">Zanjas BT (12)</button>
-        <button class="disc-btn" onclick="filtrarDisciplina('tierras', event)">Tierras (32)</button>
-        <button class="disc-btn" onclick="filtrarDisciplina('triadas', event)">Triadas BT (13)</button>
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:6px;">
+        <div class="discipline-tabs" style="flex:1;">
+          <button class="disc-btn active" onclick="filtrarDisciplina('mesas', event)">Mesas (151)</button>
+          <button class="disc-btn" onclick="filtrarDisciplina('solar', event)">☀️ Cable Solar (302)</button>
+          <button class="disc-btn" onclick="filtrarDisciplina('zanjas_solar', event)">Zanjas Sol (28)</button>
+          <button class="disc-btn" onclick="filtrarDisciplina('zanjas_bt', event)">Zanjas BT (12)</button>
+          <button class="disc-btn" onclick="filtrarDisciplina('tierras', event)">Tierras (32)</button>
+          <button class="disc-btn" onclick="filtrarDisciplina('triadas', event)">Triadas (13)</button>
+        </div>
+        <button class="btn-toggle-filters" id="btn-toggle-filtros" onclick="toggleFiltrosSecundarios()" title="Ocultar/Mostrar filtros">
+          <span id="txt-toggle-filtros">⚡ Filtros</span>
+        </button>
       </div>
 
       <!-- FILTRO DE POTENCIA 575W / 580W PARA MONTAJE DE MESAS -->
       <div class="mesas-potencia-bar" id="mesas-potencia-bar" style="display: flex;">
-        <span class="filter-label">⚡ Potencia de Módulos:</span>
+        <span class="filter-label" style="font-size:10px;">⚡ Potencia:</span>
         <div class="inv-chips-wrap">
-          <button class="chip-inv active" id="chip-potencia-all" onclick="setFiltroPotencia('ALL', event)">Todos (151 Mesas • 7.852 Mód.)</button>
+          <button class="chip-inv active" id="chip-potencia-all" onclick="setFiltroPotencia('ALL', event)">Todos</button>
           <button class="chip-inv" id="chip-potencia-575" onclick="setFiltroPotencia('575W', event)" style="border-color:#d97706; color:#b45309;">
-            <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#d97706; margin-right:3px;"></span>
-            575W (34 Mesas • 1.768 Mód.)
+            <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#d97706; margin-right:2px;"></span>
+            575W (34)
           </button>
           <button class="chip-inv" id="chip-potencia-580" onclick="setFiltroPotencia('580W', event)" style="border-color:#0284c7; color:#0369a1;">
-            <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#0284c7; margin-right:3px;"></span>
-            580W (117 Mesas • 6.084 Mód.)
+            <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#0284c7; margin-right:2px;"></span>
+            580W (117)
           </button>
         </div>
-        <span style="font-size: 11px; color: var(--text-muted); margin-left: auto;">
-          <strong>575W:</strong> L1 a L6 + L7 (M4, M5) &bull; <strong>580W:</strong> L7 (M1..M3) + L8 a L31
+        <span style="font-size: 10px; color: var(--text-muted); margin-left: auto;">
+          575W: L1..L6 + L7M4-5 &bull; 580W: L7M1-3 + L8..L31
         </span>
       </div>
 
@@ -1128,6 +1221,20 @@
     else if (tabId === 'pallets') renderPalletsResumen();
   }
 
+  let filtrosSecundariosVisibles = true;
+  function toggleFiltrosSecundarios() {
+    filtrosSecundariosVisibles = !filtrosSecundariosVisibles;
+    const potenciaBar = document.getElementById('mesas-potencia-bar');
+    const solarBar = document.getElementById('solar-filter-bar');
+    const txt = document.getElementById('txt-toggle-filtros');
+    if (disciplinaActual === 'mesas' && potenciaBar) {
+      potenciaBar.style.display = filtrosSecundariosVisibles ? 'flex' : 'none';
+    } else if (disciplinaActual === 'solar' && solarBar) {
+      solarBar.style.display = filtrosSecundariosVisibles ? 'flex' : 'none';
+    }
+    if (txt) txt.innerText = filtrosSecundariosVisibles ? '⚡ Filtros' : '⚡ Ver Filtros';
+  }
+
   function filtrarDisciplina(disc, ev) {
     disciplinaActual = disc;
     document.querySelectorAll('.disc-btn').forEach(b => b.classList.remove('active'));
@@ -1135,11 +1242,16 @@
 
     const filterBar = document.getElementById('solar-filter-bar');
     if (filterBar) {
-      filterBar.style.display = (disc === 'solar') ? 'flex' : 'none';
+      filterBar.style.display = (disc === 'solar' && filtrosSecundariosVisibles) ? 'flex' : 'none';
     }
     const potenciaBar = document.getElementById('mesas-potencia-bar');
     if (potenciaBar) {
-      potenciaBar.style.display = (disc === 'mesas') ? 'flex' : 'none';
+      potenciaBar.style.display = (disc === 'mesas' && filtrosSecundariosVisibles) ? 'flex' : 'none';
+    }
+
+    const btnToggle = document.getElementById('btn-toggle-filtros');
+    if (btnToggle) {
+      btnToggle.style.display = (disc === 'mesas' || disc === 'solar') ? 'inline-flex' : 'none';
     }
 
     renderTerrenoItems();
