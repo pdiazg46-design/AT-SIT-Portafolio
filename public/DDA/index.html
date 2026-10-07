@@ -2215,6 +2215,13 @@ Esta acción anulará la fecha de ejecución y restará este ítem del avance de
     renderResumenEjecutivo();
     renderTerrenoItems();
     renderPalletsResumen();
+
+    // Registro de Service Worker para PWA instalable
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/DDA/sw.js', { scope: '/DDA/' })
+        .then(reg => console.log('DDA PWA Service Worker registrado con éxito:', reg.scope))
+        .catch(err => console.warn('Error al registrar Service Worker DDA:', err));
+    }
   });
   window.addEventListener('resize', actualizarAlturaHeader);
 </script>
