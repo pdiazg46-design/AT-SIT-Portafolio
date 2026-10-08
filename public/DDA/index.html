@@ -917,6 +917,12 @@
       <button class="nav-btn" onclick="switchTab('terreno', event)">📋 Campo</button>
       <button class="nav-btn" onclick="switchTab('pallets', event)">📦 Pallets (219)</button>
     </div>
+    <!-- BOTÓN DE INSTALACIÓN COMO APP EN EL TELÉFONO -->
+    <div id="pwa-install-banner" style="display:none; width:100%; margin-top:2px;">
+      <button onclick="triggerInstallPWA()" style="width:100%; padding:6px; background:#0284c7; color:#fff; font-weight:800; font-size:11px; border:none; border-radius:6px; display:flex; align-items:center; justify-content:center; gap:6px; cursor:pointer; box-shadow:0 1px 3px rgba(0,0,0,0.15);">
+        📲 Instalar App Terracon DDA en este teléfono
+      </button>
+    </div>
   </div>
 </header>
 
@@ -2223,6 +2229,42 @@ Esta acción anulará la fecha de ejecución y restará este ítem del avance de
         .catch(err => console.warn('Error al registrar Service Worker DDA:', err));
     }
   });
+
+  let deferredInstallPrompt = null;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredInstallPrompt = e;
+    const banner = document.getElementById('pwa-install-banner');
+    if (banner) {
+      banner.style.display = 'block';
+      actualizarAlturaHeader();
+    }
+  });
+
+  function triggerInstallPWA() {
+    if (deferredInstallPrompt) {
+      deferredInstallPrompt.prompt();
+      deferredInstallPrompt.userChoice.then((choiceResult) => {
+        if (choiceResult.outcome === 'accepted') {
+          console.log('Usuario aceptó instalar Terracon DDA');
+          const banner = document.getElementById('pwa-install-banner');
+          if (banner) banner.style.display = 'none';
+        }
+        deferredInstallPrompt = null;
+        actualizarAlturaHeader();
+      });
+    } else {
+      alert('Para instalar Terracon DDA: toca los tres puntos (⋮) de tu navegador Chrome y selecciona "Instalar aplicación" o "Agregar a la pantalla principal".');
+    }
+  }
+
+  window.addEventListener('appinstalled', () => {
+    console.log('Terracon DDA instalada con éxito como PWA');
+    const banner = document.getElementById('pwa-install-banner');
+    if (banner) banner.style.display = 'none';
+    actualizarAlturaHeader();
+  });
+
   window.addEventListener('resize', actualizarAlturaHeader);
 </script>
 </body>
