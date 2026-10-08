@@ -1,5 +1,5 @@
 {
-  "id": "terracon-dda-cabina110-pwa",
+  "id": "/DDA/",
   "name": "Terracon DDA - Cabina 1.10",
   "short_name": "Terracon DDA",
   "description": "Control de Avance, Matriz de Strings y Gestión de Campo Cabina 1.10 - Diego de Almagro",
@@ -10,6 +10,7 @@
   "orientation": "any",
   "background_color": "#0f172a",
   "theme_color": "#0f172a",
+  "prefer_related_applications": false,
   "categories": ["productivity", "utilities", "business"],
   "icons": [
     {
@@ -19,10 +20,22 @@
       "purpose": "any"
     },
     {
+      "src": "/DDA/icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
       "src": "/DDA/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
+    },
+    {
+      "src": "/DDA/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     },
     {
       "src": "/DDA/apple-touch-icon.png",

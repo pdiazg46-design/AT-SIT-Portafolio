@@ -963,22 +963,24 @@
     <div class="section-box">
       <div class="section-header">
         <div class="section-title">📌 Estado y Desglose por Partidas del Proyecto</div>
-        <span style="font-size: 12px; color: var(--text-muted);">En tiempo real</span>
+        <span style="font-size: 11px; color: var(--text-muted);">👉 Desliza tabla a la derecha</span>
       </div>
-      <table class="styled-table">
-        <thead>
-          <tr>
-            <th>Partida / Tema de Trabajo</th>
-            <th>Programado</th>
-            <th>Ejecutado</th>
-            <th>Pendiente</th>
-            <th>% Cumplimiento</th>
-            <th>Progreso</th>
-            <th>Estado</th>
-          </tr>
-        </thead>
-        <tbody id="tabla-resumen-cuerpo"></tbody>
-      </table>
+      <div style="width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch;">
+        <table class="styled-table" style="min-width: 680px;">
+          <thead>
+            <tr>
+              <th style="min-width: 160px;">Partida / Tema de Trabajo</th>
+              <th style="min-width: 90px;">Programado</th>
+              <th style="min-width: 80px;">Ejecutado</th>
+              <th style="min-width: 80px;">Pendiente</th>
+              <th style="min-width: 80px;">% Cumplimiento</th>
+              <th style="min-width: 100px;">Progreso</th>
+              <th style="min-width: 90px;">Estado</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-resumen-cuerpo"></tbody>
+        </table>
+      </div>
     </div>
 
   </div>
