@@ -1066,7 +1066,7 @@
     <div class="nav-tabs">
       <button class="nav-btn active" onclick="switchTab('ejecutivo', event)">📊 Resumen</button>
       <button class="nav-btn" onclick="switchTab('terreno', event)">📋 Campo</button>
-      <button class="nav-btn" onclick="switchTab('pallets', event)">📦 Pallets (219)</button>
+      <button class="nav-btn" onclick="switchTab('pallets', event)">📦 Pallet´s en Terreno</button>
     </div>
     <!-- BOTÓN DE INSTALACIÓN COMO APP EN EL TELÉFONO -->
     <div id="pwa-install-banner" style="display:none; width:100%; margin-top:2px;">
@@ -1155,17 +1155,40 @@
 
     <div class="terreno-toolbar">
       <div style="display:flex; justify-content:space-between; align-items:center; gap:6px;">
-        <div class="discipline-tabs" style="flex:1;">
-          <button class="disc-btn active" onclick="filtrarDisciplina('mesas', event)">Mesas (151)</button>
-          <button class="disc-btn" onclick="filtrarDisciplina('solar', event)">☀️ Cable Solar (302)</button>
-          <button class="disc-btn" onclick="filtrarDisciplina('zanjas_solar', event)">Zanjas Sol (28)</button>
-          <button class="disc-btn" onclick="filtrarDisciplina('zanjas_bt', event)">Zanjas BT (12)</button>
-          <button class="disc-btn" onclick="filtrarDisciplina('tierras', event)">Tierras (32)</button>
-          <button class="disc-btn" onclick="filtrarDisciplina('triadas', event)">Triadas (13)</button>
+        <div class="discipline-tabs" style="flex:1; overflow-x:auto; white-space:nowrap;">
+          <button class="disc-btn active" onclick="filtrarDisciplina('retiro', event)">♻️ Retiro Módulos (159)</button>
+          <button class="disc-btn" onclick="filtrarDisciplina('pallets_tab', event)">📦 Pallet´s</button>
+          <button class="disc-btn" onclick="filtrarDisciplina('mesas', event)">🏗️ Montaje Mesas (151)</button>
+          <button class="disc-btn" onclick="filtrarDisciplina('zanjas_solar', event)">🚜 Zanjas Cable Solar (28)</button>
+          <button class="disc-btn" onclick="filtrarDisciplina('solar', event)">☀️ Cableado Solar (302)</button>
+          <button class="disc-btn" onclick="filtrarDisciplina('zanjas_bt', event)">⚡ Zanjas BT (12)</button>
+          <button class="disc-btn" onclick="filtrarDisciplina('tierras', event)">🌐 Tierras (32)</button>
+          <button class="disc-btn" onclick="filtrarDisciplina('triadas', event)">🔌 Triadas (13)</button>
         </div>
         <button class="btn-toggle-filters" id="btn-toggle-filtros" onclick="toggleFiltrosSecundarios()" title="Ocultar/Mostrar filtros">
           <span id="txt-toggle-filtros">⚡ Filtros</span>
         </button>
+      </div>
+
+      <!-- BARRA DE CONTROL PARA RETIRO DE MÓDULOS EXISTENTES Y CÁLCULO DE PALLET'S -->
+      <div class="retiro-control-bar" id="retiro-control-bar" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 6px; padding: 8px 12px; margin-top: 6px;">
+        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <span style="font-size: 11px; font-weight: 800; color: #0f172a; text-transform: uppercase;">📦 Módulos por Pallet:</span>
+            <input type="number" id="input-mods-por-pallet" value="30" min="1" max="100" onchange="actualizarCalculoPalletsTerreno(this.value)" oninput="actualizarCalculoPalletsTerreno(this.value)"
+                   style="width: 65px; padding: 4px 8px; font-size: 13px; font-weight: 900; color: #0284c7; text-align: center; border: 1.5px solid #0284c7; border-radius: 6px; background: #ffffff;">
+          </div>
+          <div style="font-size: 11px; color: #475569; display: flex; align-items: center; gap: 8px;">
+            <span>Total Módulos Existentes: <strong style="color: #0f172a;">14.310</strong></span>
+            <span>&bull;</span>
+            <span>Pallets Estimados: <strong id="lbl-total-pallets-estimados" style="color: #0284c7; font-size: 12px;">477</strong></span>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px; font-size: 11px;">
+          <span style="display: inline-flex; align-items: center; gap: 4px;"><span style="display: inline-block; width: 12px; height: 12px; border-radius: 3px; background: #fee2e2; border: 1px solid #ef4444;"></span> <strong>0</strong>: Sin Módulos (Rojo)</span>
+          <span style="display: inline-flex; align-items: center; gap: 4px;"><span style="display: inline-block; width: 12px; height: 12px; border-radius: 3px; background: #dcfce7; border: 1px solid #22c55e;"></span> <strong>90</strong>: En Terreno (Verde)</span>
+          <span style="display: inline-flex; align-items: center; gap: 4px;"><span style="display: inline-block; width: 12px; height: 12px; border-radius: 3px; background: #0284c7; border: 1px solid #0369a1;"></span> <strong>✓</strong>: Retirado 100%</span>
+        </div>
       </div>
 
       <!-- FILTRO DE POTENCIA 575W / 580W PARA MONTAJE DE MESAS -->
@@ -1296,6 +1319,62 @@
     </div>
 
   </div>
+
+<!-- MODAL REGISTRO DE RETIRO DE MESA -->
+<div class="modal-overlay" id="modal-retiro">
+  <div class="modal-box" style="max-width: 440px;">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-retiro-title">♻️ Retiro Mesa L2M3</div>
+      <button class="modal-close" onclick="cerrarModalRetiro()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div style="background: #f1f5f9; padding: 8px 12px; border-radius: 6px; margin-bottom: 12px; font-size: 12px; color: #334155;">
+        <div>Módulos Existentes en Mesa: <strong id="modal-retiro-existentes">90</strong></div>
+        <div>Retirados a la fecha: <strong id="modal-retiro-ya-retirados" style="color: #0284c7;">0</strong></div>
+        <div>Pendientes por retirar: <strong id="modal-retiro-pendientes" style="color: #dc2626;">90</strong></div>
+      </div>
+
+      <div style="margin-bottom: 10px;">
+        <label style="font-size: 12px; font-weight: 800; display: block; margin-bottom: 4px;">
+          Módulos Retirados en Esta Jornada (Máx: <span id="modal-retiro-max-restante">90</span>):
+        </label>
+        <div style="display: flex; gap: 6px;">
+          <input type="number" id="modal-retiro-input-modulos" class="input-modulo-grande" min="1" max="90" value="90"
+                 onfocus="this.select();" onclick="this.select();" style="flex: 1;">
+          <button type="button" class="btn btn-primary" onclick="setRetiroRapido(90)" style="padding: 0 12px; font-weight: 800;">
+            Todo (90)
+          </button>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 8px;">
+        <label style="font-size: 11px; font-weight: 700; color: var(--text-muted);">Fecha de Desmontaje:</label>
+        <input type="date" id="modal-retiro-input-fecha" class="modal-form-control">
+      </div>
+
+      <div style="margin-bottom: 12px;">
+        <label style="font-size: 11px; font-weight: 700; color: var(--text-muted);">Nota / Cuadrilla / N° Pallet Destino:</label>
+        <input type="text" id="modal-retiro-input-nota" class="modal-form-control" placeholder="Ej: Cuadrilla Desmontaje 1, Pallet #12">
+      </div>
+
+      <div style="display: flex; gap: 8px;">
+        <button class="btn btn-primary" style="flex: 1; padding: 10px; font-size: 13px; font-weight: 800;" onclick="guardarRegistroRetiro()">
+          💾 Guardar Retiro
+        </button>
+        <button class="btn" style="padding: 10px 14px; font-size: 12px; color: #dc2626; border-color: #fca5a5;" onclick="desmarcarRetiroCompleto()" title="Reiniciar a 0 módulos retirados">
+          ↺ Desmarcar
+        </button>
+      </div>
+
+      <div style="margin-top: 14px;">
+        <div style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">
+          Historial de Desmontaje de esta Mesa
+        </div>
+        <div id="modal-retiro-historial-list" style="max-height: 110px; overflow-y: auto; border: 1px solid var(--border-light); border-radius: 5px; margin-top: 4px;"></div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- MODAL REGISTRO DE MESA -->
 <div class="modal-overlay" id="modal-bitacora">
@@ -1470,7 +1549,7 @@
     }
   }
 
-  let disciplinaActual = 'mesas';
+  let disciplinaActual = 'retiro';
   let mesaActivaModal = null;
   let posicionActivaModal = 'bajo';
   let filtroInversorActivo = 'ALL';
@@ -1514,13 +1593,21 @@
     if (potenciaBar) {
       potenciaBar.style.display = (disc === 'mesas' && filtrosSecundariosVisibles) ? 'flex' : 'none';
     }
+    const retiroBar = document.getElementById('retiro-control-bar');
+    if (retiroBar) {
+      retiroBar.style.display = (disc === 'retiro') ? 'flex' : 'none';
+    }
 
     const btnToggle = document.getElementById('btn-toggle-filtros');
     if (btnToggle) {
       btnToggle.style.display = (disc === 'mesas' || disc === 'solar') ? 'inline-flex' : 'none';
     }
 
-    renderTerrenoItems();
+    if (disc === 'pallets_tab') {
+      renderPalletsTabTerreno();
+    } else {
+      renderTerrenoItems();
+    }
   }
 
   function setInversorFilter(inv, ev) {
@@ -1555,11 +1642,336 @@
     renderTerrenoItems();
   }
 
+
+  // MATRIZ OFICIAL DE RETIRO DE MÓDULOS EXISTENTES (14.310 MÓDULOS EN 159 MESAS)
+  const RETIRO_DATA_EXACTA = {"L1M1": {"fila": 1, "mesa": 1, "cant": 0}, "L1M2": {"fila": 1, "mesa": 2, "cant": 0}, "L1M3": {"fila": 1, "mesa": 3, "cant": 0}, "L1M4": {"fila": 1, "mesa": 4, "cant": 0}, "L1M5": {"fila": 1, "mesa": 5, "cant": 0}, "L1M6": {"fila": 1, "mesa": 6, "cant": 0}, "L2M1": {"fila": 2, "mesa": 1, "cant": 0}, "L2M2": {"fila": 2, "mesa": 2, "cant": 0}, "L2M3": {"fila": 2, "mesa": 3, "cant": 90}, "L2M4": {"fila": 2, "mesa": 4, "cant": 90}, "L2M5": {"fila": 2, "mesa": 5, "cant": 90}, "L2M6": {"fila": 2, "mesa": 6, "cant": 90}, "L3M1": {"fila": 3, "mesa": 1, "cant": 0}, "L3M2": {"fila": 3, "mesa": 2, "cant": 90}, "L3M3": {"fila": 3, "mesa": 3, "cant": 90}, "L3M4": {"fila": 3, "mesa": 4, "cant": 90}, "L3M5": {"fila": 3, "mesa": 5, "cant": 90}, "L3M6": {"fila": 3, "mesa": 6, "cant": 90}, "L4M1": {"fila": 4, "mesa": 1, "cant": 0}, "L4M2": {"fila": 4, "mesa": 2, "cant": 90}, "L4M3": {"fila": 4, "mesa": 3, "cant": 90}, "L4M4": {"fila": 4, "mesa": 4, "cant": 90}, "L4M5": {"fila": 4, "mesa": 5, "cant": 90}, "L4M6": {"fila": 4, "mesa": 6, "cant": 90}, "L5M1": {"fila": 5, "mesa": 1, "cant": 0}, "L5M2": {"fila": 5, "mesa": 2, "cant": 90}, "L5M3": {"fila": 5, "mesa": 3, "cant": 90}, "L5M4": {"fila": 5, "mesa": 4, "cant": 90}, "L5M5": {"fila": 5, "mesa": 5, "cant": 90}, "L5M6": {"fila": 5, "mesa": 6, "cant": 90}, "L6M1": {"fila": 6, "mesa": 1, "cant": 0}, "L6M2": {"fila": 6, "mesa": 2, "cant": 90}, "L6M3": {"fila": 6, "mesa": 3, "cant": 90}, "L6M4": {"fila": 6, "mesa": 4, "cant": 90}, "L6M5": {"fila": 6, "mesa": 5, "cant": 90}, "L6M6": {"fila": 6, "mesa": 6, "cant": 90}, "L7M1": {"fila": 7, "mesa": 1, "cant": 0}, "L7M2": {"fila": 7, "mesa": 2, "cant": 90}, "L7M3": {"fila": 7, "mesa": 3, "cant": 90}, "L7M4": {"fila": 7, "mesa": 4, "cant": 90}, "L7M5": {"fila": 7, "mesa": 5, "cant": 90}, "L7M6": {"fila": 7, "mesa": 6, "cant": 90}, "L8M1": {"fila": 8, "mesa": 1, "cant": 0}, "L8M2": {"fila": 8, "mesa": 2, "cant": 90}, "L8M3": {"fila": 8, "mesa": 3, "cant": 90}, "L8M4": {"fila": 8, "mesa": 4, "cant": 90}, "L8M5": {"fila": 8, "mesa": 5, "cant": 90}, "L8M6": {"fila": 8, "mesa": 6, "cant": 90}, "L9M1": {"fila": 9, "mesa": 1, "cant": 0}, "L9M2": {"fila": 9, "mesa": 2, "cant": 90}, "L9M3": {"fila": 9, "mesa": 3, "cant": 90}, "L9M4": {"fila": 9, "mesa": 4, "cant": 90}, "L9M5": {"fila": 9, "mesa": 5, "cant": 90}, "L9M6": {"fila": 9, "mesa": 6, "cant": 90}, "L10M1": {"fila": 10, "mesa": 1, "cant": 0}, "L10M2": {"fila": 10, "mesa": 2, "cant": 90}, "L10M3": {"fila": 10, "mesa": 3, "cant": 90}, "L10M4": {"fila": 10, "mesa": 4, "cant": 90}, "L10M5": {"fila": 10, "mesa": 5, "cant": 90}, "L10M6": {"fila": 10, "mesa": 6, "cant": 90}, "L11M1": {"fila": 11, "mesa": 1, "cant": 0}, "L11M2": {"fila": 11, "mesa": 2, "cant": 90}, "L11M3": {"fila": 11, "mesa": 3, "cant": 90}, "L11M4": {"fila": 11, "mesa": 4, "cant": 90}, "L11M5": {"fila": 11, "mesa": 5, "cant": 90}, "L11M6": {"fila": 11, "mesa": 6, "cant": 90}, "L12M1": {"fila": 12, "mesa": 1, "cant": 0}, "L12M2": {"fila": 12, "mesa": 2, "cant": 90}, "L12M3": {"fila": 12, "mesa": 3, "cant": 90}, "L12M4": {"fila": 12, "mesa": 4, "cant": 90}, "L12M5": {"fila": 12, "mesa": 5, "cant": 90}, "L12M6": {"fila": 12, "mesa": 6, "cant": 90}, "L13M1": {"fila": 13, "mesa": 1, "cant": 0}, "L13M2": {"fila": 13, "mesa": 2, "cant": 90}, "L13M3": {"fila": 13, "mesa": 3, "cant": 90}, "L13M4": {"fila": 13, "mesa": 4, "cant": 90}, "L13M5": {"fila": 13, "mesa": 5, "cant": 90}, "L13M6": {"fila": 13, "mesa": 6, "cant": 90}, "L14M1": {"fila": 14, "mesa": 1, "cant": 0}, "L14M2": {"fila": 14, "mesa": 2, "cant": 90}, "L14M3": {"fila": 14, "mesa": 3, "cant": 90}, "L14M4": {"fila": 14, "mesa": 4, "cant": 90}, "L14M5": {"fila": 14, "mesa": 5, "cant": 90}, "L14M6": {"fila": 14, "mesa": 6, "cant": 90}, "L15M1": {"fila": 15, "mesa": 1, "cant": 0}, "L15M2": {"fila": 15, "mesa": 2, "cant": 90}, "L15M3": {"fila": 15, "mesa": 3, "cant": 90}, "L15M4": {"fila": 15, "mesa": 4, "cant": 90}, "L15M5": {"fila": 15, "mesa": 5, "cant": 90}, "L15M6": {"fila": 15, "mesa": 6, "cant": 90}, "L16M1": {"fila": 16, "mesa": 1, "cant": 0}, "L16M2": {"fila": 16, "mesa": 2, "cant": 90}, "L16M3": {"fila": 16, "mesa": 3, "cant": 90}, "L16M4": {"fila": 16, "mesa": 4, "cant": 90}, "L16M5": {"fila": 16, "mesa": 5, "cant": 90}, "L16M6": {"fila": 16, "mesa": 6, "cant": 90}, "L17M1": {"fila": 17, "mesa": 1, "cant": 0}, "L17M2": {"fila": 17, "mesa": 2, "cant": 90}, "L17M3": {"fila": 17, "mesa": 3, "cant": 90}, "L17M4": {"fila": 17, "mesa": 4, "cant": 90}, "L17M5": {"fila": 17, "mesa": 5, "cant": 90}, "L17M6": {"fila": 17, "mesa": 6, "cant": 90}, "L18M1": {"fila": 18, "mesa": 1, "cant": 0}, "L18M2": {"fila": 18, "mesa": 2, "cant": 90}, "L18M3": {"fila": 18, "mesa": 3, "cant": 90}, "L18M4": {"fila": 18, "mesa": 4, "cant": 90}, "L18M5": {"fila": 18, "mesa": 5, "cant": 90}, "L18M6": {"fila": 18, "mesa": 6, "cant": 90}, "L19M1": {"fila": 19, "mesa": 1, "cant": 0}, "L19M2": {"fila": 19, "mesa": 2, "cant": 90}, "L19M3": {"fila": 19, "mesa": 3, "cant": 90}, "L19M4": {"fila": 19, "mesa": 4, "cant": 90}, "L19M5": {"fila": 19, "mesa": 5, "cant": 90}, "L19M6": {"fila": 19, "mesa": 6, "cant": 90}, "L20M1": {"fila": 20, "mesa": 1, "cant": 0}, "L20M2": {"fila": 20, "mesa": 2, "cant": 90}, "L20M3": {"fila": 20, "mesa": 3, "cant": 90}, "L20M4": {"fila": 20, "mesa": 4, "cant": 90}, "L20M5": {"fila": 20, "mesa": 5, "cant": 90}, "L20M6": {"fila": 20, "mesa": 6, "cant": 90}, "L21M1": {"fila": 21, "mesa": 1, "cant": 90}, "L21M2": {"fila": 21, "mesa": 2, "cant": 90}, "L21M3": {"fila": 21, "mesa": 3, "cant": 90}, "L21M4": {"fila": 21, "mesa": 4, "cant": 90}, "L21M5": {"fila": 21, "mesa": 5, "cant": 90}, "L21M6": {"fila": 21, "mesa": 6, "cant": 90}, "L22M1": {"fila": 22, "mesa": 1, "cant": 90}, "L22M2": {"fila": 22, "mesa": 2, "cant": 90}, "L22M3": {"fila": 22, "mesa": 3, "cant": 90}, "L22M4": {"fila": 22, "mesa": 4, "cant": 90}, "L22M5": {"fila": 22, "mesa": 5, "cant": 90}, "L22M6": {"fila": 22, "mesa": 6, "cant": 90}, "L23M1": {"fila": 23, "mesa": 1, "cant": 90}, "L23M2": {"fila": 23, "mesa": 2, "cant": 90}, "L23M3": {"fila": 23, "mesa": 3, "cant": 90}, "L23M4": {"fila": 23, "mesa": 4, "cant": 90}, "L23M5": {"fila": 23, "mesa": 5, "cant": 90}, "L23M6": {"fila": 23, "mesa": 6, "cant": 90}, "L24M1": {"fila": 24, "mesa": 1, "cant": 90}, "L24M2": {"fila": 24, "mesa": 2, "cant": 90}, "L24M3": {"fila": 24, "mesa": 3, "cant": 90}, "L24M4": {"fila": 24, "mesa": 4, "cant": 90}, "L24M5": {"fila": 24, "mesa": 5, "cant": 90}, "L24M6": {"fila": 24, "mesa": 6, "cant": 90}, "L25M1": {"fila": 25, "mesa": 1, "cant": 90}, "L25M2": {"fila": 25, "mesa": 2, "cant": 90}, "L25M3": {"fila": 25, "mesa": 3, "cant": 90}, "L25M4": {"fila": 25, "mesa": 4, "cant": 90}, "L25M5": {"fila": 25, "mesa": 5, "cant": 90}, "L25M6": {"fila": 25, "mesa": 6, "cant": 90}, "L26M1": {"fila": 26, "mesa": 1, "cant": 90}, "L26M2": {"fila": 26, "mesa": 2, "cant": 90}, "L26M3": {"fila": 26, "mesa": 3, "cant": 90}, "L26M4": {"fila": 26, "mesa": 4, "cant": 90}, "L26M5": {"fila": 26, "mesa": 5, "cant": 90}, "L26M6": {"fila": 26, "mesa": 6, "cant": 90}, "L27M1": {"fila": 27, "mesa": 1, "cant": 90}, "L27M2": {"fila": 27, "mesa": 2, "cant": 90}, "L27M3": {"fila": 27, "mesa": 3, "cant": 90}, "L27M4": {"fila": 27, "mesa": 4, "cant": 90}, "L27M5": {"fila": 27, "mesa": 5, "cant": 90}, "L27M6": {"fila": 27, "mesa": 6, "cant": 90}, "L28M1": {"fila": 28, "mesa": 1, "cant": 90}, "L28M2": {"fila": 28, "mesa": 2, "cant": 90}, "L28M3": {"fila": 28, "mesa": 3, "cant": 90}, "L28M4": {"fila": 28, "mesa": 4, "cant": 90}, "L28M5": {"fila": 28, "mesa": 5, "cant": 90}, "L28M6": {"fila": 28, "mesa": 6, "cant": 90}, "L29M1": {"fila": 29, "mesa": 1, "cant": 90}, "L29M2": {"fila": 29, "mesa": 2, "cant": 90}, "L29M3": {"fila": 29, "mesa": 3, "cant": 90}, "L29M4": {"fila": 29, "mesa": 4, "cant": 90}, "L29M5": {"fila": 29, "mesa": 5, "cant": 90}, "L29M6": {"fila": 29, "mesa": 6, "cant": 90}, "L30M1": {"fila": 30, "mesa": 1, "cant": 90}, "L30M2": {"fila": 30, "mesa": 2, "cant": 90}, "L30M3": {"fila": 30, "mesa": 3, "cant": 90}, "L30M4": {"fila": 30, "mesa": 4, "cant": 90}, "L30M5": {"fila": 30, "mesa": 5, "cant": 90}, "L30M6": {"fila": 30, "mesa": 6, "cant": 90}, "L31M1": {"fila": 31, "mesa": 1, "cant": 90}, "L31M2": {"fila": 31, "mesa": 2, "cant": 90}, "L31M3": {"fila": 31, "mesa": 3, "cant": 90}, "L31M4": {"fila": 31, "mesa": 4, "cant": 90}, "L31M5": {"fila": 31, "mesa": 5, "cant": 90}, "L31M6": {"fila": 31, "mesa": 6, "cant": 0}};
+
+  if (!estadoAvance.retiro) estadoAvance.retiro = {};
+  if (!estadoAvance.mods_por_pallet) estadoAvance.mods_por_pallet = 30;
+
+  function actualizarCalculoPalletsTerreno(val) {
+    const num = parseInt(val, 10);
+    if (!isNaN(num) && num > 0) {
+      estadoAvance.mods_por_pallet = num;
+      guardarCambios(false);
+      const totalModsExistentes = 14310;
+      const totalPalletsEst = Math.ceil(totalModsExistentes / num);
+      const lbl = document.getElementById('lbl-total-pallets-estimados');
+      if (lbl) lbl.innerText = totalPalletsEst;
+      renderResumenEjecutivo();
+      renderPalletsTabTerreno();
+    }
+  }
+
+  let mesaActivaRetiro = null;
+
+  function abrirModalRetiro(mesaId) {
+    const info = RETIRO_DATA_EXACTA[mesaId];
+    if (!info || info.cant <= 0) return; // Las mesas en 0 (rojas) no se intervienen
+
+    mesaActivaRetiro = { id: mesaId, total: info.cant };
+    document.getElementById('modal-retiro-title').innerText = `♻️ Retiro Mesa ${mesaId} (Fila ${info.fila})`;
+    document.getElementById('modal-retiro-existentes').innerText = info.cant;
+
+    const st = estadoAvance.retiro[mesaId] || { retirados: 0, bitacora: [] };
+    const yaRet = st.retirados || 0;
+    const pend = Math.max(0, info.cant - yaRet);
+
+    document.getElementById('modal-retiro-ya-retirados').innerText = yaRet;
+    document.getElementById('modal-retiro-pendientes').innerText = pend;
+    document.getElementById('modal-retiro-max-restante').innerText = pend;
+
+    const input = document.getElementById('modal-retiro-input-modulos');
+    input.max = pend > 0 ? pend : info.cant;
+    input.value = pend > 0 ? pend : info.cant;
+
+    const today = new Date().toISOString().slice(0, 10);
+    document.getElementById('modal-retiro-input-fecha').value = today;
+    document.getElementById('modal-retiro-input-nota').value = '';
+
+    renderHistorialRetiroModal(st.bitacora || []);
+    document.getElementById('modal-retiro').classList.add('active');
+
+    setTimeout(() => {
+      input.focus();
+      input.select();
+    }, 150);
+  }
+
+  function setRetiroRapido(val) {
+    const input = document.getElementById('modal-retiro-input-modulos');
+    const maxVal = parseInt(input.max, 10) || val;
+    input.value = Math.min(val, maxVal);
+    input.focus();
+    input.select();
+  }
+
+  function cerrarModalRetiro() {
+    document.getElementById('modal-retiro').classList.remove('active');
+    mesaActivaRetiro = null;
+  }
+
+  function guardarRegistroRetiro() {
+    if (!mesaActivaRetiro) return;
+    const mesaId = mesaActivaRetiro.id;
+    const info = RETIRO_DATA_EXACTA[mesaId];
+    const fecha = document.getElementById('modal-retiro-input-fecha').value;
+    const mods = parseInt(document.getElementById('modal-retiro-input-modulos').value, 10);
+    const nota = document.getElementById('modal-retiro-input-nota').value.trim();
+
+    if (!fecha || isNaN(mods) || mods <= 0) return;
+
+    estadoAvance.retiro[mesaId] = estadoAvance.retiro[mesaId] || { retirados: 0, bitacora: [] };
+    const st = estadoAvance.retiro[mesaId];
+    st.retirados = Math.min(info.cant, (st.retirados || 0) + mods);
+    st.bitacora = st.bitacora || [];
+    st.bitacora.push({ fecha, modulos: mods, nota });
+
+    guardarCambios(true);
+    cerrarModalRetiro();
+    renderTerrenoItems();
+    renderResumenEjecutivo();
+    renderPalletsTabTerreno();
+  }
+
+  function desmarcarRetiroCompleto() {
+    if (!mesaActivaRetiro) return;
+    const mesaId = mesaActivaRetiro.id;
+    if (!confirm(`¿Deseas reiniciar y desmarcar todos los módulos retirados en ${mesaId}?`)) return;
+
+    delete estadoAvance.retiro[mesaId];
+    guardarCambios(true, true);
+    cerrarModalRetiro();
+    renderTerrenoItems();
+    renderResumenEjecutivo();
+    renderPalletsTabTerreno();
+  }
+
+  function eliminarRegistroRetiroBitacora(idx) {
+    if (!mesaActivaRetiro) return;
+    const mesaId = mesaActivaRetiro.id;
+    const st = estadoAvance.retiro[mesaId];
+    if (!st || !st.bitacora || !st.bitacora[idx]) return;
+
+    const reg = st.bitacora[idx];
+    if (!confirm(`¿Eliminar registro de ${reg.modulos} módulos retirados el ${reg.fecha}?`)) return;
+
+    const elim = st.bitacora.splice(idx, 1)[0];
+    st.retirados = Math.max(0, (st.retirados || 0) - elim.modulos);
+
+    guardarCambios(true, true);
+    renderHistorialRetiroModal(st.bitacora);
+    renderTerrenoItems();
+    renderResumenEjecutivo();
+    renderPalletsTabTerreno();
+  }
+
+  function renderHistorialRetiroModal(bitacora) {
+    const list = document.getElementById('modal-retiro-historial-list');
+    if (!bitacora || bitacora.length === 0) {
+      list.innerHTML = '<div style="padding: 6px; text-align: center; color: var(--text-muted); font-size: 11px;">Sin desmontajes registrados.</div>';
+      return;
+    }
+    let h = '';
+    bitacora.forEach((b, idx) => {
+      h += `
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:5px 8px; border-bottom:1px solid #f1f5f9; font-size:11px;">
+          <div>
+            <strong>${b.fecha}</strong>: <strong>+${b.modulos} mód.</strong>
+            ${b.nota ? `<span style="color:var(--text-muted); font-size:10px;"> (${b.nota})</span>` : ''}
+          </div>
+          <button class="btn" style="padding:1px 5px; font-size:9px; color:#dc2626;" onclick="eliminarRegistroRetiroBitacora(${idx})">✕</button>
+        </div>
+      `;
+    });
+    list.innerHTML = h;
+  }
+
+  function renderPalletsTabTerreno() {
+    const pContainer = document.getElementById('grid-terreno-items');
+    if (disciplinaActual !== 'pallets_tab') return;
+
+    const modsXPallet = estadoAvance.mods_por_pallet || 30;
+    let totalRetirados = 0;
+    Object.values(estadoAvance.retiro || {}).forEach(r => { totalRetirados += (r.retirados || 0); });
+
+    const totalModsObj = 14310;
+    const totalPalletsEst = Math.ceil(totalModsObj / modsXPallet);
+    const palletsCompletosCargados = Math.floor(totalRetirados / modsXPallet);
+    const remanenteMods = totalRetirados % modsXPallet;
+    const pctPallets = totalModsObj > 0 ? ((totalRetirados / totalModsObj) * 100).toFixed(1) : 0;
+
+    let h = `
+      <div style="background: #ffffff; border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 14px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 14px;">
+          <div>
+            <div style="font-size: 16px; font-weight: 900; color: #0f172a;">📦 Control Logístico de Pallet´s en Terreno</div>
+            <div style="font-size: 12px; color: #475569;">Cálculo dinámico según avance de retiro de módulos existentes</div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 12px; font-weight: 800; color: #0f172a;">Capacidad por Pallet:</span>
+            <input type="number" value="${modsXPallet}" min="1" max="100" onchange="actualizarCalculoPalletsTerreno(this.value)"
+                   style="width: 70px; padding: 5px 8px; font-size: 14px; font-weight: 900; color: #0284c7; text-align: center; border: 2px solid #0284c7; border-radius: 6px;">
+          </div>
+        </div>
+
+        <div class="kpi-grid" style="margin-bottom: 14px;">
+          <div class="kpi-card" style="border-left: 4px solid #0284c7;">
+            <div class="kpi-label">Módulos Retirados</div>
+            <div class="kpi-val" style="color: #0284c7;">${totalRetirados.toLocaleString('es-CL')}</div>
+            <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: ${pctPallets}%; background: #0284c7;"></div></div>
+            <div class="kpi-sub">de 14.310 módulos (${pctPallets}%)</div>
+          </div>
+
+          <div class="kpi-card" style="border-left: 4px solid #16a34a;">
+            <div class="kpi-label">Pallets Completos Cargados</div>
+            <div class="kpi-val" style="color: #16a34a;">${palletsCompletosCargados} Pallets</div>
+            <div class="kpi-sub">${palletsCompletosCargados * modsXPallet} módulos consolidados</div>
+          </div>
+
+          <div class="kpi-card" style="border-left: 4px solid #d97706;">
+            <div class="kpi-label">Pallet en Proceso (Fracción)</div>
+            <div class="kpi-val" style="color: #d97706;">${remanenteMods} / ${modsXPallet}</div>
+            <div class="kpi-sub">Módulos cargados en pallet actual</div>
+          </div>
+
+          <div class="kpi-card" style="border-left: 4px solid #64748b;">
+            <div class="kpi-label">Total Pallets Requeridos</div>
+            <div class="kpi-val" style="color: #0f172a;">${totalPalletsEst} Pallets</div>
+            <div class="kpi-sub">A ${modsXPallet} módulos por pallet</div>
+          </div>
+        </div>
+
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 12px; font-size: 12px; color: #334155;">
+          <strong>💡 Regla de Terreno:</strong> Puedes cambiar la cantidad de módulos por pallet en cualquier momento durante la faena (por ejemplo 30, 32 o 36). El sistema recalculará inmediatamente la cantidad de pallets necesarios y consolidados sin perder los registros de avance.
+        </div>
+      </div>
+    `;
+
+    pContainer.innerHTML = h;
+  }
+
   // RENDER TERRENO
   function renderTerrenoItems() {
     const container = document.getElementById('grid-terreno-items');
 
-    if (disciplinaActual === 'mesas') {
+    if (disciplinaActual === 'pallets_tab') {
+      renderPalletsTabTerreno();
+      return;
+    }
+
+    if (disciplinaActual === 'retiro') {
+      // MODO RETIRO DE MÓDULOS EXISTENTES (FOTO 1: 31 FILAS x 6 MESAS)
+      // CELDAS CON 0 EN ROJO, CELDAS CON 90 EN VERDE
+      let totalRetiradosCab = 0;
+      Object.values(estadoAvance.retiro || {}).forEach(r => { totalRetiradosCab += (r.retirados || 0); });
+      const modsXPallet = estadoAvance.mods_por_pallet || 30;
+      const totalPalletsEst = Math.ceil(14310 / modsXPallet);
+      const palletsCompletos = Math.floor(totalRetiradosCab / modsXPallet);
+
+      let html = `
+        <div class="field-matrix-container">
+          <div class="field-matrix-header">
+            <div>FILA / LÍNEA</div>
+            <div>MESA 1</div>
+            <div>MESA 2</div>
+            <div>MESA 3</div>
+            <div>MESA 4</div>
+            <div>MESA 5</div>
+            <div>MESA 6</div>
+          </div>
+      `;
+
+      for (let l = 1; l <= 31; l++) {
+        let existentesLinea = 0;
+        let retiradosLinea = 0;
+        for (let col = 1; col <= 6; col++) {
+          const id = `L${l}M${col}`;
+          const info = RETIRO_DATA_EXACTA[id];
+          if (info && info.cant > 0) {
+            existentesLinea += info.cant;
+            const rState = estadoAvance.retiro[id] || { retirados: 0 };
+            retiradosLinea += (rState.retirados || 0);
+          }
+        }
+        const pctLinea = existentesLinea > 0 ? ((retiradosLinea / existentesLinea) * 100).toFixed(0) : 0;
+
+        html += `
+          <div class="field-row-container">
+            <div class="linea-label-cell" style="background: ${existentesLinea === 0 ? '#fee2e2' : '#f8fafc'};">
+              <span>Línea ${l}</span>
+              <span class="linea-label-sub" style="color: ${retiradosLinea >= existentesLinea && existentesLinea > 0 ? '#16a34a' : 'inherit'};">
+                ${existentesLinea > 0 ? `${retiradosLinea}/${existentesLinea} (${pctLinea}%)` : '<span style="color:#dc2626; font-weight:800;">SIN MÓDULOS</span>'}
+              </span>
+            </div>
+        `;
+
+        for (let col = 1; col <= 6; col++) {
+          const id = `L${l}M${col}`;
+          const info = RETIRO_DATA_EXACTA[id];
+          const cantExistente = info ? info.cant : 0;
+
+          if (cantExistente === 0) {
+            // CELDA EN ROJO CON 0 (IGUAL A FOTO 1)
+            html += `
+              <div class="mesa-slot-card" style="background:#f87171; color:#ffffff; border-color:#ef4444; display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:64px; cursor:default;" title="Fila ${l} Mesa ${col}: 0 Módulos">
+                <span style="font-size:10px; font-weight:800; opacity:0.9;">Mesa ${col}</span>
+                <span style="font-size:18px; font-weight:900; line-height:1;">0</span>
+                <span style="font-size:9px; opacity:0.85; font-weight:700;">Sin módulos</span>
+              </div>
+            `;
+          } else {
+            // CELDA OPERATIVA CON 90 MÓDULOS (VERDE SEGÚN FOTO 1)
+            const rState = estadoAvance.retiro[id] || { retirados: 0, bitacora: [] };
+            const retirados = rState.retirados || 0;
+            const pctRetiro = Math.min(100, ((retirados / cantExistente) * 100)).toFixed(0);
+            const is100 = retirados >= cantExistente;
+            const isParcial = retirados > 0 && !is100;
+
+            let bgColor = '#4ade80'; // Verde Foto 1
+            let textColor = '#064e3b';
+            let borderColor = '#22c55e';
+            let pillBg = '#15803d';
+            let pillText = '#ffffff';
+
+            if (is100) {
+              bgColor = '#0284c7'; // Azul retirado 100%
+              textColor = '#ffffff';
+              borderColor = '#0369a1';
+              pillBg = '#0f172a';
+            } else if (isParcial) {
+              bgColor = '#fef08a'; // Amarillo en avance
+              textColor = '#854d0e';
+              borderColor = '#eab308';
+              pillBg = '#ca8a04';
+            }
+
+            html += `
+              <div class="mesa-slot-card" onclick="abrirModalRetiro('${id}')"
+                   style="background:${bgColor}; color:${textColor}; border-color:${borderColor}; min-height:64px; padding:6px; cursor:pointer; display:flex; flex-direction:column; justify-content:space-between; box-shadow:0 1px 2px rgba(0,0,0,0.06);">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <span style="font-size:10px; font-weight:800;">${id}</span>
+                  <span style="background:${pillBg}; color:${pillText}; font-size:9px; font-weight:800; padding:1px 5px; border-radius:4px;">
+                    ${is100 ? '✓ RETIRADO' : `${retirados}/${cantExistente}`}
+                  </span>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:baseline; margin-top:2px;">
+                  <span style="font-size:18px; font-weight:900; line-height:1;">${cantExistente}</span>
+                  <span style="font-size:10px; font-weight:800;">${pctRetiro}%</span>
+                </div>
+                <div style="background:rgba(0,0,0,0.12); height:4px; border-radius:999px; overflow:hidden; margin-top:4px;">
+                  <div style="width:${pctRetiro}%; height:100%; background:${is100 ? '#ffffff' : '#0f172a'};"></div>
+                </div>
+              </div>
+            `;
+          }
+        }
+        html += `</div>`;
+      }
+      html += `</div>`;
+      container.innerHTML = html;
+
+    } else if (disciplinaActual === 'mesas') {
       const mesasMap = {};
       PROYECTO_DATA.mesas.forEach(m => {
         mesasMap[`L${m.linea}M${m.mesa}`] = m;
@@ -2430,15 +2842,23 @@ Esta acción anulará la fecha de ejecución y restará este ítem del avance de
     document.getElementById('bar-solar').style.width = `${solarPct}%`;
     document.getElementById('kpi-solar-cnt').innerText = `${solarHecho} / ${totalSolar} Strings`;
 
+    let totalModsRetiradosEj = 0;
+    Object.values(estadoAvance.retiro || {}).forEach(r => { totalModsRetiradosEj += (r.retirados || 0); });
+    const modsXPalletEj = estadoAvance.mods_por_pallet || 30;
+    const totalPalletsEstEj = Math.ceil(14310 / modsXPalletEj);
+    const palletsCargadosEj = Math.floor(totalModsRetiradosEj / modsXPalletEj);
+    const pctRetiroEj = ((totalModsRetiradosEj / 14310) * 100).toFixed(1);
+    const pctPalletsCargadosEj = totalPalletsEstEj > 0 ? ((palletsCargadosEj / totalPalletsEstEj) * 100).toFixed(1) : 0;
+
     const items = [
-      { nombre: 'Montaje de Módulos (Fila Abajo)', total: `3.926 Mód.`, hecho: `${modulosBajoTotales} Mód.`, pend: `${3926 - modulosBajoTotales} Mód.`, pct: ((modulosBajoTotales/3926)*100).toFixed(1), unidad: '26 mód/mesa (Nivel Inferior)' },
-      { nombre: 'Montaje de Módulos (Fila Arriba)', total: `3.926 Mód.`, hecho: `${modulosAltoTotales} Mód.`, pend: `${3926 - modulosAltoTotales} Mód.`, pct: ((modulosAltoTotales/3926)*100).toFixed(1), unidad: '26 mód/mesa (Nivel Superior)' },
-      { nombre: 'Cableado Solar DC (Strings)', total: totalSolar, hecho: solarHecho, pend: totalSolar - solarHecho, pct: solarPct, unidad: 'Strings (18.621 m cable solar)' },
-      { nombre: 'Zanjas Interconexión Strings (Solar)', total: totalZSolar, hecho: zSolarHecho, pend: totalZSolar - zSolarHecho, pct: ((zSolarHecho/totalZSolar)*100).toFixed(1), unidad: 'Tramos (154 ML)' },
-      { nombre: 'Zanjas Canalización Baja Tensión (BT)', total: totalZBt, hecho: zBtHecho, pend: totalZBt - zBtHecho, pct: ((zBtHecho/totalZBt)*100).toFixed(1), unidad: 'Tramos Inv 1 - Inv 13' },
-      { nombre: 'Malla de Puesta a Tierra (Zanja + Cable)', total: totalTierras, hecho: tierrasHecho, pend: totalTierras - tierrasHecho, pct: ((tierrasHecho/totalTierras)*100).toFixed(1), unidad: 'Filas (L1 - L32)' },
-      { nombre: 'Cableado Triadas Baja Tensión (BT)', total: totalTriadas, hecho: triadasHecho, pend: totalTriadas - triadasHecho, pct: ((triadasHecho/totalTriadas)*100).toFixed(1), unidad: 'Inversores (13 Un.)' },
-      { nombre: 'Ubicación y Descarga de Pallets en Campo', total: `${totalPalletsObj} Pallets`, hecho: `${palletsPosicionadosCount} Pallets`, pend: `${totalPalletsObj - palletsPosicionadosCount} Pallets`, pct: palletsPct, unidad: '36 mód/pallet (Carta Resumen Oficial)' }
+      { nombre: '1. Retiro de Módulos Existentes', total: `14.310 Mód.`, hecho: `${totalModsRetiradosEj} Mód.`, pend: `${14310 - totalModsRetiradosEj} Mód.`, pct: pctRetiroEj, unidad: '159 Mesas de 90 mód/mesa' },
+      { nombre: '2. Pallet´s en Terreno (Carga / Acopio)', total: `${totalPalletsEstEj} Pallets`, hecho: `${palletsCargadosEj} Pallets`, pend: `${totalPalletsEstEj - palletsCargadosEj} Pallets`, pct: pctPalletsCargadosEj, unidad: `${modsXPalletEj} mód/pallet ajustable en terreno` },
+      { nombre: '3. Montaje de Módulos Nuevos (Mesas)', total: `7.852 Mód.`, hecho: `${modulosMontadosTotales} Mód.`, pend: `${7852 - modulosMontadosTotales} Mód.`, pct: modulosPct, unidad: '151 Mesas (575W / 580W)' },
+      { nombre: '4. Zanjas para Cable Solar DC', total: totalZSolar, hecho: zSolarHecho, pend: totalZSolar - zSolarHecho, pct: ((zSolarHecho/totalZSolar)*100).toFixed(1), unidad: '28 Tramos interconexión (154 ML)' },
+      { nombre: '5. Cableado Solar DC (Strings)', total: totalSolar, hecho: solarHecho, pend: totalSolar - solarHecho, pct: solarPct, unidad: '302 Strings (18.621 m cable solar)' },
+      { nombre: '6. Zanjas Canalización Baja Tensión (BT)', total: totalZBt, hecho: zBtHecho, pend: totalZBt - zBtHecho, pct: ((zBtHecho/totalZBt)*100).toFixed(1), unidad: '12 Tramos Inv 1 - Inv 13' },
+      { nombre: '7. Tierras (Zanja + Conductor Malla)', total: totalTierras, hecho: tierrasHecho, pend: totalTierras - tierrasHecho, pct: ((tierrasHecho/totalTierras)*100).toFixed(1), unidad: '32 Filas (L1 - L32)' },
+      { nombre: '8. Cableado Triadas Baja Tensión (BT)', total: totalTriadas, hecho: triadasHecho, pend: totalTriadas - triadasHecho, pct: ((triadasHecho/totalTriadas)*100).toFixed(1), unidad: '13 Circuitos Inversores' }
     ];
 
     let tBody = '';
