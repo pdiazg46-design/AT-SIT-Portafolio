@@ -1175,7 +1175,7 @@
         <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
           <div style="display: flex; align-items: center; gap: 6px;">
             <span style="font-size: 11px; font-weight: 800; color: #0f172a; text-transform: uppercase;">📦 Módulos por Pallet:</span>
-            <input type="number" id="input-mods-por-pallet" value="30" min="1" max="100" onchange="actualizarCalculoPalletsTerreno(this.value)" oninput="actualizarCalculoPalletsTerreno(this.value)"
+            <input type="number" id="input-mods-por-pallet" value="30" min="1" max="100" onchange="actualizarCalculoPalletsTerreno(this.value, true)" oninput="actualizarCalculoPalletsTerreno(this.value, false)"
                    style="width: 65px; padding: 4px 8px; font-size: 13px; font-weight: 900; color: #0284c7; text-align: center; border: 1.5px solid #0284c7; border-radius: 6px; background: #ffffff;">
           </div>
           <div style="font-size: 11px; color: #475569; display: flex; align-items: center; gap: 8px;">
@@ -1649,17 +1649,30 @@
   if (!estadoAvance.retiro) estadoAvance.retiro = {};
   if (!estadoAvance.mods_por_pallet) estadoAvance.mods_por_pallet = 30;
 
-  function actualizarCalculoPalletsTerreno(val) {
+  function actualizarCalculoPalletsTerreno(val, showToastMsg = true) {
     const num = parseInt(val, 10);
     if (!isNaN(num) && num > 0) {
       estadoAvance.mods_por_pallet = num;
       guardarCambios(false);
+
+      // Sincronizar todos los inputs de modulos por pallet en pantalla
+      const inputBar = document.getElementById('input-mods-por-pallet');
+      if (inputBar && parseInt(inputBar.value, 10) !== num) inputBar.value = num;
+
+      const inputTab = document.getElementById('input-tab-mods-por-pallet');
+      if (inputTab && parseInt(inputTab.value, 10) !== num) inputTab.value = num;
+
       const totalModsExistentes = 11250;
       const totalPalletsEst = Math.ceil(totalModsExistentes / num);
       const lbl = document.getElementById('lbl-total-pallets-estimados');
       if (lbl) lbl.innerText = totalPalletsEst;
+
       renderResumenEjecutivo();
-      renderPalletsTabTerreno();
+      if (disciplinaActual === 'pallets_tab') renderPalletsTabTerreno();
+
+      if (showToastMsg) {
+        showToast(`✓ Grabado: ${num} módulos/pallet (${totalPalletsEst} pallets totales)`);
+      }
     }
   }
 
@@ -1810,7 +1823,7 @@
           </div>
           <div style="display: flex; align-items: center; gap: 8px;">
             <span style="font-size: 12px; font-weight: 800; color: #0f172a;">Capacidad por Pallet:</span>
-            <input type="number" value="${modsXPallet}" min="1" max="100" onchange="actualizarCalculoPalletsTerreno(this.value)"
+            <input type="number" id="input-tab-mods-por-pallet" value="${modsXPallet}" min="1" max="100" onchange="actualizarCalculoPalletsTerreno(this.value, true)" oninput="actualizarCalculoPalletsTerreno(this.value, false)"
                    style="width: 70px; padding: 5px 8px; font-size: 14px; font-weight: 900; color: #0284c7; text-align: center; border: 2px solid #0284c7; border-radius: 6px;">
           </div>
         </div>
@@ -3118,6 +3131,11 @@ Esta acción anulará la fecha de ejecución y restará este ítem del avance de
   window.addEventListener('DOMContentLoaded', () => {
     checkAuthStatus();
     actualizarAlturaHeader();
+
+    // Cargar y aplicar valor guardado en faena de modulos por pallet
+    const savedModsXPallet = estadoAvance.mods_por_pallet || 30;
+    actualizarCalculoPalletsTerreno(savedModsXPallet, false);
+
     renderResumenEjecutivo();
     renderTerrenoItems();
     renderPalletsResumen();
