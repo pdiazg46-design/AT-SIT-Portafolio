@@ -628,6 +628,122 @@ export default function Home() {
                                 </div>
                             </div>
                         </motion.div>
+
+                        {/* Featured Mi Mascota PWA Card */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 40 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.6, delay: 0.3 }}
+                            className="mt-12 bg-gradient-to-br from-slate-900/90 via-purple-950/40 to-slate-950 border border-purple-500/30 rounded-[3.5rem] p-8 md:p-16 backdrop-blur-2xl relative overflow-hidden shadow-2xl shadow-purple-950/50 hover:border-purple-500/60 transition-all duration-700 group"
+                        >
+                            {/* Ambient Glow */}
+                            <div className="absolute top-0 right-0 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl pointer-events-none group-hover:bg-purple-500/20 transition-all duration-700" />
+
+                            <div className="grid lg:grid-cols-12 gap-12 items-center relative z-10">
+                                {/* Visual Mockup Side */}
+                                <div className="lg:col-span-5 relative">
+                                    <div className="relative rounded-[2.5rem] overflow-hidden border border-purple-500/30 shadow-2xl bg-slate-950 p-8 flex flex-col items-center justify-center text-center group-hover:scale-[1.02] transition-transform duration-700">
+                                        <div className="w-24 h-24 rounded-3xl bg-gradient-to-tr from-purple-600 via-pink-600 to-amber-500 p-0.5 shadow-2xl shadow-purple-500/40 mb-4">
+                                            <div className="w-full h-full bg-slate-950 rounded-[22px] flex items-center justify-center text-4xl">
+                                                🐾
+                                            </div>
+                                        </div>
+                                        <h3 className="text-2xl font-black text-white mb-2 tracking-tight">Mi Mascota <span className="text-purple-400 text-sm font-medium">Hoja de Vida</span></h3>
+                                        <p className="text-xs text-slate-400 max-w-xs mb-4">Carnet Clínico Digital & Hoja de Vida Médica 100% Offline-First para el hogar.</p>
+                                        
+                                        <div className="flex flex-wrap justify-center gap-2">
+                                            <span className="bg-purple-400/20 text-purple-300 border border-purple-400/30 text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full">
+                                                PWA Offline-First
+                                            </span>
+                                            <span className="bg-emerald-400/20 text-emerald-300 border border-emerald-400/30 text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full">
+                                                Cero Nube / Local
+                                            </span>
+                                            <span className="bg-amber-400/20 text-amber-300 border border-amber-400/30 text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full">
+                                                Certificados SAG / Viaje
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    {/* Tech Quick Badges */}
+                                    <div className="mt-6 flex flex-wrap justify-center gap-2">
+                                        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 bg-white/5 border border-white/10 px-3 py-1 rounded-xl">
+                                            IndexedDB Dexie
+                                        </span>
+                                        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 bg-white/5 border border-white/10 px-3 py-1 rounded-xl">
+                                            Multi-Mascota
+                                        </span>
+                                        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 bg-white/5 border border-white/10 px-3 py-1 rounded-xl">
+                                            Curva de Peso
+                                        </span>
+                                        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 bg-white/5 border border-white/10 px-3 py-1 rounded-xl">
+                                            iOS & Android
+                                        </span>
+                                    </div>
+                                </div>
+
+                                {/* Content Side */}
+                                <div className="lg:col-span-7 flex flex-col justify-between">
+                                    <div>
+                                        <div className="inline-flex items-center gap-2 text-purple-400 text-xs font-black uppercase tracking-widest mb-4">
+                                            <Sparkles size={16} className="text-purple-400 animate-pulse" />
+                                            🐕 Salud Animal Soberana & Privada
+                                        </div>
+                                        <h3 className="text-3xl md:text-4xl font-black text-white mb-4 tracking-tight">
+                                            Mi Mascota — Hoja de Vida Médica
+                                        </h3>
+                                        <p className="text-slate-300 text-sm md:text-base font-normal leading-relaxed mb-6">
+                                            Gestiona el carnet médico de tus perros, gatos y mascotas directamente en tu teléfono. Control de vacunas con trazabilidad de lote y frasco, calendario de antiparasitarios, gráfico evolutivo de peso, bitácora de cirugías y visor a pantalla completa de certificados oficiales timbrados.
+                                        </p>
+
+                                        {/* Features List */}
+                                        <div className="grid sm:grid-cols-2 gap-4 mb-8">
+                                            <div className="flex items-start gap-3.5 bg-white/5 border border-white/10 p-4 rounded-2xl hover:bg-white/[0.08] transition-colors">
+                                                <div className="p-2.5 rounded-xl bg-purple-500/20 text-purple-300 shrink-0">
+                                                    <ShieldCheck size={20} />
+                                                </div>
+                                                <div>
+                                                    <div className="text-xs font-black uppercase text-white tracking-wider mb-0.5">100% Offline & Local</div>
+                                                    <div className="text-[11px] text-slate-400 font-medium">Sin suscripciones ni servidores externos. Los certificados y fotos quedan en tu equipo.</div>
+                                                </div>
+                                            </div>
+
+                                            <div className="flex items-start gap-3.5 bg-white/5 border border-white/10 p-4 rounded-2xl hover:bg-white/[0.08] transition-colors">
+                                                <div className="p-2.5 rounded-xl bg-amber-500/20 text-amber-300 shrink-0">
+                                                    <Award size={20} />
+                                                </div>
+                                                <div>
+                                                    <div className="text-xs font-black uppercase text-white tracking-wider mb-0.5">Certificados Timbrados</div>
+                                                    <div className="text-[11px] text-slate-400 font-medium">Adjunta respaldos en PDF/Foto con folio y firma para viajes y controles.</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Action Buttons Bar */}
+                                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-6 border-t border-white/10">
+                                        <a
+                                            href="/mascota/"
+                                            className="bg-gradient-to-r from-purple-500 via-indigo-600 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white font-black px-8 py-4 rounded-2xl shadow-xl shadow-purple-500/20 transition-all transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 text-sm text-center group/btn"
+                                        >
+                                            <ExternalLink size={20} className="group-hover/btn:translate-x-0.5 transition-transform" />
+                                            <span>Abrir Mi Mascota (PWA)</span>
+                                        </a>
+                                        <a
+                                            href="/mascota/MiMascota_PWA_Offline.zip"
+                                            download
+                                            className="bg-white/10 hover:bg-white/20 text-white font-bold px-5 py-4 rounded-2xl text-center transition-all text-sm flex items-center justify-center gap-2 border border-white/10"
+                                        >
+                                            <DownloadCloud size={16} /> Descargar ZIP Offline
+                                        </a>
+                                    </div>
+                                    <p className="text-[11px] text-purple-300 mt-4 text-center sm:text-left font-medium flex items-center gap-1.5 bg-purple-950/40 border border-purple-500/30 p-2.5 rounded-xl">
+                                        <ShieldCheck size={16} className="text-purple-400 shrink-0" />
+                                        <span><strong>Versión v1.0.0 Lista para Instalar:</strong> Descargable directamente desde atsit.cl a tu celular (Safari iOS / Chrome Android).</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </motion.div>
                     </div>
                 </section>
 

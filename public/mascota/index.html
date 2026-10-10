@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>Mi Mascota - Hoja de Vida Médica</title>
+    
+    <!-- PWA Web Manifest -->
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+
+    <!-- Safari / iOS Mobile Metas -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Mi Mascota" />
+    <meta name="theme-color" content="#7c3aed" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="description" content="Hoja de Vida Médica y Carnet de Salud para Mascotas. 100% Offline y Soberano para el hogar." />
+
+    <!-- Anti-zoom in inputs for iOS -->
+    <style>input,select,textarea{font-size:16px!important}</style>
+    <script type="module" crossorigin src="./assets/index-dQK_wr9I.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-CE7xr5MO.css">
+  </head>
+  <body class="bg-slate-50 dark:bg-slate-950 select-none">
+    <div id="root"></div>
+    <script>
+      // Registro del Service Worker para funcionamiento 100% Offline-First
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js')
+            .then((reg) => console.log('SW Mi Mascota registrado:', reg.scope))
+            .catch((err) => console.warn('SW error:', err));
+        });
+      }
+    </script>
+  </body>
+</html>
