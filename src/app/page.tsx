@@ -729,7 +729,7 @@ export default function Home() {
                                             className="bg-gradient-to-r from-emerald-500 via-teal-600 to-cyan-600 hover:from-emerald-600 hover:to-teal-700 text-white font-black px-8 py-4 rounded-2xl shadow-xl shadow-emerald-500/25 transition-all transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 text-sm text-center group/btn"
                                         >
                                             <Sparkles size={20} className="group-hover/btn:rotate-12 transition-transform text-amber-300" />
-                                            <span>Comprar Acceso de por Vida ($3.990)</span>
+                                            <span>Comprar Acceso de por Vida ($4.990)</span>
                                         </a>
                                         <a
                                             href="/mascota/index.html"
