@@ -720,28 +720,37 @@ export default function Home() {
                                         </div>
                                     </div>
 
-                                    {/* Action Buttons Bar */}
+                                    {/* Action Buttons Bar con Mercado Pago Checkout */}
                                     <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-6 border-t border-white/10">
+                                        <a
+                                            href="https://mpago.la/1YdH7eG"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="bg-gradient-to-r from-emerald-500 via-teal-600 to-cyan-600 hover:from-emerald-600 hover:to-teal-700 text-white font-black px-8 py-4 rounded-2xl shadow-xl shadow-emerald-500/25 transition-all transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 text-sm text-center group/btn"
+                                        >
+                                            <Sparkles size={20} className="group-hover/btn:rotate-12 transition-transform text-amber-300" />
+                                            <span>Comprar Acceso de por Vida ($3.990)</span>
+                                        </a>
                                         <a
                                             href="/mascota/index.html"
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="bg-gradient-to-r from-purple-500 via-indigo-600 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white font-black px-8 py-4 rounded-2xl shadow-xl shadow-purple-500/20 transition-all transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 text-sm text-center group/btn"
+                                            className="bg-purple-600/30 hover:bg-purple-600/50 text-purple-200 hover:text-white font-bold px-6 py-4 rounded-2xl text-center transition-all text-sm flex items-center justify-center gap-2 border border-purple-500/40"
                                         >
-                                            <ExternalLink size={20} className="group-hover/btn:translate-x-0.5 transition-transform" />
-                                            <span>Abrir Mi Mascota (PWA)</span>
+                                            <ExternalLink size={18} />
+                                            <span>Probar Demo Gratis</span>
                                         </a>
                                         <a
                                             href="/mascota/MiMascota_PWA_Offline.zip"
                                             download
                                             className="bg-white/10 hover:bg-white/20 text-white font-bold px-5 py-4 rounded-2xl text-center transition-all text-sm flex items-center justify-center gap-2 border border-white/10"
                                         >
-                                            <DownloadCloud size={16} /> Descargar ZIP Offline
+                                            <DownloadCloud size={16} /> ZIP
                                         </a>
                                     </div>
                                     <p className="text-[11px] text-purple-300 mt-4 text-center sm:text-left font-medium flex items-center gap-1.5 bg-purple-950/40 border border-purple-500/30 p-2.5 rounded-xl">
-                                        <ShieldCheck size={16} className="text-purple-400 shrink-0" />
-                                        <span><strong>Versión v1.0.0 Lista para Instalar:</strong> Descargable directamente desde atsit.cl a tu celular (Safari iOS / Chrome Android).</span>
+                                        <ShieldCheck size={16} className="text-emerald-400 shrink-0" />
+                                        <span><strong>Pago Seguro con Mercado Pago:</strong> Redcompra, Webpay, Débito o Crédito. Acceso vitalicio inmediato para Android y iPhone.</span>
                                     </p>
                                 </div>
                             </div>
