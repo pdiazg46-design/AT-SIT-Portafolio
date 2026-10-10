@@ -723,7 +723,9 @@ export default function Home() {
                                     {/* Action Buttons Bar */}
                                     <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-6 border-t border-white/10">
                                         <a
-                                            href="/mascota/"
+                                            href="/mascota/index.html"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
                                             className="bg-gradient-to-r from-purple-500 via-indigo-600 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white font-black px-8 py-4 rounded-2xl shadow-xl shadow-purple-500/20 transition-all transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 text-sm text-center group/btn"
                                         >
                                             <ExternalLink size={20} className="group-hover/btn:translate-x-0.5 transition-transform" />
