@@ -1,4 +1,4 @@
-const APP_VERSION = '1.0.2';
+const APP_VERSION = '1.0.3';
 const CACHE_NAME = `mi-mascota-v${APP_VERSION}`;
 const ASSETS = [
   './',
@@ -9,19 +9,18 @@ const ASSETS = [
   './icon-192.png',
   './icon-512.png',
   './icon-maskable-192.png',
-  './icon-maskable-512.png',
-  './assets/index-NVd1HNJQ.js',
-  './assets/index-C3XN9tNV.css'
+  './icon-maskable-512.png'
 ];
 
 // Install: Cache core assets and activate immediately
 self.addEventListener('install', (e) => {
   self.skipWaiting();
   e.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS).catch((err) => {
-        console.warn('PWA Cache install partial:', err);
-      });
+    caches.open(CACHE_NAME).then(async (cache) => {
+      // Usar Promise.allSettled para que en iOS/Safari si falla uno no aborte la app
+      await Promise.allSettled(
+        ASSETS.map((asset) => cache.add(asset).catch((err) => console.warn('Cache skip:', asset, err)))
+      );
     })
   );
 });
