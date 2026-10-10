@@ -22,6 +22,8 @@ export default function MiMascotaAdminPage() {
   const [errorPin, setErrorPin] = useState(false);
   const [copiedLink, setCopiedLink] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [vipTokensList, setVipTokensList] = useState<Array<{ token: string; used: boolean; createdAt: string }>>([]);
+  const [isGeneratingVip, setIsGeneratingVip] = useState(false);
 
   const [data, setData] = useState<{
     stats: {
@@ -50,8 +52,39 @@ export default function MiMascotaAdminPage() {
       setErrorPin(false);
       sessionStorage.setItem('mascota_admin_auth', 'true');
       fetchData();
+      fetchVipTokens();
     } else {
       setErrorPin(true);
+    }
+  };
+
+  const fetchVipTokens = async () => {
+    try {
+      const res = await fetch('/api/mascota/vip?pin=8249');
+      if (res.ok) {
+        const json = await res.json();
+        setVipTokensList(json.tokens || []);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleGenerateVipToken = async () => {
+    setIsGeneratingVip(true);
+    try {
+      const res = await fetch('/api/mascota/vip', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'create_vip_token', pin: '8249', notes: 'Pase 1 solo uso' }),
+      });
+      if (res.ok) {
+        await fetchVipTokens();
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsGeneratingVip(false);
     }
   };
 
@@ -235,21 +268,55 @@ export default function MiMascotaAdminPage() {
               </button>
             </div>
 
-            {/* Link 3 */}
-            <div className="p-3 rounded-2xl bg-white/5 border border-white/5 flex flex-col justify-between">
+            {/* Link 3: Generador de Enlaces VIP de 1 Solo Uso */}
+            <div className="p-3 rounded-2xl bg-white/5 border border-purple-500/30 flex flex-col justify-between">
               <div>
-                <span className="font-bold text-purple-400 block mb-1">👑 Enlace Desbloqueo VIP</span>
-                <p className="text-[11px] text-slate-400 mb-2">Activa PRO al abrir (Clientes/Familia).</p>
+                <span className="font-bold text-purple-400 block mb-1">👑 Crear Pase VIP (1 Solo Uso)</span>
+                <p className="text-[11px] text-slate-400 mb-2">Se quema tras abrirse. Nadie lo puede reenviar.</p>
               </div>
               <button
-                onClick={() => copyToClipboard('https://www.atsit.cl/mascota/index.html?activated=true', 'l3')}
-                className="w-full py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold flex items-center justify-center gap-1.5 transition active:scale-95"
+                onClick={handleGenerateVipToken}
+                disabled={isGeneratingVip}
+                className="w-full py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold flex items-center justify-center gap-1.5 transition active:scale-95 shadow-md shadow-purple-600/30"
               >
-                {copiedLink === 'l3' ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} />}
-                <span>{copiedLink === 'l3' ? '¡Copiado!' : 'Copiar Link VIP'}</span>
+                <Sparkles size={14} className="text-amber-300" />
+                <span>{isGeneratingVip ? 'Generando...' : '+ Generar Pase VIP'}</span>
               </button>
             </div>
           </div>
+
+          {/* Lista de Pases VIP Generados */}
+          {vipTokensList.length > 0 && (
+            <div className="mt-4 pt-3 border-t border-white/10 space-y-2">
+              <span className="text-xs font-bold text-slate-300 block">Pases VIP Creados:</span>
+              <div className="space-y-1.5 max-h-40 overflow-y-auto pr-1">
+                {vipTokensList.map((t, idx) => {
+                  const link = `https://www.atsit.cl/mascota/index.html?vip=${t.token}`;
+                  return (
+                    <div key={idx} className="flex items-center justify-between p-2 rounded-xl bg-black/40 border border-white/10 text-xs">
+                      <div className="flex items-center gap-2">
+                        <span className={`w-2 h-2 rounded-full ${t.used ? 'bg-red-500' : 'bg-emerald-400 animate-pulse'}`} />
+                        <span className="font-mono text-white font-bold">{t.token}</span>
+                        <span className="text-[10px] text-slate-400">({t.used ? 'Canjeado' : 'Disponible'})</span>
+                      </div>
+                      <button
+                        onClick={() => copyToClipboard(link, `vip_${idx}`)}
+                        disabled={t.used}
+                        className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition flex items-center gap-1 ${
+                          t.used 
+                            ? 'bg-white/5 text-slate-500 cursor-not-allowed' 
+                            : 'bg-purple-500/20 text-purple-300 hover:bg-purple-500/30'
+                        }`}
+                      >
+                        {copiedLink === `vip_${idx}` ? <Check size={12} /> : <Copy size={12} />}
+                        <span>{copiedLink === `vip_${idx}` ? '¡Copiado!' : (t.used ? 'Quemado' : 'Copiar Link')}</span>
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Historial de Eventos Recientes */}
