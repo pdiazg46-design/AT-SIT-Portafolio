@@ -1,5 +1,6 @@
-const CACHE_NAME = 'mi-mascota-cache-v1';
-const ASSETS_TO_CACHE = [
+const APP_VERSION = '1.0.2';
+const CACHE_NAME = `mi-mascota-v${APP_VERSION}`;
+const ASSETS = [
   './',
   './index.html',
   './manifest.webmanifest',
@@ -9,78 +10,74 @@ const ASSETS_TO_CACHE = [
   './icon-512.png',
   './icon-maskable-192.png',
   './icon-maskable-512.png',
+  './assets/index-NVd1HNJQ.js',
+  './assets/index-C3XN9tNV.css'
 ];
 
-// Install event: Pre-cache core shell
-self.addEventListener('install', (event) => {
-  event.waitUntil(
+// Install: Cache core assets and activate immediately
+self.addEventListener('install', (e) => {
+  self.skipWaiting();
+  e.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS_TO_CACHE).catch((err) => {
-        console.warn('Cache addAll warning:', err);
+      return cache.addAll(ASSETS).catch((err) => {
+        console.warn('PWA Cache install partial:', err);
       });
     })
   );
-  self.skipWaiting();
 });
 
-// Activate event: Clean up previous caches
-self.addEventListener('activate', (event) => {
-  event.waitUntil(
+// Activate: Purge old cache versions and claim clients
+self.addEventListener('activate', (e) => {
+  e.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
         keys.map((key) => {
           if (key !== CACHE_NAME) {
+            console.log('[ServiceWorker] Purging old cache:', key);
             return caches.delete(key);
           }
         })
       );
-    })
+    }).then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
-// Fetch event: Cache First with Network Fallback (100% Offline-First)
-self.addEventListener('fetch', (event) => {
-  if (event.request.method !== 'GET') return;
+// Fetch Strategy: Network-First for Navigation & HTML (to get instant updates), Cache-First for static assets
+self.addEventListener('fetch', (e) => {
+  if (e.request.method !== 'GET') return;
+  if (!e.request.url.startsWith('http')) return;
 
-  event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        // En segundo plano revalidar recursos estáticos
-        fetch(event.request)
-          .then((networkResponse) => {
-            if (networkResponse && networkResponse.status === 200) {
-              caches.open(CACHE_NAME).then((cache) => {
-                cache.put(event.request, networkResponse);
-              });
-            }
-          })
-          .catch(() => {
-            // Sin conexión a internet, se mantiene en cache de forma silenciosa
-          });
-
-        return cachedResponse;
-      }
-
-      return fetch(event.request)
-        .then((networkResponse) => {
-          if (!networkResponse || networkResponse.status !== 200) {
-            return networkResponse;
-          }
-
+  // Para navegación HTML: Intentar red primero, si no hay internet usar cache
+  if (e.request.mode === 'navigate' || e.request.destination === 'document') {
+    e.respondWith(
+      fetch(e.request).then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200) {
           const responseToCache = networkResponse.clone();
           caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, responseToCache);
+            cache.put(e.request, responseToCache);
           });
+        }
+        return networkResponse;
+      }).catch(() => {
+        return caches.match(e.request).then((cached) => cached || caches.match('./index.html'));
+      })
+    );
+    return;
+  }
 
-          return networkResponse;
-        })
-        .catch(() => {
-          // Si falla y es navegación HTML, devolver index.html de cache
-          if (event.request.mode === 'navigate') {
-            return caches.match('./index.html');
-          }
-        });
+  // Para assets estáticos: Cache-First con revalidación en background
+  e.respondWith(
+    caches.match(e.request).then((cachedResponse) => {
+      const fetchPromise = fetch(e.request).then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200) {
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(e.request, networkResponse.clone());
+          });
+        }
+        return networkResponse;
+      }).catch(() => {});
+
+      return cachedResponse || fetchPromise;
     })
   );
 });
