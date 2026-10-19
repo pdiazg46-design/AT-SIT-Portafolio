@@ -1,4 +1,4 @@
-const APP_VERSION = '1.0.9';
+const APP_VERSION = '1.0.10';
 const CACHE_NAME = `mi-mascota-v${APP_VERSION}`;
 const ASSETS = [
   './',
@@ -9,7 +9,8 @@ const ASSETS = [
   './icon-192.png',
   './icon-512.png',
   './icon-maskable-192.png',
-  './icon-maskable-512.png'
+  './icon-maskable-512.png',
+  './clinica-demo.png'
 ];
 
 // Install: Cache core assets and activate immediately
