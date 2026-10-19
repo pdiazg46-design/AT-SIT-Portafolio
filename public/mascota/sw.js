@@ -1,4 +1,4 @@
-const APP_VERSION = '1.0.12';
+const APP_VERSION = '1.0.13';
 const CACHE_NAME = `mi-mascota-v${APP_VERSION}`;
 const ASSETS = [
   './',
