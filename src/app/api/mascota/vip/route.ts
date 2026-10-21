@@ -1,5 +1,15 @@
 import { NextResponse } from 'next/server';
 
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+};
+
+export async function OPTIONS() {
+  return new NextResponse(null, { status: 204, headers: corsHeaders });
+}
+
 interface VipToken {
   token: string;
   createdAt: string;
@@ -20,7 +30,7 @@ export async function POST(req: Request) {
     // A) Generar nuevo Token VIP único
     if (action === 'create_vip_token') {
       if (pin !== '8249' && pin !== '1234') {
-        return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
+        return NextResponse.json({ error: 'No autorizado' }, { status: 401, headers: corsHeaders });
       }
 
       // Generar código aleatorio amigable MASC-XXXXXX
@@ -34,46 +44,58 @@ export async function POST(req: Request) {
         notes: notes || 'Regalo VIP / Cortesía',
       };
 
-      return NextResponse.json({
-        success: true,
-        token: newToken,
-        vipLink: `https://www.atsit.cl/mascota/index.html?vip=${newToken}`,
-      });
+      return NextResponse.json(
+        {
+          success: true,
+          token: newToken,
+          vipLink: `https://www.atsit.cl/mascota/index.html?vip=${newToken}`,
+        },
+        { status: 200, headers: corsHeaders }
+      );
     }
 
     // B) VALIDAR Y CANJEAR Token VIP (Llamado por la App del celular del usuario)
     if (action === 'claim_vip_token') {
       if (!token || !vipTokens[token]) {
-        return NextResponse.json({ 
-          valid: false, 
-          message: 'El código de enlace VIP no existe o es inválido.' 
-        }, { status: 404 });
+        return NextResponse.json(
+          { 
+            valid: false, 
+            message: 'El código de enlace VIP no existe o es inválido.' 
+          },
+          { status: 404, headers: corsHeaders }
+        );
       }
 
       const tokenObj = vipTokens[token];
 
       if (tokenObj.used) {
-        return NextResponse.json({ 
-          valid: false, 
-          alreadyUsed: true, 
-          usedAt: tokenObj.usedAt,
-          message: 'Este enlace VIP ya fue utilizado y canjeado en otro dispositivo.' 
-        }, { status: 410 });
+        return NextResponse.json(
+          { 
+            valid: false, 
+            alreadyUsed: true, 
+            usedAt: tokenObj.usedAt,
+            message: 'Este enlace VIP ya fue utilizado y canjeado en otro dispositivo.' 
+          },
+          { status: 410, headers: corsHeaders }
+        );
       }
 
       // Marcar como consumido definitivamente (1 SOLO USO)
       tokenObj.used = true;
       tokenObj.usedAt = new Date().toISOString();
 
-      return NextResponse.json({
-        valid: true,
-        message: '¡Pase VIP de 1 solo uso canjeado con éxito! Versión PRO Activada de por vida.',
-      });
+      return NextResponse.json(
+        {
+          valid: true,
+          message: '¡Pase VIP de 1 solo uso canjeado con éxito! Versión PRO Activada de por vida.',
+        },
+        { status: 200, headers: corsHeaders }
+      );
     }
 
-    return NextResponse.json({ error: 'Acción no reconocida' }, { status: 400 });
+    return NextResponse.json({ error: 'Acción no reconocida' }, { status: 400, headers: corsHeaders });
   } catch (error: any) {
-    return NextResponse.json({ error: error?.message || 'Error en servidor' }, { status: 500 });
+    return NextResponse.json({ error: error?.message || 'Error en servidor' }, { status: 500, headers: corsHeaders });
   }
 }
 
@@ -83,9 +105,9 @@ export async function GET(req: Request) {
   const pin = searchParams.get('pin');
 
   if (pin !== '8249' && pin !== '1234') {
-    return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
+    return NextResponse.json({ error: 'No autorizado' }, { status: 401, headers: corsHeaders });
   }
 
   const list = Object.values(vipTokens).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
-  return NextResponse.json({ tokens: list });
+  return NextResponse.json({ tokens: list }, { status: 200, headers: corsHeaders });
 }
