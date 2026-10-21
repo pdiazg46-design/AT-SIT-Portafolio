@@ -1,4 +1,17 @@
 import { NextResponse } from 'next/server';
+import { Pool } from 'pg';
+
+const NEON_DB_URL =
+  process.env.NEON_DATABASE_URL ||
+  'postgresql://neondb_owner:npg_Q2NF0jfBXHSY@ep-tiny-mountain-anuuuyoe-pooler.c-6.us-east-1.aws.neon.tech/neondb?sslmode=require';
+
+const pool = new Pool({
+  connectionString: NEON_DB_URL,
+  ssl: { rejectUnauthorized: false },
+  max: 5,
+  connectionTimeoutMillis: 5000,
+  idleTimeoutMillis: 15000,
+});
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -10,20 +23,34 @@ export async function OPTIONS() {
   return new NextResponse(null, { status: 204, headers: corsHeaders });
 }
 
-interface VipToken {
-  token: string;
-  createdAt: string;
-  used: boolean;
-  usedAt?: string;
-  notes?: string;
+let vipTableEnsured = false;
+async function ensureVipTable() {
+  if (vipTableEnsured) return;
+  try {
+    const client = await pool.connect();
+    try {
+      await client.query(`
+        CREATE TABLE IF NOT EXISTS mimascota_vip_tokens (
+          token VARCHAR(100) PRIMARY KEY,
+          created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+          used BOOLEAN DEFAULT FALSE,
+          used_at TIMESTAMP WITH TIME ZONE,
+          notes TEXT
+        );
+      `);
+      vipTableEnsured = true;
+    } finally {
+      client.release();
+    }
+  } catch (err) {
+    console.warn('Neon DB init VIP warning:', err);
+  }
 }
-
-// Bóveda de tokens VIP únicos
-const vipTokens: Record<string, VipToken> = {};
 
 // 1. GENERAR o LISTAR tokens (Acceso del Administrador)
 export async function POST(req: Request) {
   try {
+    await ensureVipTable();
     const body = await req.json();
     const { action, token, pin, notes } = body;
 
@@ -33,16 +60,15 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: 'No autorizado' }, { status: 401, headers: corsHeaders });
       }
 
-      // Generar código aleatorio amigable MASC-XXXXXX
       const randomStr = Math.random().toString(36).substring(2, 8).toUpperCase();
       const newToken = `MASC-${randomStr}`;
 
-      vipTokens[newToken] = {
-        token: newToken,
-        createdAt: new Date().toISOString(),
-        used: false,
-        notes: notes || 'Regalo VIP / Cortesía',
-      };
+      await pool.query(
+        `INSERT INTO mimascota_vip_tokens (token, created_at, used, notes)
+         VALUES ($1, NOW(), false, $2)
+         ON CONFLICT (token) DO NOTHING`,
+        [newToken, notes || 'Regalo VIP / Cortesía']
+      );
 
       return NextResponse.json(
         {
@@ -54,26 +80,36 @@ export async function POST(req: Request) {
       );
     }
 
-    // B) VALIDAR Y CANJEAR Token VIP (Llamado por la App del celular del usuario)
+    // B) VALIDAR Y CANJEAR Token VIP (Llamado por la App del celular)
     if (action === 'claim_vip_token') {
-      if (!token || !vipTokens[token]) {
+      if (!token) {
         return NextResponse.json(
-          { 
-            valid: false, 
-            message: 'El código de enlace VIP no existe o es inválido.' 
-          },
+          { valid: false, message: 'Código requerido' },
+          { status: 400, headers: corsHeaders }
+        );
+      }
+
+      const cleanToken = token.trim().toUpperCase();
+      const res = await pool.query(
+        `SELECT token, used, used_at FROM mimascota_vip_tokens WHERE token = $1`,
+        [cleanToken]
+      );
+
+      if (res.rows.length === 0) {
+        return NextResponse.json(
+          { valid: false, message: 'El código de enlace VIP no existe o es inválido.' },
           { status: 404, headers: corsHeaders }
         );
       }
 
-      const tokenObj = vipTokens[token];
+      const tokenObj = res.rows[0];
 
       if (tokenObj.used) {
         return NextResponse.json(
           { 
             valid: false, 
             alreadyUsed: true, 
-            usedAt: tokenObj.usedAt,
+            usedAt: tokenObj.used_at,
             message: 'Este enlace VIP ya fue utilizado y canjeado en otro dispositivo.' 
           },
           { status: 410, headers: corsHeaders }
@@ -81,8 +117,10 @@ export async function POST(req: Request) {
       }
 
       // Marcar como consumido definitivamente (1 SOLO USO)
-      tokenObj.used = true;
-      tokenObj.usedAt = new Date().toISOString();
+      await pool.query(
+        `UPDATE mimascota_vip_tokens SET used = true, used_at = NOW() WHERE token = $1`,
+        [cleanToken]
+      );
 
       return NextResponse.json(
         {
@@ -101,13 +139,23 @@ export async function POST(req: Request) {
 
 // GET: Listar tokens para el panel de administración
 export async function GET(req: Request) {
-  const { searchParams } = new URL(req.url);
-  const pin = searchParams.get('pin');
+  try {
+    await ensureVipTable();
+    const { searchParams } = new URL(req.url);
+    const pin = searchParams.get('pin');
 
-  if (pin !== '8249' && pin !== '1234') {
-    return NextResponse.json({ error: 'No autorizado' }, { status: 401, headers: corsHeaders });
+    if (pin !== '8249' && pin !== '1234') {
+      return NextResponse.json({ error: 'No autorizado' }, { status: 401, headers: corsHeaders });
+    }
+
+    const res = await pool.query(
+      `SELECT token, created_at AS "createdAt", used, used_at AS "usedAt", notes
+       FROM mimascota_vip_tokens
+       ORDER BY created_at DESC`
+    );
+
+    return NextResponse.json({ tokens: res.rows }, { status: 200, headers: corsHeaders });
+  } catch (error: any) {
+    return NextResponse.json({ error: error?.message || 'Error en servidor' }, { status: 500, headers: corsHeaders });
   }
-
-  const list = Object.values(vipTokens).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
-  return NextResponse.json({ tokens: list }, { status: 200, headers: corsHeaders });
 }
