@@ -29,7 +29,7 @@ export interface TelemetryEvent {
   platform: 'ios' | 'android' | 'web' | string;
   isPro: boolean;
   partnerCode: string;
-  partnerType: 'clinic' | 'pharmacy' | 'organic';
+  partnerType: 'clinic' | 'pharmacy' | 'food_store' | 'organic';
   partnerName: string;
   timestamp: string;
 }
@@ -37,7 +37,7 @@ export interface TelemetryEvent {
 export interface PartnerSummary {
   code: string;
   name: string;
-  type: 'clinic' | 'pharmacy' | 'organic';
+  type: 'clinic' | 'pharmacy' | 'food_store' | 'organic';
   appOpens: number;
   petsCreated: number;
   proActivations: number;
@@ -94,10 +94,32 @@ export async function POST(req: Request) {
 
     // Resolver atribución
     const code = (partnerCode || 'organico').toLowerCase().trim();
-    const type: 'clinic' | 'pharmacy' | 'organic' =
-      partnerType === 'clinic' || partnerType === 'pharmacy' ? partnerType : (code.startsWith('farma') ? 'pharmacy' : (code.startsWith('vet') || code === 'demo' ? 'clinic' : 'organic'));
+    const type: 'clinic' | 'pharmacy' | 'food_store' | 'organic' =
+      partnerType === 'clinic' || partnerType === 'pharmacy' || partnerType === 'food_store'
+        ? partnerType
+        : code.startsWith('tienda') || code.startsWith('alimento') || code.startsWith('petshop')
+        ? 'food_store'
+        : code.startsWith('farma')
+        ? 'pharmacy'
+        : code.startsWith('vet') || code === 'demo'
+        ? 'clinic'
+        : 'organic';
     
-    const name = partnerName || (code === 'demo' ? 'Clínica Veterinaria Demo (ATSIT)' : (code === 'farma_demo' || code === 'farmacia' ? 'Farmacia Veterinaria Demo (ATSIT)' : (type === 'clinic' ? `Clínica ${code}` : (type === 'pharmacy' ? `Farmacia ${code}` : 'Redes Sociales / Libre'))));
+    const name =
+      partnerName ||
+      (code === 'demo'
+        ? 'Clínica Veterinaria Demo (ATSIT)'
+        : code === 'farma_demo' || code === 'farmacia'
+        ? 'Farmacia Veterinaria Demo (ATSIT)'
+        : code === 'tienda_demo' || code === 'tienda' || code === 'alimento'
+        ? 'Tienda de Alimentos Demo (ATSIT)'
+        : type === 'food_store'
+        ? `Tienda de Alimentos ${code}`
+        : type === 'clinic'
+        ? `Clínica ${code}`
+        : type === 'pharmacy'
+        ? `Farmacia ${code}`
+        : 'Redes Sociales / Libre');
 
     // Persistir de forma inmutable en PostgreSQL (Neon)
     try {
@@ -179,6 +201,16 @@ export async function GET() {
         code: 'farma_demo',
         name: 'Farmacia Veterinaria Demo (ATSIT)',
         type: 'pharmacy',
+        appOpens: 0,
+        petsCreated: 0,
+        proActivations: 0,
+        revenue: 0,
+        lastActivity: '-',
+      },
+      tienda_demo: {
+        code: 'tienda_demo',
+        name: 'Tienda de Alimentos Demo (ATSIT)',
+        type: 'food_store',
         appOpens: 0,
         petsCreated: 0,
         proActivations: 0,
