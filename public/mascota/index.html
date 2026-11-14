@@ -20,18 +20,39 @@
 
     <!-- Anti-zoom in inputs for iOS -->
     <style>input,select,textarea{font-size:16px!important}</style>
-    <script type="module" crossorigin src="/mascota/assets/index-DDMFLIRB.js"></script>
-    <link rel="stylesheet" crossorigin href="/mascota/assets/index-_rUxRw8x.css">
+    <script type="module" crossorigin src="/mascota/assets/index-C27ysnfF.js"></script>
+    <link rel="stylesheet" crossorigin href="/mascota/assets/index-DGYCw_hR.css">
   </head>
   <body class="bg-slate-50 dark:bg-slate-950 select-none">
     <div id="root"></div>
     <script>
-      // Registro del Service Worker para funcionamiento 100% Offline-First
+      // Registro del Service Worker con protocolo de auto-actualización forzada silenciosa
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js')
-            .then((reg) => console.log('SW Mi Mascota registrado:', reg.scope))
-            .catch((err) => console.warn('SW error:', err));
+          navigator.serviceWorker.register('./sw.js').then((reg) => {
+            console.log('SW Mi Mascota registrado:', reg.scope);
+            
+            // Forzar búsqueda de actualización cada vez que el usuario abre o vuelve a la app
+            document.addEventListener('visibilitychange', () => {
+              if (document.visibilityState === 'visible') {
+                reg.update().catch(() => {});
+              }
+            });
+
+            // Chequeo periódico cada 15 minutos en segundo plano
+            setInterval(() => {
+              reg.update().catch(() => {});
+            }, 15 * 60 * 1000);
+          }).catch((err) => console.warn('SW error:', err));
+        });
+
+        // En cuanto el nuevo Service Worker toma el control, recargar instantáneamente sin avisos
+        let refreshing = false;
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          if (!refreshing) {
+            refreshing = true;
+            window.location.reload();
+          }
         });
       }
     </script>
