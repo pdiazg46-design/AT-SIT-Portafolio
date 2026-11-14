@@ -63,6 +63,9 @@ async function ensureTables() {
           created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
         );
         CREATE INDEX IF NOT EXISTS idx_mimascota_partner ON mimascota_telemetry_events(partner_code);
+        UPDATE mimascota_telemetry_events
+        SET partner_type = 'clinic', partner_name = 'Clínica Veterinaria Demo (ATSIT)'
+        WHERE partner_code = 'clinica_demo' AND (partner_type = 'organic' OR partner_name LIKE '%Contacto Libre%');
       `);
       tableEnsured = true;
     } finally {
@@ -77,6 +80,16 @@ export async function POST(req: Request) {
   try {
     await ensureTables();
     const body = await req.json();
+
+    // Acción de reseteo de pruebas (protegida con PIN)
+    if (body.action === 'reset_demo_telemetry' && body.pin === '8249') {
+      await pool.query(`
+        DELETE FROM mimascota_telemetry_events 
+        WHERE partner_code IN ('clinica_demo', 'demo', 'farma_demo', 'tienda_demo', 'farmacia');
+      `);
+      return NextResponse.json({ success: true, message: 'Telemetría de prueba reiniciada a cero' }, { status: 200, headers: corsHeaders });
+    }
+
     const {
       action,
       platform,
@@ -101,13 +114,13 @@ export async function POST(req: Request) {
         ? 'food_store'
         : code.startsWith('farma')
         ? 'pharmacy'
-        : code.startsWith('vet') || code === 'demo'
+        : code.startsWith('vet') || code.includes('clinica') || code === 'demo'
         ? 'clinic'
         : 'organic';
     
     const name =
       partnerName ||
-      (code === 'demo'
+      (code === 'demo' || code === 'clinica_demo'
         ? 'Clínica Veterinaria Demo (ATSIT)'
         : code === 'farma_demo' || code === 'farmacia'
         ? 'Farmacia Veterinaria Demo (ATSIT)'
